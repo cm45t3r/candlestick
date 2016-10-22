@@ -1,0 +1,11 @@
+{
+	"root": true,
+	"extends": "airbnb",
+	"rules": {
+		"no-tabs": 0,
+		"no-plusplus": 0,
+		"func-names": 0,
+		"indent": ["error", 4],
+		"space-before-function-paren": ["error", "never"]
+	}
+}

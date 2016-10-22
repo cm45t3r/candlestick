@@ -1,0 +1,52 @@
+{
+  "name": "candlestick",
+  "version": "0.0.1",
+  "description": "Candlestick patterns detection.",
+  "author": {
+    "name": "Trendz",
+    "email": "trendzplatform@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Carlos Uribe",
+      "email": "cm45t3r@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Trendz/candlestick",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Trendz/candlestick"
+  },
+  "bugs": {
+    "url": "https://github.com/Trendz/candlestick/issues"
+  },
+  "keywords": [
+    "candlestick",
+    "pattern",
+    "detection",
+    "technical",
+    "analysis"
+  ],
+  "engines": {
+    "node": ">= 5.11.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^3.8.1",
+    "eslint-config-airbnb": "^11.2.0",
+    "eslint-plugin-import": "^1.16.0",
+    "eslint-plugin-react": "^6.4.1",
+    "mocha": "^2.5.3"
+  },
+  "files": [
+    "LICENSE",
+    "HISTORY.md",
+    "README.md",
+    "index.js"
+  ],
+  "scripts": {
+    "test": "mocha --check-leaks --use_strict"
+  },
+  "main": "index.js"
+}
