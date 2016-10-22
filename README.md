@@ -1,6 +1,6 @@
 # Candlestick
 
-[![Build status][travis-image]][travis-url]
+[![Build Status](https://travis-ci.org/Trendz/candlestick.svg?branch=master)](https://travis-ci.org/Trendz/candlestick)
 
 A [node.js](http://nodejs.org) library for candlestick pattern detection. It is written in pure javascript and solves the need for node-gyp builds.
 
