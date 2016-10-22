@@ -1,5 +1,7 @@
 # Candlestick
 
+[![Build status][travis-image]][travis-url]
+
 A [node.js](http://nodejs.org) library for candlestick pattern detection. It is written in pure javascript and solves the need for node-gyp builds.
 
 
