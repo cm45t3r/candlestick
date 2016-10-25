@@ -45,7 +45,9 @@
     "LICENSE",
     "HISTORY.md",
     "README.md",
-    "index.js"
+    "index.js",
+    ".eslintrc.json",
+    ".travis.yml"
   ],
   "scripts": {
     "test": "mocha --check-leaks --use_strict"
