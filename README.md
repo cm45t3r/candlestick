@@ -27,10 +27,10 @@ Mandatory fields of `previous` and `current` are:
 ``` js
 {
 	...
-	open: Number,	// security's opening price
-	high: Number,	// security's highest price
-	low: Number,	// security's lowest price 
-	close: Number	// security's closing price
+	open: Number,   // security's opening price
+	high: Number,   // security's highest price
+	low: Number,    // security's lowest price 
+	close: Number   // security's closing price
 }
 ```
 
