@@ -1,25 +1,25 @@
-// Bearish kicker example.
+/* Bearish kicker boolean detection. */
 
 const candlestick = require('../index');
 
-// Market data
-const tick0 = {
+// Market data: previous and current ticks.
+const previous = {
     ticker: 'ORCL',
-    date: '2016-09-15',
-    open: 40.18,
-    high: 41.03,
-    low: 40.09,
-    close: 40.86
+    date: '2016-06-23',
+    open: 40.40,
+    high: 40.87,
+    low: 40.26,
+    close: 40.83
 };
 
-const tick1 = {
+const current = {
     ticker: 'ORCL',
-    date: '2016-09-16',
-    open: 39.61,
-    high: 39.35,
-    low: 38.71,
-    close: 38.92
+    date: '2016-06-24',
+    open: 39.38,
+    high: 39.89,
+    low: 39.02,
+    close: 39.23
 };
 
-const check = candlestick.isBearishKicker(tick0, tick1);
+const check = candlestick.isBearishKicker(previous, current);
 console.log(`Bearish kicker? ${check}`); // true

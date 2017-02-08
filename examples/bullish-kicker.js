@@ -1,26 +1,25 @@
-// Bullish kicker example.
+/* Bullish kicker boolean detection. */
 
 const candlestick = require('../index');
 
-// Market data
-// TODO: find bullkicker valid data
-const tick0 = {
-    ticker: 'ORCL',
-    date: '2016-09-15',
-    open: 40.18,
-    high: 41.03,
-    low: 40.09,
-    close: 40.86
+// Market data: previous and current ticks.
+const previous = {
+    ticker: 'CSCO',
+    date: '2016-06-27',
+    open: 27.48,
+    high: 27.55,
+    low: 27.13,
+    close: 27.31
 };
 
-const tick1 = {
-    ticker: 'ORCL',
-    date: '2016-09-16',
-    open: 39.61,
-    high: 39.35,
-    low: 38.71,
-    close: 38.92
+const current = {
+    ticker: 'CSCO',
+    date: '2016-06-28',
+    open: 27.55,
+    high: 27.85,
+    low: 27.50,
+    close: 27.79
 };
 
-const check = candlestick.isBullishKicker(tick0, tick1);
-console.log(`Bearish kicker? ${check}`); // true
+const check = candlestick.isBullishKicker(previous, current);
+console.log(`Bullish kicker? ${check}`); // true

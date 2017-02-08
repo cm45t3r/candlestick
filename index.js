@@ -3,4 +3,4 @@
  * MIT Licence.
  */
 
-module.exports = require('./lib/candlestick');
+module.exports = require('./src/candlestick');
