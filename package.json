@@ -32,7 +32,8 @@
     "node": ">= 5.11.0"
   },
   "dependencies": {
-    "lodash": "^4.17.2"
+    "lodash": "^4.17.2",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "eslint": "^3.8.1",
@@ -52,7 +53,10 @@
     ".travis.yml"
   ],
   "scripts": {
-    "test": "mocha --check-leaks --use_strict"
+    "test": "mocha --check-leaks --use_strict",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
-  "main": "index.js"
+  "main": "index.js",
+  "snyk": true
 }
