@@ -1,16 +1,16 @@
 # Candlestick
 
-[![Build Status](https://travis-ci.org/Trendz/candlestick.svg?branch=master)](https://travis-ci.org/Trendz/candlestick)
+[![Build Status](https://api.travis-ci.org/cm45t3r/candlestick.svg?branch=master)](https://travis-ci.com/cm45t3r/candlestick)
 [![npm version](https://badge.fury.io/js/candlestick.svg)](https://badge.fury.io/js/candlestick)
 
-A [node.js](http://nodejs.org) library for candlestick pattern detection. It is written in pure javascript and solves the need for node-gyp builds.
+A JavaScript library for candlestick pattern detection. Easy to use and solves the need for node-gyp builds.
 
 
 ## Installation
 
-To install the most recent release from npm, run:
+To use the most recent release in your project:
 
-	npm install candlestick
+  npm install --save candlestick
 
 
 ## Available functions
@@ -22,19 +22,21 @@ To install the most recent release from npm, run:
 * `bearishKicker(dataArray)`
 * `shootingStar(dataArray)`
 
-Mandatory fields of `previous` and `current` are:
+`previous` and `current` are OHLC (Open, High, Low, Close) objects:
 
 ``` js
 {
-	...
-	open: Number,   // security's opening price
-	high: Number,   // security's highest price
-	low: Number,    // security's lowest price 
-	close: Number   // security's closing price
+  ...
+  open: Number,   // security's opening price
+  high: Number,   // security's highest price
+  low: Number,    // security's lowest price
+  close: Number   // security's closing price
 }
 ```
 
-Parameter `dataArray` is an array of OHLC objects like `previous` or `current`.
+`dataArray` is an array of OHLC objects, like `previous` or `current`.
+
+Note: The OHLC object could have more properties and does not affect the computing result.
 
 
 ## Examples
@@ -47,21 +49,21 @@ const cs = require('candlestick');
 
 // Market data: previous and current ticks
 const prev = {
-	ticker: 'ORCL',
-	date: '2016-09-15',
-	open: 40.18,
-	high: 41.03,
-	low: 40.09,
-	close: 40.86
+  security: 'ORCL',
+  date: '2016-09-15',
+  open: 40.18,
+  high: 41.03,
+  low: 40.09,
+  close: 40.86
 };
 
 const curr = {
-	ticker: 'ORCL',
-	date: '2016-09-16',
-	open: 39.61,
-	high: 39.35,
-	low: 38.71,
-	close: 38.92
+  security: 'ORCL',
+  date: '2016-09-16',
+  open: 39.61,
+  high: 39.35,
+  low: 38.71,
+  close: 38.92
 };
 
 console.log(cs.isBullishKicker(prev, curr)); // false
@@ -69,41 +71,42 @@ console.log(cs.isBearishKicker(prev, curr)); // true
 ```
 
 ## Finding patterns in series
-Get the points in a dataset where the pattern was found:
+Find the points in a dataset where the pattern occurs:
 
 ``` js
 const cs = require('candlestick');
 
 // Market data: array of ticks
 const data = [
-	{
-		ticker: 'GE',
-		date: '2016-02-01',
-		open: 29.01,
-		high: 29.03,
-		low: 28.56,
-		close: 28.64
-	},
-	{ ... },
-	{ ... },
-
-	...
+  {
+    security: 'GE',
+    date: '2016-02-01',
+    open: 29.01,
+    high: 29.03,
+    low: 28.56,
+    close: 28.64
+  },
+  { ... },
+  { ... },
+  ...
+  { ... }
 ];
 
 console.log(cs.shootingStar(data));
-// result: [{ ticker: 'GE', date: '2016-02-10', ... }, { ticker: 'ORCL', date: '2016-07-11', ... }]
+// result: [{ security: 'GE', date: '2016-02-10', ... }, { security: 'GE', date: '2016-07-11', ... }]
 ```
 
 
 ## Running tests
 
-	npm test
+  npm run test
 
 
 ## Contributing
 
-You are welcome to contribute to this library creating issues and pull requests.
+You are welcome to contribute to this library creating issues or pull requests.
+
 
 ## Licence
 
-This project is licensed under the MIT license. See the [LICENSE](https://github.com/Trendz/candlestick/blob/master/LICENSE) file for more info.
+This project is licensed under the MIT license. See the [LICENSE](https://github.com/cm45t3r/candlestick/blob/master/LICENSE) file for more info.

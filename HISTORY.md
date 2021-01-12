@@ -7,3 +7,7 @@
 # 0.0.3 / 2016-10-25
 * Shooting star support added.
 * Examples updated.
+
+# 0.0.4 / 2021-01-12
+* Bugfixes [1](https://github.com/cm45t3r/candlestick/issues/1) and [5](https://github.com/cm45t3r/candlestick/issues/5)
+* Update [README.md](https://github.com/cm45t3r/candlestick/blob/master/README.md)
