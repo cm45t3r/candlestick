@@ -1,96 +1,56 @@
 {
   "name": "candlestick",
   "version": "0.0.4",
-  "description": "Candlestick patterns detection.",
-<<<<<<< HEAD
-=======
-  "author": {
-    "name": "Trendz",
-    "email": "trendzplatform@gmail.com"
-  },
-  "contributors": [
-    {
-      "name": "Trendz",
-      "email": "trendzplatform@gmail.com"
-    }
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/Trendz/candlestick",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Trendz/candlestick"
-  },
-  "bugs": {
-    "url": "https://github.com/Trendz/candlestick/issues"
-  },
->>>>>>> 3e0217c2cf028d76b6d56cfc634014e1bdcd6610
-  "keywords": [
-    "candlestick",
-    "pattern",
-    "detection",
-    "technical",
-    "analysis"
-  ],
-<<<<<<< HEAD
+  "description": "JavaScript library for candlestick patterns detection.",
   "homepage": "https://github.com/cm45t3r/candlestick",
-  "bugs": {
-    "url": "https://github.com/cm45t3r/candlestick/issues"
-=======
-  "engines": {
-    "node": ">= 5.11.0"
-  },
-  "dependencies": {
-    "lodash": "^4.17.2",
-    "snyk": "^1.189.0"
->>>>>>> 3e0217c2cf028d76b6d56cfc634014e1bdcd6610
-  },
-  "license": "MIT",
   "author": {
     "name": "cm45t3r",
     "url": "https://github.com/cm45t3r"
   },
+  "repository": "github:cm45t3r/candlestick",
+  "bugs": {
+    "url": "https://github.com/cm45t3r/candlestick/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "candlestick-patterns-detection",
+    "candlestick-patterns",
+    "candlestick",
+    "crypto-currency",
+    "forex",
+    "javascript",
+    "ohlc",
+    "stocks",
+    "technical-analysis",
+    "technical-indicators"
+  ],
   "files": [
-    ".eslintrc.json",
-    ".travis.yml",
     "examples/",
     "src/",
     "test/",
+    ".eslintrc.json",
     "HISTORY.md",
+    "index.js",
     "LICENSE",
-    "README.md",
-    "index.js"
+    "package-lock.json",
+    "package.json",
+    "README.md"
   ],
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cm45t3r/candlestick"
-  },
   "scripts": {
-<<<<<<< HEAD
-    "audit": "npm audit && snyk test",
-    "test": "mocha --check-leaks --use_strict",
-    "test:ci": "npm run audit && npm run test"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.1.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.19.0",
-    "mocha": "^7.1.0",
-    "rewire": "^5.0.0",
-    "snyk": "^1.298.1"
+    "audit": "npm audit",
+    "lint": "eslint .",
+    "test": "mocha --check-leaks --use_strict"
   },
   "engines": {
-    "node": ">= 7.5.0"
-  }
-=======
-    "test": "mocha --check-leaks --use_strict",
-    "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "node": ">=12"
   },
   "main": "index.js",
-  "snyk": true
->>>>>>> 3e0217c2cf028d76b6d56cfc634014e1bdcd6610
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.2.1",
+    "rewire": "^5.0.0"
+  }
 }

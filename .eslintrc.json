@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": "airbnb",
+  "extends": "airbnb-base",
   "rules": {
     "no-undef": 0,
     "no-plusplus": 0,
@@ -10,14 +10,3 @@
     "import/newline-after-import": 0
   }
 }
-
-/*
-
-//"no-tabs": 0,
-    
-    //"func-names": 0,
-    
-    //"indent": ["error", 2],
-    //
-    //"space-before-function-paren": ["error", "never"]
- */
