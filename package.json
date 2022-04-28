@@ -37,20 +37,18 @@
     "README.md"
   ],
   "scripts": {
-    "audit": "npm audit",
     "lint": "eslint .",
-    "test": "mocha --check-leaks --use_strict"
+    "test": "nyc mocha"
   },
   "engines": {
     "node": ">=12"
   },
   "main": "index.js",
-  "dependencies": {},
   "devDependencies": {
-    "eslint": "^7.17.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "mocha": "^8.2.1",
-    "rewire": "^5.0.0"
+    "chai": "^4.3.6",
+    "eslint": "^8.14.0",
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^8.4.0",
+    "nyc": "^15.1.0"
   }
 }
