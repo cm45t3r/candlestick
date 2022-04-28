@@ -15,12 +15,40 @@ To use the most recent release in your project:
 
 ## Available functions
 
+**Boolean pattern detection**
+
+* `isHammer(candlestick)`
+* `isInvertedHammer(candlestick)`
+* `isBullishHammer(candlestick)`
+* `isBearishHammer(candlestick)`
+* `isBullishInvertedHammer(candlestick)`
+* `isBearishInvertedHammer(candlestick)`
+* `isHangingMan(previous, current)`
+* `isShootingStar(previous, current)`
+* `isBullishEngulfing(previous, current)`
+* `isBearishEngulfing(previous, current)`
+* `isBullishHarami(previous, current)`
+* `isBearishHarami(previous, current)`
 * `isBullishKicker(previous, current)`
 * `isBearishKicker(previous, current)`
-* `isShootingStar(previous, current)`
+
+
+**Search patterns in arrays**
+
+* `hammer(dataArray)`
+* `invertedHammer(dataArray)`
+* `bullishHammer(dataArray)`
+* `bearishHammer(dataArray)`
+* `bullishInvertedHammer(dataArray)`
+* `bearishInvertedHammer(dataArray)`
+* `hangingMan(dataArray)`
+* `shootingStar(dataArray)`
+* `bullishEngulfing(dataArray)`
+* `bearishEngulfing(dataArray)`
+* `bullishHarami(dataArray)`
+* `bearishHarami(dataArray)`
 * `bullishKicker(dataArray)`
 * `bearishKicker(dataArray)`
-* `shootingStar(dataArray)`
 
 `previous` and `current` are OHLC (Open, High, Low, Close) objects:
 
@@ -34,9 +62,9 @@ To use the most recent release in your project:
 }
 ```
 
-`dataArray` is an array of OHLC objects, like `previous` or `current`.
+`dataArray` is an array of OHLC objects like `previous` or `current`.
 
-Note: The OHLC object could have more properties and does not affect the computing result.
+**Note:** OHLC objects can have more fields and does not affect the final result.
 
 
 ## Examples
@@ -99,12 +127,12 @@ console.log(cs.shootingStar(data));
 
 ## Running tests
 
-  npm run test
+  npm test
 
 
 ## Contributing
 
-You are welcome to contribute to this library creating issues or pull requests.
+You are welcome to contribute to this library creating new issues or pull requests.
 
 
 ## Licence
