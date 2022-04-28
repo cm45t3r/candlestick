@@ -1,194 +1,511 @@
 /*
- * Copyright (C) 2016-Present Trendz.
- * MIT Licence.
+ * Copyright (C) 2016-Present cm45t3r.
+ * MIT License.
  */
 
 /**
- Make sure objects below comprise the following fields:
- {
-    open: Number,
-    high: Number,
-    low: Number,
-    close: Number
- }*/
-
+ * Absolute distance between `open` and `close`.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, close: number }`
+ * @return {number} a positive number.
+ */
 function bodyLen(candlestick) {
-    return Math.abs(candlestick.open - candlestick.close);
+  return Math.abs(candlestick.open - candlestick.close);
 }
 
+/**
+ * Absolute distance between `open` and `high` on bearish
+ * candles or `close`and `high` on bullish candles.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, high: number, close: number }`
+ * @return {number} a positive number.
+ */
 function wickLen(candlestick) {
-    return candlestick.high - Math.max(candlestick.open, candlestick.close);
+  return candlestick.high - Math.max(candlestick.open, candlestick.close);
 }
 
+/**
+ * Absolute distance between `low` and `open` on bullish
+ * candles or `low`and `close` on bearish candles.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, low: number, close: number }`
+ * @return {number} a positive number.
+ */
 function tailLen(candlestick) {
-    return Math.min(candlestick.open, candlestick.close) - candlestick.low;
+  return Math.min(candlestick.open, candlestick.close) - candlestick.low;
 }
 
+/**
+ * Returns `top` and `bottom` ends from a body.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, close: number }`
+ * @return {Object} with fields
+ *   `{ bottom: number, top: number }`
+ */
+function bodyEnds(candlestick) {
+  return candlestick.open <= candlestick.close ?
+    { bottom: candlestick.open, top: candlestick.close } :
+    { bottom: candlestick.close, top: candlestick.open };
+}
+
+/**
+ * Returns `true` if `close` is greater than `close`.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBullish(candlestick) {
-    return candlestick.open < candlestick.close;
+  return candlestick.open < candlestick.close;
 }
 
+/**
+ * Returns `true` if `close` is greater than `open`.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBearish(candlestick) {
-    return candlestick.open > candlestick.close;
+  return candlestick.open > candlestick.close;
 }
 
-function isHammerLike(candlestick) {
-    return tailLen(candlestick) > (bodyLen(candlestick) * 2) &&
-           wickLen(candlestick) < bodyLen(candlestick);
+/**
+ * Returns `true` if previous `top` is less or equal than current
+ * and `bottom` is greater or equal.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, close: number }`
+ * @return {boolean} a boolean.
+ */
+function isEngulfed(previous, current) {
+  return bodyEnds(previous).top <= bodyEnds(current).top &&
+    bodyEnds(previous).bottom >= bodyEnds(current).bottom;
 }
 
-function isInvertedHammerLike(candlestick) {
-    return wickLen(candlestick) > (bodyLen(candlestick) * 2) &&
-           tailLen(candlestick) < bodyLen(candlestick);
+/**
+ * Returns `true` if previous `top` is less than current `bottom`.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, close: number }`
+ * @return {boolean} a boolean.
+ */
+function hasGapUp(previous, current) {
+  return bodyEnds(previous).top < bodyEnds(current).bottom;
 }
 
-function isEngulfed(shortest, longest) {
-    return bodyLen(shortest) < bodyLen(longest);
-}
-
-function isGap(lowest, upmost) {
-    return Math.max(lowest.open, lowest.close) < Math.min(upmost.open, upmost.close);
-}
-
-function isGapUp(previous, current) {
-    return isGap(previous, current);
-}
-
-function isGapDown(previous, current) {
-    return isGap(current, previous);
+/**
+ * Returns `true` if previous `bottom` is greater than current `top`.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, close: number }`
+ * @return {boolean} a boolean.
+ */
+function hasGapDown(previous, current) {
+  return bodyEnds(previous).bottom > bodyEnds(current).top;
 }
 
 // Dynamic array search for callback arguments.
 function findPattern(dataArray, callback) {
-    const upperBound = (dataArray.length - callback.length) + 1;
-    const matches = [];
+  const upperBound = (dataArray.length - callback.length) + 1;
+  const matches = [];
 
-    for (let i = 0; i < upperBound; i++) {
-        const args = [];
+  for (let i = 0; i < upperBound; i++) {
+    const args = [];
 
-        // Read the leftmost j values at position i in array.
-        // The j values are callback arguments.
-        for (let j = 0; j < callback.length; j++) {
-            args.push(dataArray[i + j]);
-        }
-
-        // Destructure args and find matches.
-        if (callback(...args)) {
-            matches.push(args[1]);
-        }
+    // Read the leftmost j values at position i in array.
+    // The j values are callback arguments.
+    for (let j = 0; j < callback.length; j++) {
+      args.push(dataArray[i + j]);
     }
 
-    return matches;
+    // Destructure args and find matches.
+    if (callback(...args)) {
+      matches.push(args[1]);
+    }
+  }
+
+  return matches;
 }
 
 // Boolean pattern detection.
 // @public
 
-function isHammer(candlestick) {
-    return isBullish(candlestick) &&
-           isHammerLike(candlestick);
+/**
+ * Returns `true` if candle **tail** is at least `2x` longer than
+ * the **body** and **wick** is shorter than **body**.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {number} ratio - minimum `tail:body` ratio on a hammer.
+ * @return {boolean} a boolean.
+ */
+ function isHammer(candlestick, ratio = 2) {
+  return tailLen(candlestick) > (bodyLen(candlestick) * ratio) &&
+    wickLen(candlestick) < bodyLen(candlestick);
 }
 
-function isInvertedHammer(candlestick) {
-    return isBearish(candlestick) &&
-           isInvertedHammerLike(candlestick);
+/**
+ * Returns `true` if candle **tail** is at least `2x` longer than
+ * the **body** and **wick** is shorter than **body**.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {number} ratio - minimum `tail:body` ratio on a hammer.
+ * @return {boolean} a boolean.
+ */
+function isInvertedHammer(candlestick, ratio = 2) {
+  return wickLen(candlestick) > (bodyLen(candlestick) * ratio) &&
+    tailLen(candlestick) < bodyLen(candlestick);
 }
 
+/**
+ * Returns `true` if candle is bullish and it's a hammer.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
+function isBullishHammer(candlestick) {
+  return isBullish(candlestick) &&
+    isHammer(candlestick);
+}
+
+/**
+ * Returns `true` if candle is bearish and it's a hammer.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
+ function isBearishHammer(candlestick) {
+  return isBearish(candlestick) &&
+    isHammer(candlestick);
+}
+
+/**
+ * Returns `true` if candle is bullish and it's an inverted hammer.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
+function isBullishInvertedHammer(candlestick) {
+  return isBullish(candlestick) &&
+    isInvertedHammer(candlestick);
+}
+
+/**
+ * Returns `true` if candle is bearish and it's an inverted hammer.
+ * 
+ * @param {Object} candlestick - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
+ function isBearishInvertedHammer(candlestick) {
+  return isBearish(candlestick) &&
+    isInvertedHammer(candlestick);
+}
+
+/**
+ * Returns `true` if there is an upward gap between
+ * a bullish candle and a bearish hammer.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isHangingMan(previous, current) {
-    return isBullish(previous) &&
-           isBearish(current) &&
-           isGapUp(previous, current) &&
-           isHammerLike(current);
+  return isBullish(previous) &&
+    isBearishHammer(current) &&
+    hasGapUp(previous, current);
 }
 
+/**
+ * Returns `true` if there is an upward gap between
+ * a bullish candle and a bearish inverted hammer.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isShootingStar(previous, current) {
-    return isBullish(previous) &&
-           isBearish(current) &&
-           isGapUp(previous, current) &&
-           isInvertedHammerLike(current);
+  return isBullish(previous) &&
+    isBearishInvertedHammer(current) &&
+    hasGapUp(previous, current);
 }
 
+/**
+ * Returns `true` if a bearish candle is engulfed by a bullish candle.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBullishEngulfing(previous, current) {
-    return isBearish(previous) &&
-           isBullish(current) &&
-           isEngulfed(previous, current);
+  return isBearish(previous) &&
+    isBullish(current) &&
+    isEngulfed(previous, current);
 }
 
+/**
+ * Returns `true` if a bullish candle is engulfed by a bearish candle.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBearishEngulfing(previous, current) {
-    return isBullish(previous) &&
-           isBearish(current) &&
-           isEngulfed(previous, current);
+  return isBullish(previous) &&
+    isBearish(current) &&
+    isEngulfed(previous, current);
 }
 
+/**
+ * Returns `true` if a bearish candle is engulfing a bullish candle.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBullishHarami(previous, current) {
-    return isBearish(previous) &&
-           isBullish(current) &&
-           isEngulfed(current, previous);
+  return isBearish(previous) &&
+    isBullish(current) &&
+    isEngulfed(current, previous);
 }
 
+/**
+ * Returns `true` if a bullish candle is engulfing a bearish candle.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBearishHarami(previous, current) {
-    return isBullish(previous) &&
-           isBearish(current) &&
-           isEngulfed(current, previous);
+  return isBullish(previous) &&
+    isBearish(current) &&
+    isEngulfed(current, previous);
 }
 
+/**
+ * Returns `true` if there is an upward gap between
+ * a bearish candle and a bullish non-hammer candle.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBullishKicker(previous, current) {
-    return isBearish(previous) &&
-           isBullish(current) &&
-           isGapUp(previous, current);
+  return isBearish(previous) &&
+    isBullish(current) &&
+    hasGapUp(previous, current) &&
+    !(isHammer(current) || isInvertedHammer(current));
 }
 
+/**
+ * Returns `true` if there is an downward gap between
+ * a bullish candle and a bearish non-hammer candle.
+ * 
+ * @param {Object} previous - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @param {Object} current - object with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {boolean} a boolean.
+ */
 function isBearishKicker(previous, current) {
-    return isBullish(previous) &&
-           isBearish(current) &&
-           isGapDown(previous, current);
+  return isBullish(previous) &&
+    isBearish(current) &&
+    hasGapDown(previous, current) &&
+    !(isHammer(current) || isInvertedHammer(current));
 }
 
 // Pattern detection in arrays.
 // @public
 
+/**
+ * Search in an array for hammers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function hammer(dataArray) {
-    return findPattern(dataArray, isHammer);
+  return findPattern(dataArray, isHammer);
 }
 
+/**
+ * Search in an array for inverted hammers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function invertedHammer(dataArray) {
-    return findPattern(dataArray, isInvertedHammer);
+  return findPattern(dataArray, isInvertedHammer);
 }
 
+/**
+ * Search in an array for bullish hammers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
+ function bullishHammer(dataArray) {
+  return findPattern(dataArray, isHammer);
+}
+
+/**
+ * Search in an array for bearish hammers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
+ function bearishHammer(dataArray) {
+  return findPattern(dataArray, isHammer);
+}
+
+/**
+ * Search in an array for bullish inverted hammers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
+ function bullishInvertedHammer(dataArray) {
+  return findPattern(dataArray, isHammer);
+}
+
+/**
+ * Search in an array for bearish inverted hammers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
+ function bearishInvertedHammer(dataArray) {
+  return findPattern(dataArray, isHammer);
+}
+
+/**
+ * Search in an array for hanging men.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function hangingMan(dataArray) {
-    return findPattern(dataArray, isShootingStar);
+  return findPattern(dataArray, isShootingStar);
 }
 
+/**
+ * Search in an array for shooting stars.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function shootingStar(dataArray) {
-    return findPattern(dataArray, isShootingStar);
+  return findPattern(dataArray, isShootingStar);
 }
 
+/**
+ * Search in an array for bullish engulfings.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function bullishEngulfing(dataArray) {
-    return findPattern(dataArray, isBullishEngulfing);
+  return findPattern(dataArray, isBullishEngulfing);
 }
 
+/**
+ * Search in an array for bearish engulfings.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function bearishEngulfing(dataArray) {
-    return findPattern(dataArray, isBearishEngulfing);
+  return findPattern(dataArray, isBearishEngulfing);
 }
 
+/**
+ * Search in an array for bullish haramis.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function bullishHarami(dataArray) {
-    return findPattern(dataArray, isBullishHarami);
+  return findPattern(dataArray, isBullishHarami);
 }
 
+/**
+ * Search in an array for bearish haramis.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function bearishHarami(dataArray) {
-    return findPattern(dataArray, isBearishHarami);
+  return findPattern(dataArray, isBearishHarami);
 }
 
+/**
+ * Search in an array for bullish kickers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function bullishKicker(dataArray) {
-    return findPattern(dataArray, isBullishKicker);
+  return findPattern(dataArray, isBullishKicker);
 }
 
+/**
+ * Search in an array for bearish kickers.
+ * 
+ * @param {Array} dataArray - array of objects with fields 
+ *   `{ open: number, high: number, low: number, close: number }`
+ * @return {Array} array of matches.
+ */
 function bearishKicker(dataArray) {
-    return findPattern(dataArray, isBearishKicker);
+  return findPattern(dataArray, isBearishKicker);
 }
 
 module.exports.isHammer = isHammer;
 module.exports.isInvertedHammer = isInvertedHammer;
+module.exports.isBullishHammer = isBullishHammer;
+module.exports.isBearishHammer = isBearishHammer;
+module.exports.isBullishInvertedHammer = isBullishInvertedHammer;
+module.exports.isBearishInvertedHammer = isBearishInvertedHammer;
 module.exports.isHangingMan = isHangingMan;
 module.exports.isShootingStar = isShootingStar;
 module.exports.isBullishEngulfing = isBullishEngulfing;
@@ -200,6 +517,10 @@ module.exports.isBearishKicker = isBearishKicker;
 
 module.exports.hammer = hammer;
 module.exports.invertedHammer = invertedHammer;
+module.exports.bullishHammer = bullishHammer;
+module.exports.bearishHammer = bearishHammer;
+module.exports.bullishInvertedHammer = bullishInvertedHammer;
+module.exports.bearishInvertedHammer = bearishInvertedHammer;
 module.exports.hangingMan = hangingMan;
 module.exports.shootingStar = shootingStar;
 module.exports.bullishEngulfing = bullishEngulfing;
