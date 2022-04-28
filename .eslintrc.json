@@ -1,12 +1,17 @@
 {
-  "root": true,
-  "extends": "airbnb-base",
-  "rules": {
-    "no-undef": 0,
-    "no-plusplus": 0,
-    "comma-dangle": 0,
-    "object-curly-newline": 0,
-    "no-underscore-dangle": 0,
-    "import/newline-after-import": 0
-  }
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2021": true,
+    "mocha": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "google"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {}
 }
