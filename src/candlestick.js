@@ -143,7 +143,7 @@ function findPattern(dataArray, callback) {
 
 /**
  * Returns `true` if candle **tail** is at least `2x` longer than
- * the **body** and **wick** is shorter than **body**.
+ * **body** and **wick** is shorter than **body**.
  * 
  * @param {Object} candlestick - object with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -156,8 +156,8 @@ function findPattern(dataArray, callback) {
 }
 
 /**
- * Returns `true` if candle **tail** is at least `2x` longer than
- * the **body** and **wick** is shorter than **body**.
+ * Returns `true` if candle **wick** is at least `2x` longer than
+ * **body** and **tail** is shorter than **body**.
  * 
  * @param {Object} candlestick - object with fields 
  *   `{ open: number, high: number, low: number, close: number }`
