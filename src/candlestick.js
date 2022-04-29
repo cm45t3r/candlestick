@@ -347,7 +347,7 @@ function isBearishKicker(previous, current) {
 // @public
 
 /**
- * Search in an array for hammers.
+ * Search in array for hammers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -358,7 +358,7 @@ function hammer(dataArray) {
 }
 
 /**
- * Search in an array for inverted hammers.
+ * Search in array for inverted hammers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -369,7 +369,7 @@ function invertedHammer(dataArray) {
 }
 
 /**
- * Search in an array for bullish hammers.
+ * Search in array for bullish hammers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -380,7 +380,7 @@ function invertedHammer(dataArray) {
 }
 
 /**
- * Search in an array for bearish hammers.
+ * Search in array for bearish hammers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -391,7 +391,7 @@ function invertedHammer(dataArray) {
 }
 
 /**
- * Search in an array for bullish inverted hammers.
+ * Search in array for bullish inverted hammers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -402,7 +402,7 @@ function invertedHammer(dataArray) {
 }
 
 /**
- * Search in an array for bearish inverted hammers.
+ * Search in array for bearish inverted hammers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -413,7 +413,7 @@ function invertedHammer(dataArray) {
 }
 
 /**
- * Search in an array for hanging men.
+ * Search in array for hanging men.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -424,7 +424,7 @@ function hangingMan(dataArray) {
 }
 
 /**
- * Search in an array for shooting stars.
+ * Search in array for shooting stars.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -435,7 +435,7 @@ function shootingStar(dataArray) {
 }
 
 /**
- * Search in an array for bullish engulfings.
+ * Search in array for bullish engulfings.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -446,7 +446,7 @@ function bullishEngulfing(dataArray) {
 }
 
 /**
- * Search in an array for bearish engulfings.
+ * Search in array for bearish engulfings.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -457,7 +457,7 @@ function bearishEngulfing(dataArray) {
 }
 
 /**
- * Search in an array for bullish haramis.
+ * Search in array for bullish haramis.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -468,7 +468,7 @@ function bullishHarami(dataArray) {
 }
 
 /**
- * Search in an array for bearish haramis.
+ * Search in array for bearish haramis.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -479,7 +479,7 @@ function bearishHarami(dataArray) {
 }
 
 /**
- * Search in an array for bullish kickers.
+ * Search in array for bullish kickers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
@@ -490,7 +490,7 @@ function bullishKicker(dataArray) {
 }
 
 /**
- * Search in an array for bearish kickers.
+ * Search in array for bearish kickers.
  * 
  * @param {Array} dataArray - array of objects with fields 
  *   `{ open: number, high: number, low: number, close: number }`
