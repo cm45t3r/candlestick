@@ -25,7 +25,6 @@
     "technical-indicators"
   ],
   "files": [
-    "examples/",
     "src/",
     "test/",
     ".eslintrc.json",
