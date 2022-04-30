@@ -1,6 +1,6 @@
 # Candlestick
 
-[![Build Status](https://app.travis-ci.com/cm45t3r/candlestick.svg?branch=master)](https://travis-ci.com/cm45t3r/candlestick)
+![Node.js CI workflow](https://github.com/cm45t3r/candlestick/actions/workflows/node.js.yml/badge.svg)
 [![npm version](https://badge.fury.io/js/candlestick.svg)](https://badge.fury.io/js/candlestick)
 
 A JavaScript library for candlestick pattern detection. Easy to use and solves the need for `node-gyp` builds.
