@@ -1,17 +1,18 @@
 # Candlestick
 
-[![Build Status](https://api.travis-ci.org/cm45t3r/candlestick.svg?branch=master)](https://travis-ci.com/cm45t3r/candlestick)
+![Node.js CI workflow](https://github.com/cm45t3r/candlestick/actions/workflows/node.js.yml/badge.svg)
 [![npm version](https://badge.fury.io/js/candlestick.svg)](https://badge.fury.io/js/candlestick)
 
-A JavaScript library for candlestick pattern detection. Easy to use and solves the need for node-gyp builds.
+A JavaScript library for candlestick pattern detection. Easy to use and solves the need for `node-gyp` builds.
 
 
 ## Installation
 
 To use the most recent release in your project:
 
-  npm install --save candlestick
-
+``` bash
+npm install --save candlestick
+```
 
 ## Available functions
 
@@ -50,19 +51,18 @@ To use the most recent release in your project:
 * `bullishKicker(dataArray)`
 * `bearishKicker(dataArray)`
 
-`previous` and `current` are OHLC (Open, High, Low, Close) objects:
+`previous` and `current` are **OHLC** (Open, High, Low, Close) objects:
 
 ``` js
 {
-  ...
-  open: Number,   // security's opening price
-  high: Number,   // security's highest price
-  low: Number,    // security's lowest price
-  close: Number   // security's closing price
+  open: number,   // security's opening price
+  high: number,   // security's highest price
+  low: number,    // security's lowest price
+  close: number   // security's closing price
 }
 ```
 
-`dataArray` is an array of OHLC objects like `previous` or `current`.
+`dataArray` is an array of **OHLC** objects like `previous` or `current`.
 
 **Note:** OHLC objects can have more fields and does not affect the final result.
 
@@ -127,14 +127,15 @@ console.log(cs.shootingStar(data));
 
 ## Running tests
 
-  npm test
-
+``` bash
+npm test
+```
 
 ## Contributing
 
-You are welcome to contribute to this library creating new issues or pull requests.
+You are welcome to contribute to this library creating new [issues](https://github.com/cm45t3r/candlestick/issues) or [pull requests](https://github.com/cm45t3r/candlestick/pulls).
 
 
-## Licence
+## License
 
 This project is licensed under the MIT license. See the [LICENSE](https://github.com/cm45t3r/candlestick/blob/master/LICENSE) file for more info.
