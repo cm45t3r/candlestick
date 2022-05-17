@@ -73,7 +73,7 @@ npm install --save candlestick
 Use two OHLCs to assess the pattern:
 
 ``` js
-const cs = require('candlestick');
+const { isBullishKicker, isBearishKicker } = require('candlestick');
 
 // Market data: previous and current ticks
 const prev = {
@@ -94,15 +94,15 @@ const curr = {
   close: 38.92
 };
 
-console.log(cs.isBullishKicker(prev, curr)); // false
-console.log(cs.isBearishKicker(prev, curr)); // true
+console.log(isBullishKicker(prev, curr)); // false
+console.log(isBearishKicker(prev, curr)); // true
 ```
 
 ## Finding patterns in series
 Find the points in a dataset where the pattern occurs:
 
 ``` js
-const cs = require('candlestick');
+const { shootingStar } = require('candlestick');
 
 // Market data: array of ticks
 const data = [
@@ -120,7 +120,7 @@ const data = [
   { ... }
 ];
 
-console.log(cs.shootingStar(data));
+console.log(shootingStar(data));
 // result: [{ security: 'GE', date: '2016-02-10', ... }, { security: 'GE', date: '2016-07-11', ... }]
 ```
 
