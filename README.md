@@ -51,7 +51,7 @@ npm install --save candlestick
 * `bullishKicker(dataArray)`
 * `bearishKicker(dataArray)`
 
-`previous` and `current` are **OHLC** (Open, High, Low, Close) objects:
+`candlestick`, `previous` and `current` are **OHLC** (Open, High, Low, Close) objects:
 
 ``` js
 {
@@ -65,6 +65,13 @@ npm install --save candlestick
 `dataArray` is an array of **OHLC** objects like `previous` or `current`.
 
 **Note:** OHLC objects can have more fields and does not affect the final result.
+
+**=== :warning: BREAKING CHANGE WARNING ON VERSIONS `>= 0.0.6` ===**
+
+**Before:** search pattern functions returned the *last* OHLC object conforming the pattern.
+**After:** they return the *first* **index** of the candle conforming the pattern. It helps 
+locating candlestick in `dataArray` more easily. So before upgrading to version 0.0.6, please 
+be aware of changing your code.
 
 
 ## Examples

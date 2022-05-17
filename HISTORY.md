@@ -22,3 +22,15 @@
 * Add optional `ratio` param to hammers.
 * Fix kickers to exclude hammers.
 * Fix candle wrapping on engulfings.
+
+# 0.0.6 / 2024-03-31
+* Remove optional param `ratio` from hammer functions causing bad results.
+* Fix `bullishHammer`, `bearishHammer`, `bullishInvertedHammer`, `bearishInvertedHammer`, and `hangingMan` functions.
+* Bugfix [#1](https://github.com/cm45t3r/candlestick/issues/1).
+
+# 0.0.7 / 2024-04-02
+* Fix index.js copyright.
+* Remove useless properties in .eslintcr and add `object-curly-spacing` exception rule.
+* Fix linting errors.
+* Update package keywords and increment version.
+* Optimize private function `findPattern` to make it more performant.

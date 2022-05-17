@@ -1,6 +1,6 @@
 {
   "name": "candlestick",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "JavaScript library for candlestick patterns detection.",
   "homepage": "https://github.com/cm45t3r/candlestick",
   "author": {
@@ -13,14 +13,20 @@
   },
   "license": "MIT",
   "keywords": [
+    "candlestick-data",
+    "candlestick-pattern-detection",
+    "candlestick-pattern",
     "candlestick-patterns-detection",
     "candlestick-patterns",
     "candlestick",
-    "crypto-currency",
-    "forex",
+    "candlesticks-pattern",
+    "candlesticks",
+    "javascript-library",
     "javascript",
     "ohlc",
-    "stocks",
+    "technical-analysis-indicators",
+    "technical-analysis-library",
+    "technical-analysis-methods",
     "technical-analysis",
     "technical-indicators"
   ],
@@ -37,17 +43,14 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "test": "nyc mocha"
+    "test": "node --test --experimental-test-coverage"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=18"
   },
   "main": "index.js",
   "devDependencies": {
-    "chai": "^4.3.6",
-    "eslint": "^8.14.0",
-    "eslint-config-google": "^0.14.0",
-    "mocha": "^8.4.0",
-    "nyc": "^15.1.0"
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0"
   }
 }
