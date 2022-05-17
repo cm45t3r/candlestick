@@ -51,7 +51,7 @@ npm install --save candlestick
 * `bullishKicker(dataArray)`
 * `bearishKicker(dataArray)`
 
-`previous` and `current` are **OHLC** (Open, High, Low, Close) objects:
+`candlestick`, `previous` and `current` are **OHLC** (Open, High, Low, Close) objects:
 
 ``` js
 {
