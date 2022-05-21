@@ -1,36 +1,37 @@
 /*
- * Copyright (C) 2016-Present cm45t3r.
+ * Copyright (C) 2016-present cm45t3r.
  * MIT License.
  */
 
-const assert = require('assert');
-const cs = require('../index');
+const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
+const candlestick = require('../index.js');
 
 describe('candlestick', () => {
   describe('#isBullishKicker()', () => {
     it('should return false when previous candle is not bearish', () => {
       const prev = {open: 1, close: 2};
       const curr = {open: 3, close: 4};
-      assert.equal(false, cs.isBullishKicker(prev, curr));
+      assert.equal(false, candlestick.isBullishKicker(prev, curr));
     });
 
     it('should return false when current candle is not bullish', () => {
       const prev = {open: 2, close: 1};
       const curr = {open: 4, close: 3};
-      assert.equal(false, cs.isBullishKicker(prev, curr));
+      assert.equal(false, candlestick.isBullishKicker(prev, curr));
     });
 
     it('should return false when no gap between candles', () => {
       const prev = {open: 2, close: 1};
       const curr = {open: 2, close: 3};
-      assert.equal(false, cs.isBullishKicker(prev, curr));
+      assert.equal(false, candlestick.isBullishKicker(prev, curr));
     });
 
     it(`should return true when candles are bear, bull and gap 
       in-between`, () => {
       const prev = {open: 2, close: 1};
       const curr = {open: 3, close: 4};
-      assert.equal(true, cs.isBullishKicker(prev, curr));
+      assert.equal(true, candlestick.isBullishKicker(prev, curr));
     });
   });
 
@@ -38,26 +39,26 @@ describe('candlestick', () => {
     it('should return false when previous candle is not bullish', () => {
       const prev = {open: 4, close: 3};
       const curr = {open: 2, close: 1};
-      assert.equal(false, cs.isBearishKicker(prev, curr));
+      assert.equal(false, candlestick.isBearishKicker(prev, curr));
     });
 
     it('should return false when current candle is not bearish', () => {
       const prev = {open: 3, close: 4};
       const curr = {open: 1, close: 2};
-      assert.equal(false, cs.isBearishKicker(prev, curr));
+      assert.equal(false, candlestick.isBearishKicker(prev, curr));
     });
 
     it('should return false when no gap between candles', () => {
       const prev = {open: 3, close: 4};
       const curr = {open: 3, close: 2};
-      assert.equal(false, cs.isBearishKicker(prev, curr));
+      assert.equal(false, candlestick.isBearishKicker(prev, curr));
     });
 
     it(`should return true when a bullish candle is followed by
       a bearish candle with down gap between`, () => {
       const prev = {open: 3, close: 4};
       const curr = {open: 2, close: 1};
-      assert.equal(true, cs.isBearishKicker(prev, curr));
+      assert.equal(true, candlestick.isBearishKicker(prev, curr));
     });
   });
 
@@ -65,26 +66,26 @@ describe('candlestick', () => {
     it('should return false when previous candle is not bullish', () => {
       const prev = {open: 2, high: 10, low: 0.5, close: 1};
       const curr = {open: 4, high: 20, low: 2.9, close: 3};
-      assert.equal(false, cs.isShootingStar(prev, curr));
+      assert.equal(false, candlestick.isShootingStar(prev, curr));
     });
 
     it('should return false when current candle is not bearish', () => {
       const prev = {open: 1, high: 10, low: 0.5, close: 2};
       const curr = {open: 3, high: 20, low: 2.9, close: 4};
-      assert.equal(false, cs.isShootingStar(prev, curr));
+      assert.equal(false, candlestick.isShootingStar(prev, curr));
     });
 
     it('should return false when no gap between candles', () => {
       const prev = {open: 1, high: 10, low: 0.5, close: 2};
       const curr = {open: 3, high: 30, low: 1.4, close: 1.5};
-      assert.equal(false, cs.isShootingStar(prev, curr));
+      assert.equal(false, candlestick.isShootingStar(prev, curr));
     });
 
     it(`should return true when candles are bull, bear, gap in-between, 
       long high and short low`, () => {
       const prev = {open: 1, high: 10, low: 0.5, close: 2};
       const curr = {open: 4, high: 20, low: 2.9, close: 3};
-      assert.equal(true, cs.isShootingStar(prev, curr));
+      assert.equal(true, candlestick.isShootingStar(prev, curr));
     });
   });
 
@@ -97,7 +98,7 @@ describe('candlestick', () => {
         {id: 6, open: 5, close: 3}, {id: 7, open: 7, close: 9},
       ];
 
-      const [r1, r2] = cs.bullishKicker(data).map((e) => e.id);
+      const [r1, r2] = candlestick.bullishKicker(data).map((e) => e.id);
       assert.equal(2, r1);
       assert.equal(7, r2);
     });
@@ -112,7 +113,7 @@ describe('candlestick', () => {
         {id: 6, open: 2, close: 1}, {id: 7, open: 7, close: 9},
       ];
 
-      const [r1, r2] = cs.bearishKicker(data).map((e) => e.id);
+      const [r1, r2] = candlestick.bearishKicker(data).map((e) => e.id);
       assert.equal(3, r1);
       assert.equal(6, r2);
     });
@@ -131,7 +132,7 @@ describe('candlestick', () => {
         {id: 7, open: 3, high: 30, low: 1.4, close: 2},
       ];
 
-      const [r1, r2] = cs.shootingStar(data).map((e) => e.id);
+      const [r1, r2] = candlestick.shootingStar(data).map((e) => e.id);
       assert.equal(1, r1);
       assert.equal(5, r2);
     });

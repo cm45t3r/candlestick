@@ -1,17 +1,45 @@
 /*
- * Copyright (C) 2016-Present cm45t3r.
+ * Copyright (C) 2016-present cm45t3r.
  * MIT License.
  */
 
+function isValid(ohlc) {
+  if (ohlc === undefined || ohlc === null) {
+    return false;
+  }
+
+  if (typeof ohlc.open !== 'number'
+    || typeof ohlc.close !== 'number') {
+    return false;
+  }
+
+  if (ohlc.high && ohlc.low
+    && (typeof ohlc.high !== 'number'
+      || typeof ohlc.low !== 'number'
+      || ohlc.high < ohlc.low)) {
+    return false;
+  }
+
+  return true;
+}
+
 /**
- * Absolute distance between `open` and `close`.
- * 
- * @param {Object} candlestick - object with fields 
- *   `{ open: number, close: number }`
- * @return {number} a positive number.
+ * Calculate the absolute distance between candlestick's `open` and `close` prices.
+ *
+ * @param {Object} ohlc - An object including at least the following properties:
+ *
+ * `{ open: number, close: number }`
+ *
+ * @param {number} ohlc.open - security's open price.
+ * @param {number} ohlc.close - security's close price.
+ * @returns {number} a positive `number` or zero. `NaN` if `ohlc` or its properties are invalid.
  */
-function bodyLen(candlestick) {
-  return Math.abs(candlestick.open - candlestick.close);
+function bodySize(ohlc) {
+  if (!isValid(ohlc)) {
+    return NaN;
+  }
+
+  return Math.abs(ohlc.open - ohlc.close);
 }
 
 /**
@@ -25,6 +53,27 @@ function bodyLen(candlestick) {
 function wickLen(candlestick) {
   return candlestick.high - Math.max(candlestick.open, candlestick.close);
 }
+
+
+/**
+ * Calculate the distance between `close` and `high` prices from a bullish OHLC candlestick,
+ * or between `open` and `high` prices from a bearish OHLC candlestick.
+ *
+ * @param {Object} ohlc - An object including at least the following properties:
+ *
+ * `{ open: number, high: number, close: number }`
+ *
+ * @param {number} ohlc.open - opening price of the security.
+ * @param {number} ohlc.high - highest price of the security.
+ * @param {number} ohlc.close - closing price of the security.
+ * @throws {InvalidHighValueException} high must be higher
+ * @returns {number} a positive `number` or zero.
+ */
+function wickLength(ohlc) {
+  validate(ohlc);
+  return ohlc.high - Math.max(ohlc.open, ohlc.close);
+}
+
 
 /**
  * Absolute distance between `low` and `open` on bullish
@@ -131,7 +180,7 @@ function findPattern(dataArray, callback) {
 
     // Destructure args and find matches.
     if (callback(...args)) {
-      matches.push(args[1]);
+      matches.push(args[0]);
     }
   }
 
@@ -150,9 +199,9 @@ function findPattern(dataArray, callback) {
  * @param {number} ratio - minimum `tail:body` ratio on a hammer.
  * @return {boolean} a boolean.
  */
- function isHammer(candlestick, ratio = 2) {
-  return tailLen(candlestick) > (bodyLen(candlestick) * ratio) &&
-    wickLen(candlestick) < bodyLen(candlestick);
+function isHammer(candlestick, ratio = 2) {
+  return tailLen(candlestick) > (bodySize(candlestick) * ratio) &&
+    wickLen(candlestick) < bodySize(candlestick);
 }
 
 /**
@@ -165,8 +214,8 @@ function findPattern(dataArray, callback) {
  * @return {boolean} a boolean.
  */
 function isInvertedHammer(candlestick, ratio = 2) {
-  return wickLen(candlestick) > (bodyLen(candlestick) * ratio) &&
-    tailLen(candlestick) < bodyLen(candlestick);
+  return wickLen(candlestick) > (bodySize(candlestick) * ratio) &&
+    tailLen(candlestick) < bodySize(candlestick);
 }
 
 /**
@@ -188,7 +237,7 @@ function isBullishHammer(candlestick) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
- function isBearishHammer(candlestick) {
+function isBearishHammer(candlestick) {
   return isBearish(candlestick) &&
     isHammer(candlestick);
 }
@@ -212,7 +261,7 @@ function isBullishInvertedHammer(candlestick) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
- function isBearishInvertedHammer(candlestick) {
+function isBearishInvertedHammer(candlestick) {
   return isBearish(candlestick) &&
     isInvertedHammer(candlestick);
 }
@@ -375,7 +424,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bullishHammer(dataArray) {
+function bullishHammer(dataArray) {
   return findPattern(dataArray, isHammer);
 }
 
@@ -386,7 +435,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bearishHammer(dataArray) {
+function bearishHammer(dataArray) {
   return findPattern(dataArray, isHammer);
 }
 
@@ -397,7 +446,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bullishInvertedHammer(dataArray) {
+function bullishInvertedHammer(dataArray) {
   return findPattern(dataArray, isHammer);
 }
 
@@ -408,7 +457,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bearishInvertedHammer(dataArray) {
+function bearishInvertedHammer(dataArray) {
   return findPattern(dataArray, isHammer);
 }
 
@@ -500,6 +549,9 @@ function bearishKicker(dataArray) {
   return findPattern(dataArray, isBearishKicker);
 }
 
+
+module.exports.bodySize = bodySize;
+
 module.exports.isHammer = isHammer;
 module.exports.isInvertedHammer = isInvertedHammer;
 module.exports.isBullishHammer = isBullishHammer;
@@ -529,3 +581,7 @@ module.exports.bullishHarami = bullishHarami;
 module.exports.bearishHarami = bearishHarami;
 module.exports.bullishKicker = bullishKicker;
 module.exports.bearishKicker = bearishKicker;
+
+if (process.env['private_function']) {
+  module.exports.isValid = isValid;
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-Present Trendz.
+ * Copyright (C) 2016-present cm45t3r.
  * MIT Licence.
  */
 
