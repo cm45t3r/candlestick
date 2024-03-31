@@ -117,25 +117,19 @@ function hasGapDown(previous, current) {
 
 // Dynamic array search for callback arguments.
 function findPattern(dataArray, callback) {
-  const upperBound = (dataArray.length - callback.length) + 1;
-  const matches = [];
+  const paramCount = callback.length;
+  const upperBound = dataArray.length - paramCount;
+  const results = [];
 
-  for (let i = 0; i < upperBound; i++) {
-    const args = [];
+  for (let i = 0; i <= upperBound; i++) {
+    const values = dataArray.slice(i, i + paramCount);
 
-    // Read the leftmost j values at position i in array.
-    // The j values are callback arguments.
-    for (let j = 0; j < callback.length; j++) {
-      args.push(dataArray[i + j]);
-    }
-
-    // Destructure args and find matches.
-    if (callback(...args)) {
-      matches.push(args[1]);
+    if (callback(...values)) {
+      results.push(i);
     }
   }
 
-  return matches;
+  return results;
 }
 
 // Boolean pattern detection.
@@ -149,7 +143,7 @@ function findPattern(dataArray, callback) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
- function isHammer(candlestick) {
+function isHammer(candlestick) {
   return tailLen(candlestick) > (bodyLen(candlestick) * 2) &&
     wickLen(candlestick) < bodyLen(candlestick);
 }
@@ -186,7 +180,7 @@ function isBullishHammer(candlestick) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
- function isBearishHammer(candlestick) {
+function isBearishHammer(candlestick) {
   return isBearish(candlestick) &&
     isHammer(candlestick);
 }
@@ -210,7 +204,7 @@ function isBullishInvertedHammer(candlestick) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
- function isBearishInvertedHammer(candlestick) {
+function isBearishInvertedHammer(candlestick) {
   return isBearish(candlestick) &&
     isInvertedHammer(candlestick);
 }
@@ -373,7 +367,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bullishHammer(dataArray) {
+function bullishHammer(dataArray) {
   return findPattern(dataArray, isBullishHammer);
 }
 
@@ -384,7 +378,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bearishHammer(dataArray) {
+function bearishHammer(dataArray) {
   return findPattern(dataArray, isBearishHammer);
 }
 
@@ -395,7 +389,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bullishInvertedHammer(dataArray) {
+function bullishInvertedHammer(dataArray) {
   return findPattern(dataArray, isBullishInvertedHammer);
 }
 
@@ -406,7 +400,7 @@ function invertedHammer(dataArray) {
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
- function bearishInvertedHammer(dataArray) {
+function bearishInvertedHammer(dataArray) {
   return findPattern(dataArray, isBearishInvertedHammer);
 }
 
