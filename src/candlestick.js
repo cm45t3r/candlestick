@@ -147,11 +147,10 @@ function findPattern(dataArray, callback) {
  * 
  * @param {Object} candlestick - object with fields 
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {number} ratio - minimum `tail:body` ratio on a hammer.
  * @return {boolean} a boolean.
  */
- function isHammer(candlestick, ratio = 2) {
-  return tailLen(candlestick) > (bodyLen(candlestick) * ratio) &&
+ function isHammer(candlestick) {
+  return tailLen(candlestick) > (bodyLen(candlestick) * 2) &&
     wickLen(candlestick) < bodyLen(candlestick);
 }
 
@@ -161,11 +160,10 @@ function findPattern(dataArray, callback) {
  * 
  * @param {Object} candlestick - object with fields 
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {number} ratio - minimum `tail:body` ratio on a hammer.
  * @return {boolean} a boolean.
  */
-function isInvertedHammer(candlestick, ratio = 2) {
-  return wickLen(candlestick) > (bodyLen(candlestick) * ratio) &&
+function isInvertedHammer(candlestick) {
+  return wickLen(candlestick) > (bodyLen(candlestick) * 2) &&
     tailLen(candlestick) < bodyLen(candlestick);
 }
 
@@ -376,7 +374,7 @@ function invertedHammer(dataArray) {
  * @return {Array} array of matches.
  */
  function bullishHammer(dataArray) {
-  return findPattern(dataArray, isHammer);
+  return findPattern(dataArray, isBullishHammer);
 }
 
 /**
@@ -387,7 +385,7 @@ function invertedHammer(dataArray) {
  * @return {Array} array of matches.
  */
  function bearishHammer(dataArray) {
-  return findPattern(dataArray, isHammer);
+  return findPattern(dataArray, isBearishHammer);
 }
 
 /**
@@ -398,7 +396,7 @@ function invertedHammer(dataArray) {
  * @return {Array} array of matches.
  */
  function bullishInvertedHammer(dataArray) {
-  return findPattern(dataArray, isHammer);
+  return findPattern(dataArray, isBullishInvertedHammer);
 }
 
 /**
@@ -409,7 +407,7 @@ function invertedHammer(dataArray) {
  * @return {Array} array of matches.
  */
  function bearishInvertedHammer(dataArray) {
-  return findPattern(dataArray, isHammer);
+  return findPattern(dataArray, isBearishInvertedHammer);
 }
 
 /**
@@ -420,7 +418,7 @@ function invertedHammer(dataArray) {
  * @return {Array} array of matches.
  */
 function hangingMan(dataArray) {
-  return findPattern(dataArray, isShootingStar);
+  return findPattern(dataArray, isHangingMan);
 }
 
 /**

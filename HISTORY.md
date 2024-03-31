@@ -22,3 +22,7 @@
 * Add optional `ratio` param to hammers.
 * Fix kickers to exclude hammers.
 * Fix candle wrapping on engulfings.
+
+# 0.0.6 / 2024-03-31
+* Remove optional param `ratio` from hammer functions causing bad results.
+* Fix `bullishHammer`, `bearishHammer`, `bullishInvertedHammer`, `bearishInvertedHammer`, and `hangingMan` functions.
