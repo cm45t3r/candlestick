@@ -89,51 +89,48 @@ describe('candlestick', () => {
   });
 
   describe('#bullishKicker()', () => {
-    it('should find bullish kickers at positions 2 and 7 in array', () => {
+    it('should find bullish kickers at positions 1 and 6 in array', () => {
       const data = [
-        {id: 0, open: 1, close: 2}, {id: 1, open: 2, close: 1},
-        {id: 2, open: 3, close: 4}, {id: 3, open: 6, close: 7},
-        {id: 4, open: 3, close: 6}, {id: 5, open: 4, close: 5},
-        {id: 6, open: 5, close: 3}, {id: 7, open: 7, close: 9},
+        { open: 1, close: 2 }, { open: 2, close: 1 },
+        { open: 3, close: 4 }, { open: 6, close: 7 },
+        { open: 3, close: 6 }, { open: 4, close: 5 },
+        { open: 5, close: 3 }, { open: 7, close: 9 },
       ];
-
-      const [r1, r2] = cs.bullishKicker(data).map((e) => e.id);
-      assert.equal(2, r1);
-      assert.equal(7, r2);
+      
+      const results = cs.bullishKicker(data);
+      assert.deepStrictEqual([1, 6], results);
     });
   });
 
   describe('#bearishKicker()', () => {
-    it('should find bearish kickers at positions 3 and 6 in array', () => {
+    it('should find bearish kickers at positions 2 and 5 in array', () => {
       const data = [
-        {id: 0, open: 5, close: 2}, {id: 1, open: 7, close: 8},
-        {id: 2, open: 3, close: 4}, {id: 3, open: 2, close: 1},
-        {id: 4, open: 3, close: 6}, {id: 5, open: 4, close: 5},
-        {id: 6, open: 2, close: 1}, {id: 7, open: 7, close: 9},
+        { open: 5, close: 2 }, { open: 7, close: 8 },
+        { open: 3, close: 4 }, { open: 2, close: 1 },
+        { open: 3, close: 6 }, { open: 4, close: 5 },
+        { open: 2, close: 1 }, { open: 7, close: 9 },
       ];
 
-      const [r1, r2] = cs.bearishKicker(data).map((e) => e.id);
-      assert.equal(3, r1);
-      assert.equal(6, r2);
+      const results = cs.bearishKicker(data);
+      assert.deepStrictEqual([2, 5], results);
     });
   });
 
   describe('#shootingStar()', () => {
-    it('should find shooting stars at positions 1 and 5 in array', () => {
+    it('should find shooting stars at positions 0 and 4 in array', () => {
       const data = [
-        {id: 0, open: 1, high: 10, low: 0.5, close: 2},
-        {id: 1, open: 4, high: 20, low: 2.9, close: 3},
-        {id: 2, open: 2, high: 10, low: 0.5, close: 1},
-        {id: 3, open: 2, high: 10, low: 0.5, close: 1},
-        {id: 4, open: 1, high: 10, low: 0.5, close: 2},
-        {id: 5, open: 4, high: 20, low: 2.9, close: 3},
-        {id: 6, open: 1, high: 10, low: 0.5, close: 2},
-        {id: 7, open: 3, high: 30, low: 1.4, close: 2},
+        { open: 1, high: 10, low: 0.5, close: 2},
+        { open: 4, high: 20, low: 2.9, close: 3},
+        { open: 2, high: 10, low: 0.5, close: 1},
+        { open: 2, high: 10, low: 0.5, close: 1},
+        { open: 1, high: 10, low: 0.5, close: 2},
+        { open: 4, high: 20, low: 2.9, close: 3},
+        { open: 1, high: 10, low: 0.5, close: 2},
+        { open: 3, high: 30, low: 1.4, close: 2},
       ];
 
-      const [r1, r2] = cs.shootingStar(data).map((e) => e.id);
-      assert.equal(1, r1);
-      assert.equal(5, r2);
+      const results = cs.shootingStar(data);
+      assert.deepStrictEqual([0, 4], results);
     });
   });
 });

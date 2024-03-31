@@ -26,3 +26,4 @@
 # 0.0.6 / 2024-03-31
 * Remove optional param `ratio` from hammer functions causing bad results.
 * Fix `bullishHammer`, `bearishHammer`, `bullishInvertedHammer`, `bearishInvertedHammer`, and `hangingMan` functions.
+* Bugfix [#1](https://github.com/cm45t3r/candlestick/issues/1).
