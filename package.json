@@ -37,17 +37,14 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "test": "nyc mocha"
+    "test": "node --test --experimental-test-coverage"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=18"
   },
   "main": "index.js",
   "devDependencies": {
-    "chai": "^4.3.6",
-    "eslint": "^8.14.0",
-    "eslint-config-google": "^0.14.0",
-    "mocha": "^8.4.0",
-    "nyc": "^15.1.0"
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0"
   }
 }
