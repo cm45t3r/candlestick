@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2016-Present cm45t3r.
+ * Copyright (C) 2016-present cm45t3r.
  * MIT License.
  */
 
-const assert = require('assert');
-const cs = require('../index');
+const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
+const cs = require('../index.js');
 
 describe('candlestick', () => {
   describe('#isBullishKicker()', () => {
