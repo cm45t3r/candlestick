@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2016-Present cm45t3r.
+ * Copyright (C) 2016-present cm45t3r.
  * MIT License.
  */
 
 /**
  * Absolute distance between `open` and `close`.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, close: number }`
  * @return {number} a positive number.
  */
@@ -17,8 +17,8 @@ function bodyLen(candlestick) {
 /**
  * Absolute distance between `open` and `high` on bearish
  * candles or `close`and `high` on bullish candles.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, high: number, close: number }`
  * @return {number} a positive number.
  */
@@ -29,8 +29,8 @@ function wickLen(candlestick) {
 /**
  * Absolute distance between `low` and `open` on bullish
  * candles or `low`and `close` on bearish candles.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, low: number, close: number }`
  * @return {number} a positive number.
  */
@@ -40,8 +40,8 @@ function tailLen(candlestick) {
 
 /**
  * Returns `top` and `bottom` ends from a body.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, close: number }`
  * @return {Object} with fields
  *   `{ bottom: number, top: number }`
@@ -54,8 +54,8 @@ function bodyEnds(candlestick) {
 
 /**
  * Returns `true` if `close` is greater than `close`.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -65,8 +65,8 @@ function isBullish(candlestick) {
 
 /**
  * Returns `true` if `close` is greater than `open`.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -77,10 +77,10 @@ function isBearish(candlestick) {
 /**
  * Returns `true` if previous `top` is less or equal than current
  * and `bottom` is greater or equal.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -91,10 +91,10 @@ function isEngulfed(previous, current) {
 
 /**
  * Returns `true` if previous `top` is less than current `bottom`.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -104,10 +104,10 @@ function hasGapUp(previous, current) {
 
 /**
  * Returns `true` if previous `bottom` is greater than current `top`.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -115,31 +115,11 @@ function hasGapDown(previous, current) {
   return bodyEnds(previous).bottom > bodyEnds(current).top;
 }
 
-// Dynamic array search for callback arguments.
-function findPattern(dataArray, callback) {
-  const paramCount = callback.length;
-  const upperBound = dataArray.length - paramCount;
-  const results = [];
-
-  for (let i = 0; i <= upperBound; i++) {
-    const values = dataArray.slice(i, i + paramCount);
-
-    if (callback(...values)) {
-      results.push(i);
-    }
-  }
-
-  return results;
-}
-
-// Boolean pattern detection.
-// @public
-
 /**
  * Returns `true` if candle **tail** is at least `2x` longer than
  * **body** and **wick** is shorter than **body**.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -151,8 +131,8 @@ function isHammer(candlestick) {
 /**
  * Returns `true` if candle **wick** is at least `2x` longer than
  * **body** and **tail** is shorter than **body**.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -163,8 +143,8 @@ function isInvertedHammer(candlestick) {
 
 /**
  * Returns `true` if candle is bullish and it's a hammer.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -175,8 +155,8 @@ function isBullishHammer(candlestick) {
 
 /**
  * Returns `true` if candle is bearish and it's a hammer.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -187,8 +167,8 @@ function isBearishHammer(candlestick) {
 
 /**
  * Returns `true` if candle is bullish and it's an inverted hammer.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -199,8 +179,8 @@ function isBullishInvertedHammer(candlestick) {
 
 /**
  * Returns `true` if candle is bearish and it's an inverted hammer.
- * 
- * @param {Object} candlestick - object with fields 
+ *
+ * @param {Object} candlestick - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -212,10 +192,10 @@ function isBearishInvertedHammer(candlestick) {
 /**
  * Returns `true` if there is an upward gap between
  * a bullish candle and a bearish hammer.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -228,10 +208,10 @@ function isHangingMan(previous, current) {
 /**
  * Returns `true` if there is an upward gap between
  * a bullish candle and a bearish inverted hammer.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -243,10 +223,10 @@ function isShootingStar(previous, current) {
 
 /**
  * Returns `true` if a bearish candle is engulfed by a bullish candle.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -258,10 +238,10 @@ function isBullishEngulfing(previous, current) {
 
 /**
  * Returns `true` if a bullish candle is engulfed by a bearish candle.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -273,10 +253,10 @@ function isBearishEngulfing(previous, current) {
 
 /**
  * Returns `true` if a bearish candle is engulfing a bullish candle.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -288,10 +268,10 @@ function isBullishHarami(previous, current) {
 
 /**
  * Returns `true` if a bullish candle is engulfing a bearish candle.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -304,10 +284,10 @@ function isBearishHarami(previous, current) {
 /**
  * Returns `true` if there is an upward gap between
  * a bearish candle and a bullish non-hammer candle.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -321,10 +301,10 @@ function isBullishKicker(previous, current) {
 /**
  * Returns `true` if there is an downward gap between
  * a bullish candle and a bearish non-hammer candle.
- * 
- * @param {Object} previous - object with fields 
+ *
+ * @param {Object} previous - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
- * @param {Object} current - object with fields 
+ * @param {Object} current - object with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {boolean} a boolean.
  */
@@ -335,13 +315,41 @@ function isBearishKicker(previous, current) {
     !(isHammer(current) || isInvertedHammer(current));
 }
 
-// Pattern detection in arrays.
-// @public
+/**
+ * Search for a pattern within array that matches the condition
+ *  specified by the callback function.
+ *
+ * @param {Array} dataArray - array of objects with fields
+ *  `{ open: number, high: number, low: number, close: number }`
+ * @param {Function} callback - function to evaluate the pattern.
+ *  **Remarks:** optional parameters are not took into account.
+ * @return {Array} containing the indices where the pattern is found.
+ * @private
+ */
+function findPattern(dataArray, callback) {
+  const paramCount = callback.length;
+  const upperBound = dataArray.length - paramCount;
+  const results = [];
+
+  for (let i = 0; i <= upperBound; i++) {
+    const values = [];
+
+    for (let j = 0; j < paramCount; j++) {
+      values.push(dataArray[i + j]);
+    }
+
+    if (callback(...values)) {
+      results.push(i);
+    }
+  }
+
+  return results;
+}
 
 /**
  * Search in array for hammers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -351,8 +359,8 @@ function hammer(dataArray) {
 
 /**
  * Search in array for inverted hammers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -362,8 +370,8 @@ function invertedHammer(dataArray) {
 
 /**
  * Search in array for bullish hammers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -373,8 +381,8 @@ function bullishHammer(dataArray) {
 
 /**
  * Search in array for bearish hammers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -384,8 +392,8 @@ function bearishHammer(dataArray) {
 
 /**
  * Search in array for bullish inverted hammers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -395,8 +403,8 @@ function bullishInvertedHammer(dataArray) {
 
 /**
  * Search in array for bearish inverted hammers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -406,8 +414,8 @@ function bearishInvertedHammer(dataArray) {
 
 /**
  * Search in array for hanging men.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -417,8 +425,8 @@ function hangingMan(dataArray) {
 
 /**
  * Search in array for shooting stars.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -428,8 +436,8 @@ function shootingStar(dataArray) {
 
 /**
  * Search in array for bullish engulfings.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -439,8 +447,8 @@ function bullishEngulfing(dataArray) {
 
 /**
  * Search in array for bearish engulfings.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -450,8 +458,8 @@ function bearishEngulfing(dataArray) {
 
 /**
  * Search in array for bullish haramis.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -461,8 +469,8 @@ function bullishHarami(dataArray) {
 
 /**
  * Search in array for bearish haramis.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -472,8 +480,8 @@ function bearishHarami(dataArray) {
 
 /**
  * Search in array for bullish kickers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */
@@ -483,8 +491,8 @@ function bullishKicker(dataArray) {
 
 /**
  * Search in array for bearish kickers.
- * 
- * @param {Array} dataArray - array of objects with fields 
+ *
+ * @param {Array} dataArray - array of objects with fields
  *   `{ open: number, high: number, low: number, close: number }`
  * @return {Array} array of matches.
  */

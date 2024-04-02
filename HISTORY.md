@@ -27,3 +27,10 @@
 * Remove optional param `ratio` from hammer functions causing bad results.
 * Fix `bullishHammer`, `bearishHammer`, `bullishInvertedHammer`, `bearishInvertedHammer`, and `hangingMan` functions.
 * Bugfix [#1](https://github.com/cm45t3r/candlestick/issues/1).
+
+# 0.0.7 / 2024-04-02
+* Fix index.js copyright.
+* Remove useless properties in .eslintcr and add `object-curly-spacing` exception rule.
+* Fix linting errors.
+* Update package keywords and increment version.
+* Optimize private function `findPattern` to make it more performant.
