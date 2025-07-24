@@ -1,12 +1,12 @@
 // invertedHammer.js
 // Inverted Hammer (Inverted Pinbar) pattern logic extracted from candlestick.js
 
-const { bodyLen, wickLen, tailLen, isBullish, isBearish, findPattern } = require('./utils.js');
+const { isBullish, isBearish, findPattern } = require('./utils.js');
 
 /**
  * Returns true if the candle is an Inverted Hammer (body in lower third, long upper shadow, small lower shadow).
  * @param {Object} candlestick - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isInvertedHammer(candlestick) {
   const body = Math.abs(candlestick.open - candlestick.close);
@@ -26,7 +26,7 @@ function isInvertedHammer(candlestick) {
 /**
  * Returns true if the candle is a Bullish Inverted Hammer (Inverted Hammer with bullish body).
  * @param {Object} candlestick - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBullishInvertedHammer(candlestick) {
   return isBullish(candlestick) && isInvertedHammer(candlestick);
@@ -35,7 +35,7 @@ function isBullishInvertedHammer(candlestick) {
 /**
  * Returns true if the candle is a Bearish Inverted Hammer (Inverted Hammer with bearish body).
  * @param {Object} candlestick - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBearishInvertedHammer(candlestick) {
   return isBearish(candlestick) && isInvertedHammer(candlestick);
@@ -44,7 +44,7 @@ function isBearishInvertedHammer(candlestick) {
 /**
  * Finds all Inverted Hammer patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function invertedHammer(dataArray) {
   return findPattern(dataArray, isInvertedHammer);
@@ -53,7 +53,7 @@ function invertedHammer(dataArray) {
 /**
  * Finds all Bullish Inverted Hammer patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bullishInvertedHammer(dataArray) {
   return findPattern(dataArray, isBullishInvertedHammer);
@@ -62,7 +62,7 @@ function bullishInvertedHammer(dataArray) {
 /**
  * Finds all Bearish Inverted Hammer patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bearishInvertedHammer(dataArray) {
   return findPattern(dataArray, isBearishInvertedHammer);

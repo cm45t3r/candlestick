@@ -4,7 +4,7 @@
 /**
  * Absolute distance between `open` and `close`.
  * @param {Object} candlestick - { open, close }
- * @returns {number}
+ * @return {number}
  */
 function bodyLen(candlestick) {
   return Math.abs(candlestick.open - candlestick.close);
@@ -13,7 +13,7 @@ function bodyLen(candlestick) {
 /**
  * Absolute distance between `open` and `high` on bearish candles or `close` and `high` on bullish candles.
  * @param {Object} candlestick - { open, high, close }
- * @returns {number}
+ * @return {number}
  */
 function wickLen(candlestick) {
   return candlestick.high - Math.max(candlestick.open, candlestick.close);
@@ -22,7 +22,7 @@ function wickLen(candlestick) {
 /**
  * Absolute distance between `low` and `open` on bullish candles or `low` and `close` on bearish candles.
  * @param {Object} candlestick - { open, low, close }
- * @returns {number}
+ * @return {number}
  */
 function tailLen(candlestick) {
   return Math.min(candlestick.open, candlestick.close) - candlestick.low;
@@ -31,7 +31,7 @@ function tailLen(candlestick) {
 /**
  * Returns `top` and `bottom` ends from a body.
  * @param {Object} candlestick - { open, close }
- * @returns {Object} { bottom, top }
+ * @return {Object} { bottom, top }
  */
 function bodyEnds(candlestick) {
   return candlestick.open <= candlestick.close ?
@@ -42,7 +42,7 @@ function bodyEnds(candlestick) {
 /**
  * Returns `true` if `close` is greater than `open` (bullish candle).
  * @param {Object} candlestick - { open, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBullish(candlestick) {
   return candlestick.open < candlestick.close;
@@ -51,7 +51,7 @@ function isBullish(candlestick) {
 /**
  * Returns `true` if `close` is less than `open` (bearish candle).
  * @param {Object} candlestick - { open, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBearish(candlestick) {
   return candlestick.open > candlestick.close;
@@ -61,7 +61,7 @@ function isBearish(candlestick) {
  * Returns `true` if previous top is less than current bottom (gap up).
  * @param {Object} previous - { open, close }
  * @param {Object} current - { open, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function hasGapUp(previous, current) {
   return bodyEnds(previous).top < bodyEnds(current).bottom;
@@ -71,7 +71,7 @@ function hasGapUp(previous, current) {
  * Returns `true` if previous bottom is greater than current top (gap down).
  * @param {Object} previous - { open, close }
  * @param {Object} current - { open, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function hasGapDown(previous, current) {
   return bodyEnds(previous).bottom > bodyEnds(current).top;
@@ -81,7 +81,7 @@ function hasGapDown(previous, current) {
  * Returns `true` if previous top is less or equal than current and bottom is greater or equal (engulfed body).
  * @param {Object} previous - { open, close }
  * @param {Object} current - { open, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isEngulfed(previous, current) {
   return bodyEnds(previous).top <= bodyEnds(current).top &&
@@ -92,7 +92,7 @@ function isEngulfed(previous, current) {
  * Generalized pattern search utility for arrays.
  * @param {Array} dataArray - Array of candlesticks
  * @param {Function} callback - Pattern function
- * @returns {Array<number>} Indices where the pattern is found
+ * @return {Array<number>} Indices where the pattern is found
  */
 function findPattern(dataArray, callback) {
   const paramCount = callback.length;
@@ -121,4 +121,4 @@ module.exports = {
   hasGapDown,
   findPattern,
   isEngulfed,
-}; 
+};

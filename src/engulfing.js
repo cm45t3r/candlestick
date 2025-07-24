@@ -7,7 +7,7 @@ const { bodyEnds, isBullish, isBearish, findPattern } = require('./utils.js');
  * Returns true if the previous candle's body is engulfed by the current candle's body.
  * @param {Object} previous - { open, close }
  * @param {Object} current - { open, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isEngulfed(previous, current) {
   return bodyEnds(previous).top <= bodyEnds(current).top &&
@@ -18,7 +18,7 @@ function isEngulfed(previous, current) {
  * Returns true if a bearish candle is followed by a bullish candle that engulfs the previous body (Bullish Engulfing).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBullishEngulfing(previous, current) {
   return isBearish(previous) &&
@@ -30,7 +30,7 @@ function isBullishEngulfing(previous, current) {
  * Returns true if a bullish candle is followed by a bearish candle that engulfs the previous body (Bearish Engulfing).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBearishEngulfing(previous, current) {
   return isBullish(previous) &&
@@ -41,7 +41,7 @@ function isBearishEngulfing(previous, current) {
 /**
  * Finds all Bullish Engulfing patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bullishEngulfing(dataArray) {
   return findPattern(dataArray, isBullishEngulfing);
@@ -50,7 +50,7 @@ function bullishEngulfing(dataArray) {
 /**
  * Finds all Bearish Engulfing patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bearishEngulfing(dataArray) {
   return findPattern(dataArray, isBearishEngulfing);
@@ -62,4 +62,4 @@ module.exports = {
   isBearishEngulfing,
   bullishEngulfing,
   bearishEngulfing,
-}; 
+};

@@ -1,12 +1,12 @@
 // hammer.js
 // Hammer (Pinbar) pattern logic extracted from candlestick.js
 
-const { bodyLen, wickLen, tailLen, isBullish, isBearish, findPattern } = require('./utils.js');
+const { isBullish, isBearish, findPattern } = require('./utils.js');
 
 /**
  * Returns true if the candle is a Hammer (body in upper third, long lower shadow, small upper shadow).
  * @param {Object} candlestick - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isHammer(candlestick) {
   const body = Math.abs(candlestick.open - candlestick.close);
@@ -25,7 +25,7 @@ function isHammer(candlestick) {
 /**
  * Returns true if the candle is a Bullish Hammer (Hammer with bullish body).
  * @param {Object} candlestick - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBullishHammer(candlestick) {
   return isBullish(candlestick) && isHammer(candlestick);
@@ -34,7 +34,7 @@ function isBullishHammer(candlestick) {
 /**
  * Returns true if the candle is a Bearish Hammer (Hammer with bearish body).
  * @param {Object} candlestick - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBearishHammer(candlestick) {
   return isBearish(candlestick) && isHammer(candlestick);
@@ -43,7 +43,7 @@ function isBearishHammer(candlestick) {
 /**
  * Finds all Hammer patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function hammer(dataArray) {
   return findPattern(dataArray, isHammer);
@@ -52,7 +52,7 @@ function hammer(dataArray) {
 /**
  * Finds all Bullish Hammer patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bullishHammer(dataArray) {
   return findPattern(dataArray, isBullishHammer);
@@ -61,7 +61,7 @@ function bullishHammer(dataArray) {
 /**
  * Finds all Bearish Hammer patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bearishHammer(dataArray) {
   return findPattern(dataArray, isBearishHammer);
@@ -74,4 +74,4 @@ module.exports = {
   hammer,
   bullishHammer,
   bearishHammer,
-}; 
+};

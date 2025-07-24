@@ -1,7 +1,7 @@
 // reversal.js
 // Hanging Man and Shooting Star pattern logic extracted from candlestick.js
 
-const { isBullish, hasGapUp, findPattern } = require('./utils.js');
+const { isBullish, findPattern } = require('./utils.js');
 const { isBearishHammer } = require('./hammer.js');
 const { isBearishInvertedHammer } = require('./invertedHammer.js');
 
@@ -9,7 +9,7 @@ const { isBearishInvertedHammer } = require('./invertedHammer.js');
  * Returns true if a bullish candle is followed by a bearish hammer with a gap up (Hanging Man).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isHangingMan(previous, current) {
   return isBullish(previous) &&
@@ -21,7 +21,7 @@ function isHangingMan(previous, current) {
  * Returns true if a bullish candle is followed by a bearish inverted hammer with a gap up (Shooting Star).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isShootingStar(previous, current) {
   return isBullish(previous) &&
@@ -32,7 +32,7 @@ function isShootingStar(previous, current) {
 /**
  * Finds all Hanging Man patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function hangingMan(dataArray) {
   return findPattern(dataArray, isHangingMan);
@@ -41,7 +41,7 @@ function hangingMan(dataArray) {
 /**
  * Finds all Shooting Star patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function shootingStar(dataArray) {
   return findPattern(dataArray, isShootingStar);
@@ -52,4 +52,4 @@ module.exports = {
   isShootingStar,
   hangingMan,
   shootingStar,
-}; 
+};

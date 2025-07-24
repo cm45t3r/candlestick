@@ -48,4 +48,4 @@ function patternChain(candles, patterns = allPatterns) {
 module.exports = {
   patternChain,
   allPatterns,
-}; 
+};

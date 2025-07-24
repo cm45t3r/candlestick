@@ -1,7 +1,7 @@
 // kicker.js
 // Kicker pattern logic extracted from candlestick.js
 
-const { isBullish, isBearish, hasGapUp, hasGapDown, bodyEnds, bodyLen, wickLen, tailLen, findPattern } = require('./utils.js');
+const { isBullish, isBearish, hasGapUp, hasGapDown, findPattern } = require('./utils.js');
 const { isHammer } = require('./hammer.js');
 const { isInvertedHammer } = require('./invertedHammer.js');
 
@@ -9,7 +9,7 @@ const { isInvertedHammer } = require('./invertedHammer.js');
  * Returns true if a bearish candle is followed by a bullish candle with a gap up (not a hammer or inverted hammer). (Bullish Kicker)
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBullishKicker(previous, current) {
   return isBearish(previous) &&
@@ -22,7 +22,7 @@ function isBullishKicker(previous, current) {
  * Returns true if a bullish candle is followed by a bearish candle with a gap down (not a hammer or inverted hammer). (Bearish Kicker)
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
- * @returns {boolean}
+ * @return {boolean}
  */
 function isBearishKicker(previous, current) {
   return isBullish(previous) &&
@@ -34,7 +34,7 @@ function isBearishKicker(previous, current) {
 /**
  * Finds all Bullish Kicker patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bullishKicker(dataArray) {
   return findPattern(dataArray, isBullishKicker);
@@ -43,7 +43,7 @@ function bullishKicker(dataArray) {
 /**
  * Finds all Bearish Kicker patterns in a series.
  * @param {Array<Object>} dataArray
- * @returns {Array<number>}
+ * @return {Array<number>}
  */
 function bearishKicker(dataArray) {
   return findPattern(dataArray, isBearishKicker);
@@ -54,4 +54,4 @@ module.exports = {
   isBearishKicker,
   bullishKicker,
   bearishKicker,
-}; 
+};
