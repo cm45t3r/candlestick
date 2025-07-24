@@ -2,24 +2,73 @@
 
 ![Node.js CI workflow](https://github.com/cm45t3r/candlestick/actions/workflows/node.js.yml/badge.svg)
 [![npm version](https://badge.fury.io/js/candlestick.svg)](https://badge.fury.io/js/candlestick)
+[![npm downloads](https://img.shields.io/npm/dm/candlestick.svg)](https://www.npmjs.com/package/candlestick)
+[![ESLint](https://img.shields.io/badge/code%20style-eslint-brightgreen.svg)](https://eslint.org/)
+[![code style: prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg?style=flat)](https://prettier.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/cm45t3r/candlestick/pulls)
+[![Contributors](https://img.shields.io/github/contributors/cm45t3r/candlestick.svg)](https://github.com/cm45t3r/candlestick/graphs/contributors)
 
 A modern, modular JavaScript library for candlestick pattern detection. Detects classic reversal and continuation patterns in OHLC data, with a clean API and no native dependencies.
 
 ---
 
-## Features
+## Table of Contents
+- [Why Candlestick?](#why-candlestick)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+- [Pattern Detection Functions](#pattern-detection-functions)
+- [High-Level Pattern Chaining](#high-level-pattern-chaining)
+- [Pattern Descriptions](#pattern-descriptions)
+- [Examples](#examples)
+- [Linting & Formatting](#linting--formatting)
+- [Running Tests](#running-tests)
+- [Contributing](#contributing)
+- [Changelog](#changelog)
+- [Roadmap](#roadmap)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
+
+---
+
+## Why Candlestick?
+- **No native dependencies**: 100% JavaScript, works everywhere Node.js runs.
 - **Modular**: Each pattern is its own module, easy to extend or customize.
 - **Consistent API**: All pattern functions use a standard interface.
 - **Pattern Chaining**: Scan for multiple patterns in a single pass.
 - **Comprehensive Test Suite**: Each pattern and utility is unit tested.
 - **Modern Tooling**: Uses ESLint (flat config) and Prettier for code quality and formatting.
+- **Actively Maintained**: See [ROADMAP.md](./ROADMAP.md) and [CHANGELOG.md](./CHANGELOG.md).
 
 ---
 
-## Installation
+## Features
+- Modular pattern logic
+- Consistent, easy-to-use API
+- Pattern chaining for multi-pattern scans
+- 100% test coverage, CI/CD ready
+- Modern code style and documentation
+
+---
+
+## Quick Start
 
 ```bash
 npm install candlestick
+```
+
+```js
+const { isHammer, hammer, patternChain } = require('candlestick');
+
+const candle = { open: 10, high: 15, low: 8, close: 14 };
+console.log(isHammer(candle)); // true or false
+
+const candles = [/* array of OHLC objects */];
+console.log(hammer(candles)); // [indices]
+
+const results = patternChain(candles);
+console.log(results); // [{ index, pattern, match }]
 ```
 
 ---
@@ -169,6 +218,25 @@ npm test
 - Please open [issues](https://github.com/cm45t3r/candlestick/issues) or [pull requests](https://github.com/cm45t3r/candlestick/pulls) for bugs, features, or questions.
 - Add tests for new patterns or utilities.
 - Follow the code style enforced by ESLint and Prettier.
+- See [CONTRIBUTING.md](./CONTRIBUTING.md) for full guidelines.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
+
+---
+
+## Roadmap
+
+See [ROADMAP.md](./ROADMAP.md) for planned features and future directions.
+
+---
+
+## Code of Conduct
+
+See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for community standards and enforcement.
 
 ---
 
