@@ -1,2 +1,11 @@
 *~
 .git*
+.github/
+.gitignore
+.npmignore
+.env
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+*.swp

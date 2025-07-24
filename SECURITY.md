@@ -15,7 +15,7 @@ Please use the latest version for all security-critical applications.
 
 If you discover a security vulnerability, please **do not open a public issue**. Instead, report it responsibly by emailing:
 
-**security@yourdomain.com** (replace with your actual contact)
+**v3rlq9xye (at) mozmail (dot) com**
 
 Alternatively, you may use [GitHub Security Advisories](https://github.com/cm45t3r/candlestick/security/advisories) for confidential reporting.
 
