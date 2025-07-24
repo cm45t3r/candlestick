@@ -11,4 +11,6 @@ module.exports = {
   ...require('./kicker.js'),
   ...require('./reversal.js'),
   ...require('./doji.js'),
+  ...require('./patternChain.js'),
+  utils: require('./utils.js'),
 };

@@ -22,6 +22,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - [High-Level Pattern Chaining](#high-level-pattern-chaining)
 - [Pattern Descriptions](#pattern-descriptions)
 - [Examples](#examples)
+- [Full Example Files](#full-example-files)
 - [Linting & Formatting](#linting--formatting)
 - [Running Tests](#running-tests)
 - [Contributing](#contributing)
@@ -195,6 +196,24 @@ const matches = patternChain(data, allPatterns);
 console.log(matches);
 // [ { index: 3, pattern: 'hammer', match: [Object] }, ... ]
 ```
+
+---
+
+## Full Example Files
+
+See the [`examples/`](./examples/) directory for runnable, copy-pasteable usage of every pattern and utility:
+
+- [`examples/hammer.js`](./examples/hammer.js) — Hammer pattern detection
+- [`examples/invertedHammer.js`](./examples/invertedHammer.js) — Inverted Hammer pattern detection
+- [`examples/doji.js`](./examples/doji.js) — Doji pattern detection
+- [`examples/engulfing.js`](./examples/engulfing.js) — Engulfing pattern detection
+- [`examples/harami.js`](./examples/harami.js) — Harami pattern detection
+- [`examples/kicker.js`](./examples/kicker.js) — Kicker pattern detection
+- [`examples/reversal.js`](./examples/reversal.js) — Hanging Man and Shooting Star
+- [`examples/patternChain.js`](./examples/patternChain.js) — Multi-pattern detection with patternChain
+- [`examples/utils.js`](./examples/utils.js) — Utility functions: bodyLen, wickLen, tailLen, isBullish, isBearish, hasGapUp, hasGapDown, findPattern
+
+See [`examples/README.md`](./examples/README.md) for more details and instructions.
 
 ---
 
