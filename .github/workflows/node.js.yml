@@ -27,8 +27,13 @@ jobs:
     - run: npm run lint
     - run: npm run build --if-present
     - run: npm test
-    # Uncomment the following lines if you set up codecov.io and add CODECOV_TOKEN to repo secrets
-    #- name: Upload coverage to Codecov
-    #  uses: codecov/codecov-action@v3
-    #  with:
-    #    token: ${{ secrets.CODECOV_TOKEN }}
+    - run: npm run coverage
+    - name: Upload coverage to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./coverage/lcov.info
+        coveralls-endpoint: https://coveralls.io
+        parallel: false
+        flag-name: run-${{ matrix.os }}-${{ matrix.node-version }}
+        coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
