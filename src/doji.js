@@ -1,0 +1,29 @@
+// doji.js
+// Doji pattern detection module
+
+const { bodyLen, wickLen, tailLen, isBullish, isBearish, findPattern } = require('./utils.js');
+
+/**
+ * Returns `true` if the candlestick is a Doji (body is very small compared to range).
+ * @param {Object} candlestick - { open, high, low, close }
+ * @returns {boolean}
+ */
+function isDoji(candlestick) {
+  const range = candlestick.high - candlestick.low;
+  // Body is less than 10% of the range, and range is not zero
+  return range > 0 && bodyLen(candlestick) / range < 0.1;
+}
+
+/**
+ * Finds all Doji patterns in a series.
+ * @param {Array<Object>} dataArray
+ * @returns {Array<number>}
+ */
+function doji(dataArray) {
+  return findPattern(dataArray, isDoji);
+}
+
+module.exports = {
+  isDoji,
+  doji,
+}; 
