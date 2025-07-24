@@ -500,32 +500,180 @@ function bearishKicker(dataArray) {
   return findPattern(dataArray, isBearishKicker);
 }
 
+/**
+ * Returns `true` if the candlestick is a Hammer (also known as Pinbar).
+ * @param {Object} candlestick - { open, high, low, close }
+ * @returns {boolean} True if the candle is a Hammer/Pinbar.
+ */
 module.exports.isHammer = isHammer;
+/**
+ * Returns `true` if the candlestick is an Inverted Hammer (also known as Inverted Pinbar).
+ * @param {Object} candlestick - { open, high, low, close }
+ * @returns {boolean} True if the candle is an Inverted Hammer/Pinbar.
+ */
 module.exports.isInvertedHammer = isInvertedHammer;
+/**
+ * Returns `true` if the candlestick is a Bullish Hammer (Bullish Pinbar).
+ * @param {Object} candlestick - { open, high, low, close }
+ * @returns {boolean} True if the candle is a Bullish Hammer/Pinbar.
+ */
 module.exports.isBullishHammer = isBullishHammer;
+/**
+ * Returns `true` if the candlestick is a Bearish Hammer (Bearish Pinbar).
+ * @param {Object} candlestick - { open, high, low, close }
+ * @returns {boolean} True if the candle is a Bearish Hammer/Pinbar.
+ */
 module.exports.isBearishHammer = isBearishHammer;
+/**
+ * Returns `true` if the candlestick is a Bullish Inverted Hammer.
+ * @param {Object} candlestick - { open, high, low, close }
+ * @returns {boolean} True if the candle is a Bullish Inverted Hammer.
+ */
 module.exports.isBullishInvertedHammer = isBullishInvertedHammer;
+/**
+ * Returns `true` if the candlestick is a Bearish Inverted Hammer.
+ * @param {Object} candlestick - { open, high, low, close }
+ * @returns {boolean} True if the candle is a Bearish Inverted Hammer.
+ */
 module.exports.isBearishInvertedHammer = isBearishInvertedHammer;
+/**
+ * Returns `true` if the previous candle and current candle form a Hanging Man pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Hanging Man.
+ */
 module.exports.isHangingMan = isHangingMan;
+/**
+ * Returns `true` if the previous candle and current candle form a Shooting Star pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Shooting Star.
+ */
 module.exports.isShootingStar = isShootingStar;
+/**
+ * Returns `true` if the previous and current candles form a Bullish Engulfing pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Bullish Engulfing.
+ */
 module.exports.isBullishEngulfing = isBullishEngulfing;
+/**
+ * Returns `true` if the previous and current candles form a Bearish Engulfing pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Bearish Engulfing.
+ */
 module.exports.isBearishEngulfing = isBearishEngulfing;
+/**
+ * Returns `true` if the previous and current candles form a Bullish Harami pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Bullish Harami.
+ */
 module.exports.isBullishHarami = isBullishHarami;
+/**
+ * Returns `true` if the previous and current candles form a Bearish Harami pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Bearish Harami.
+ */
 module.exports.isBearishHarami = isBearishHarami;
+/**
+ * Returns `true` if the previous and current candles form a Bullish Kicker pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Bullish Kicker.
+ */
 module.exports.isBullishKicker = isBullishKicker;
+/**
+ * Returns `true` if the previous and current candles form a Bearish Kicker pattern.
+ * @param {Object} previous - { open, high, low, close }
+ * @param {Object} current - { open, high, low, close }
+ * @returns {boolean} True if the pattern is a Bearish Kicker.
+ */
 module.exports.isBearishKicker = isBearishKicker;
 
+/**
+ * Finds all Hammer (Pinbar) patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Hammer pattern is found.
+ */
 module.exports.hammer = hammer;
+/**
+ * Finds all Inverted Hammer (Pinbar) patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Inverted Hammer pattern is found.
+ */
 module.exports.invertedHammer = invertedHammer;
+/**
+ * Finds all Bullish Hammer (Pinbar) patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bullish Hammer pattern is found.
+ */
 module.exports.bullishHammer = bullishHammer;
+/**
+ * Finds all Bearish Hammer (Pinbar) patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bearish Hammer pattern is found.
+ */
 module.exports.bearishHammer = bearishHammer;
+/**
+ * Finds all Bullish Inverted Hammer patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bullish Inverted Hammer pattern is found.
+ */
 module.exports.bullishInvertedHammer = bullishInvertedHammer;
+/**
+ * Finds all Bearish Inverted Hammer patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bearish Inverted Hammer pattern is found.
+ */
 module.exports.bearishInvertedHammer = bearishInvertedHammer;
+/**
+ * Finds all Hanging Man patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Hanging Man pattern is found.
+ */
 module.exports.hangingMan = hangingMan;
+/**
+ * Finds all Shooting Star patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Shooting Star pattern is found.
+ */
 module.exports.shootingStar = shootingStar;
+/**
+ * Finds all Bullish Engulfing patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bullish Engulfing pattern is found.
+ */
 module.exports.bullishEngulfing = bullishEngulfing;
+/**
+ * Finds all Bearish Engulfing patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bearish Engulfing pattern is found.
+ */
 module.exports.bearishEngulfing = bearishEngulfing;
+/**
+ * Finds all Bullish Harami patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bullish Harami pattern is found.
+ */
 module.exports.bullishHarami = bullishHarami;
+/**
+ * Finds all Bearish Harami patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bearish Harami pattern is found.
+ */
 module.exports.bearishHarami = bearishHarami;
+/**
+ * Finds all Bullish Kicker patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bullish Kicker pattern is found.
+ */
 module.exports.bullishKicker = bullishKicker;
+/**
+ * Finds all Bearish Kicker patterns in a series.
+ * @param {Array<Object>} dataArray - Array of candlesticks { open, high, low, close }
+ * @returns {Array<number>} Indices where the Bearish Kicker pattern is found.
+ */
 module.exports.bearishKicker = bearishKicker;
