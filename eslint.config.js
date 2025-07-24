@@ -2,6 +2,9 @@ const js = require('@eslint/js');
 const prettier = require('eslint-config-prettier');
 
 module.exports = [
+  {
+    ignores: ['dist/', 'coverage/'],
+  },
   js.configs.recommended,
   prettier,
   {
@@ -21,6 +24,8 @@ module.exports = [
     },
     rules: {
       'no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: false }],
+      'eqeqeq': 'error',
+      'no-console': 'warn',
       // Add any custom rules here
     },
   },

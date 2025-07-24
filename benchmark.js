@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-env node */
 const { hammer } = require('./src/hammer.js');
 const { precomputeCandleProps } = require('./src/utils.js');
