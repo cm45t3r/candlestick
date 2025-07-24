@@ -10,7 +10,7 @@ jobs:
     name: Generate Changelog
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Generate changelog
         uses: heinrichreimer/github-changelog-generator-action@v2.4
         with:
@@ -29,7 +29,7 @@ jobs:
     needs: changelog
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Create Release
         uses: actions/create-release@v1
         env:
