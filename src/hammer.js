@@ -1,43 +1,53 @@
 // hammer.js
 // Hammer (Pinbar) pattern logic extracted from candlestick.js
 
-const { isBullish, isBearish, findPattern } = require('./utils.js');
+const { findPattern, precomputeCandleProps } = require('./utils.js');
 
 /**
  * Returns true if the candle is a Hammer (body in upper third, long lower shadow, small upper shadow).
- * @param {Object} candlestick - { open, high, low, close }
+ * @param {Object} candlestick - { open, high, low, close, bodyLen, wickLen, tailLen }
  * @return {boolean}
  */
 function isHammer(candlestick) {
-  const body = Math.abs(candlestick.open - candlestick.close);
-  const lower = Math.min(candlestick.open, candlestick.close) - candlestick.low;
-  const upper = candlestick.high - Math.max(candlestick.open, candlestick.close);
-  const range = candlestick.high - candlestick.low;
+  let c = candlestick;
+  if (c.bodyLen === undefined || c.wickLen === undefined || c.tailLen === undefined) {
+    c = require('./utils.js').precomputeCandleProps([candlestick])[0];
+  }
+  const { bodyLen, tailLen, wickLen, high, low, open, close } = c;
+  const range = high - low;
   // Body in upper third, lower shadow at least 2x body, upper shadow small
   return (
     range > 0 &&
-    lower >= 2 * body &&
-    upper <= body &&
-    (Math.max(candlestick.open, candlestick.close) > candlestick.low + range * 2 / 3)
+    tailLen >= 2 * bodyLen &&
+    wickLen <= bodyLen &&
+    (Math.max(open, close) > low + range * 2 / 3)
   );
 }
 
 /**
  * Returns true if the candle is a Bullish Hammer (Hammer with bullish body).
- * @param {Object} candlestick - { open, high, low, close }
+ * @param {Object} candlestick
  * @return {boolean}
  */
 function isBullishHammer(candlestick) {
-  return isBullish(candlestick) && isHammer(candlestick);
+  let c = candlestick;
+  if (c.isBullish === undefined) {
+    c = require('./utils.js').precomputeCandleProps([candlestick])[0];
+  }
+  return c.isBullish && isHammer(c);
 }
 
 /**
  * Returns true if the candle is a Bearish Hammer (Hammer with bearish body).
- * @param {Object} candlestick - { open, high, low, close }
+ * @param {Object} candlestick
  * @return {boolean}
  */
 function isBearishHammer(candlestick) {
-  return isBearish(candlestick) && isHammer(candlestick);
+  let c = candlestick;
+  if (c.isBearish === undefined) {
+    c = require('./utils.js').precomputeCandleProps([candlestick])[0];
+  }
+  return c.isBearish && isHammer(c);
 }
 
 /**
@@ -46,7 +56,8 @@ function isBearishHammer(candlestick) {
  * @return {Array<number>}
  */
 function hammer(dataArray) {
-  return findPattern(dataArray, isHammer);
+  const candles = precomputeCandleProps(dataArray);
+  return findPattern(candles, isHammer);
 }
 
 /**
@@ -55,7 +66,8 @@ function hammer(dataArray) {
  * @return {Array<number>}
  */
 function bullishHammer(dataArray) {
-  return findPattern(dataArray, isBullishHammer);
+  const candles = precomputeCandleProps(dataArray);
+  return findPattern(candles, isBullishHammer);
 }
 
 /**
@@ -64,7 +76,8 @@ function bullishHammer(dataArray) {
  * @return {Array<number>}
  */
 function bearishHammer(dataArray) {
-  return findPattern(dataArray, isBearishHammer);
+  const candles = precomputeCandleProps(dataArray);
+  return findPattern(candles, isBearishHammer);
 }
 
 module.exports = {

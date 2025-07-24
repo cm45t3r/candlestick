@@ -1,30 +1,34 @@
 // harami.js
 // Harami pattern logic extracted from candlestick.js
 
-const { isBullish, isBearish, isEngulfed, findPattern } = require('./utils.js');
+const { isEngulfed, findPattern, precomputeCandleProps } = require('./utils.js');
 
 /**
  * Returns true if a bearish candle is followed by a smaller bullish candle inside the previous body (Bullish Harami).
- * @param {Object} previous - { open, high, low, close }
- * @param {Object} current - { open, high, low, close }
+ * @param {Object} previous
+ * @param {Object} current
  * @return {boolean}
  */
 function isBullishHarami(previous, current) {
-  return isBearish(previous) &&
-    isBullish(current) &&
-    isEngulfed(current, previous);
+  let p = previous, c = current;
+  if (p.isBearish === undefined || c.isBullish === undefined) {
+    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+  }
+  return p.isBearish && c.isBullish && isEngulfed(c, p);
 }
 
 /**
  * Returns true if a bullish candle is followed by a smaller bearish candle inside the previous body (Bearish Harami).
- * @param {Object} previous - { open, high, low, close }
- * @param {Object} current - { open, high, low, close }
+ * @param {Object} previous
+ * @param {Object} current
  * @return {boolean}
  */
 function isBearishHarami(previous, current) {
-  return isBullish(previous) &&
-    isBearish(current) &&
-    isEngulfed(current, previous);
+  let p = previous, c = current;
+  if (p.isBullish === undefined || c.isBearish === undefined) {
+    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+  }
+  return p.isBullish && c.isBearish && isEngulfed(c, p);
 }
 
 /**
@@ -33,7 +37,8 @@ function isBearishHarami(previous, current) {
  * @return {Array<number>}
  */
 function bullishHarami(dataArray) {
-  return findPattern(dataArray, isBullishHarami);
+  const candles = precomputeCandleProps(dataArray);
+  return findPattern(candles, isBullishHarami);
 }
 
 /**
@@ -42,7 +47,8 @@ function bullishHarami(dataArray) {
  * @return {Array<number>}
  */
 function bearishHarami(dataArray) {
-  return findPattern(dataArray, isBearishHarami);
+  const candles = precomputeCandleProps(dataArray);
+  return findPattern(candles, isBearishHarami);
 }
 
 module.exports = {

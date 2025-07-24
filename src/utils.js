@@ -110,6 +110,34 @@ function findPattern(dataArray, callback) {
   return results;
 }
 
+/**
+ * Precompute and cache all relevant properties for each candle in a series.
+ * Returns a new array of candle objects with extra fields: bodyLen, wickLen, tailLen, isBullish, isBearish, bodyEnds.
+ * @param {Array<Object>} dataArray
+ * @return {Array<Object>} Array of candles with cached properties
+ */
+function precomputeCandleProps(dataArray) {
+  return dataArray.map(candle => {
+    const body = Math.abs(candle.open - candle.close);
+    const wick = candle.high - Math.max(candle.open, candle.close);
+    const tail = Math.min(candle.open, candle.close) - candle.low;
+    const bullish = candle.open < candle.close;
+    const bearish = candle.open > candle.close;
+    const bodyEndsObj = candle.open <= candle.close
+      ? { bottom: candle.open, top: candle.close }
+      : { bottom: candle.close, top: candle.open };
+    return {
+      ...candle,
+      bodyLen: body,
+      wickLen: wick,
+      tailLen: tail,
+      isBullish: bullish,
+      isBearish: bearish,
+      bodyEnds: bodyEndsObj,
+    };
+  });
+}
+
 module.exports = {
   bodyLen,
   wickLen,
@@ -121,4 +149,5 @@ module.exports = {
   hasGapDown,
   findPattern,
   isEngulfed,
+  precomputeCandleProps,
 };

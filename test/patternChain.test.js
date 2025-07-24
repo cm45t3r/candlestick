@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { patternChain, allPatterns } = require('../src/patternChain.js');
+const { patternChain } = require('../src/patternChain.js');
 const hammer = require('../src/hammer.js');
 const doji = require('../src/doji.js');
 const engulfing = require('../src/engulfing.js');
@@ -113,10 +113,8 @@ describe('patternChain', () => {
       { open: 10, close: 20 }, // bullish
       { open: 20, close: 10 }, // bearish
     ];
-    // Use findPattern to generate indices for the custom pattern
-    const indices = utils.findPattern(candles, bullBear);
     const results = patternChain(candles, [
-      { name: 'bullBear', fn: arr => indices, paramCount: 2 },
+      { name: 'bullBear', fn: arr => utils.findPattern(arr, bullBear), paramCount: 2 },
     ]);
     assert.deepStrictEqual(results, [
       { index: 0, pattern: 'bullBear', match: [candles[0], candles[1]] },

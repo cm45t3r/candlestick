@@ -1,7 +1,7 @@
-import js from '@eslint/js';
-import prettier from 'eslint-config-prettier';
+const js = require('@eslint/js');
+const prettier = require('eslint-config-prettier');
 
-export default [
+module.exports = [
   js.configs.recommended,
   prettier,
   {
@@ -11,6 +11,12 @@ export default [
       globals: {
         window: 'readonly',
         document: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
       },
     },
     rules: {
