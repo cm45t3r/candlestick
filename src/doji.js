@@ -4,7 +4,7 @@
 const { bodyLen, wickLen, tailLen, isBullish, isBearish, findPattern } = require('./utils.js');
 
 /**
- * Returns `true` if the candlestick is a Doji (body is very small compared to range).
+ * Returns true if the candlestick is a Doji (body is very small compared to the range, indicating indecision).
  * @param {Object} candlestick - { open, high, low, close }
  * @returns {boolean}
  */

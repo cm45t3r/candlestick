@@ -6,7 +6,7 @@ const { isHammer } = require('./hammer.js');
 const { isInvertedHammer } = require('./invertedHammer.js');
 
 /**
- * Returns `true` if there is an upward gap between a bearish candle and a bullish non-hammer candle (Bullish Kicker).
+ * Returns true if a bearish candle is followed by a bullish candle with a gap up (not a hammer or inverted hammer). (Bullish Kicker)
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}
@@ -19,7 +19,7 @@ function isBullishKicker(previous, current) {
 }
 
 /**
- * Returns `true` if there is a downward gap between a bullish candle and a bearish non-hammer candle (Bearish Kicker).
+ * Returns true if a bullish candle is followed by a bearish candle with a gap down (not a hammer or inverted hammer). (Bearish Kicker)
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}

@@ -4,7 +4,7 @@
 const { bodyLen, wickLen, tailLen, isBullish, isBearish, findPattern } = require('./utils.js');
 
 /**
- * Returns `true` if candle tail is at least 2x longer than body and wick is shorter than body (Hammer/Pinbar).
+ * Returns true if the candle is a Hammer (body in upper third, long lower shadow, small upper shadow).
  * @param {Object} candlestick - { open, high, low, close }
  * @returns {boolean}
  */
@@ -23,7 +23,7 @@ function isHammer(candlestick) {
 }
 
 /**
- * Returns `true` if candle is bullish and it's a hammer (Bullish Pinbar).
+ * Returns true if the candle is a Bullish Hammer (Hammer with bullish body).
  * @param {Object} candlestick - { open, high, low, close }
  * @returns {boolean}
  */
@@ -32,7 +32,7 @@ function isBullishHammer(candlestick) {
 }
 
 /**
- * Returns `true` if candle is bearish and it's a hammer (Bearish Pinbar).
+ * Returns true if the candle is a Bearish Hammer (Hammer with bearish body).
  * @param {Object} candlestick - { open, high, low, close }
  * @returns {boolean}
  */
@@ -41,7 +41,7 @@ function isBearishHammer(candlestick) {
 }
 
 /**
- * Finds all Hammer (Pinbar) patterns in a series.
+ * Finds all Hammer patterns in a series.
  * @param {Array<Object>} dataArray
  * @returns {Array<number>}
  */
@@ -50,7 +50,7 @@ function hammer(dataArray) {
 }
 
 /**
- * Finds all Bullish Hammer (Pinbar) patterns in a series.
+ * Finds all Bullish Hammer patterns in a series.
  * @param {Array<Object>} dataArray
  * @returns {Array<number>}
  */
@@ -59,7 +59,7 @@ function bullishHammer(dataArray) {
 }
 
 /**
- * Finds all Bearish Hammer (Pinbar) patterns in a series.
+ * Finds all Bearish Hammer patterns in a series.
  * @param {Array<Object>} dataArray
  * @returns {Array<number>}
  */

@@ -4,7 +4,7 @@
 const { bodyEnds, isBullish, isBearish, findPattern } = require('./utils.js');
 
 /**
- * Returns `true` if previous top is less or equal than current and bottom is greater or equal (engulfed body).
+ * Returns true if the previous candle's body is engulfed by the current candle's body.
  * @param {Object} previous - { open, close }
  * @param {Object} current - { open, close }
  * @returns {boolean}
@@ -15,7 +15,7 @@ function isEngulfed(previous, current) {
 }
 
 /**
- * Returns `true` if a bearish candle is engulfed by a bullish candle (Bullish Engulfing).
+ * Returns true if a bearish candle is followed by a bullish candle that engulfs the previous body (Bullish Engulfing).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}
@@ -27,7 +27,7 @@ function isBullishEngulfing(previous, current) {
 }
 
 /**
- * Returns `true` if a bullish candle is engulfed by a bearish candle (Bearish Engulfing).
+ * Returns true if a bullish candle is followed by a bearish candle that engulfs the previous body (Bearish Engulfing).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}

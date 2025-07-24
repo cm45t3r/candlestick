@@ -6,7 +6,7 @@ const { isBearishHammer } = require('./hammer.js');
 const { isBearishInvertedHammer } = require('./invertedHammer.js');
 
 /**
- * Returns `true` if there is an upward gap between a bullish candle and a bearish hammer (Hanging Man).
+ * Returns true if a bullish candle is followed by a bearish hammer with a gap up (Hanging Man).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}
@@ -18,7 +18,7 @@ function isHangingMan(previous, current) {
 }
 
 /**
- * Returns `true` if there is an upward gap between a bullish candle and a bearish inverted hammer (Shooting Star).
+ * Returns true if a bullish candle is followed by a bearish inverted hammer with a gap up (Shooting Star).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}

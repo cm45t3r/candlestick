@@ -4,7 +4,7 @@
 const { isBullish, isBearish, isEngulfed, bodyEnds, findPattern } = require('./utils.js');
 
 /**
- * Returns `true` if a bearish candle is engulfing a bullish candle (Bullish Harami).
+ * Returns true if a bearish candle is followed by a smaller bullish candle inside the previous body (Bullish Harami).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}
@@ -16,7 +16,7 @@ function isBullishHarami(previous, current) {
 }
 
 /**
- * Returns `true` if a bullish candle is engulfing a bearish candle (Bearish Harami).
+ * Returns true if a bullish candle is followed by a smaller bearish candle inside the previous body (Bearish Harami).
  * @param {Object} previous - { open, high, low, close }
  * @param {Object} current - { open, high, low, close }
  * @returns {boolean}
