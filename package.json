@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cm45t3r/candlestick.git"
+    "url": "git+https://github.com/cm45t3r/candlestick.git"
   },
   "bugs": {
     "url": "https://github.com/cm45t3r/candlestick/issues"
