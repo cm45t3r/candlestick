@@ -4,35 +4,17 @@
 
 [Full Changelog](https://github.com/cm45t3r/candlestick/compare/v1.0.1...v1.0.2)
 
-**Improvements & Refactors:**
+**Merged pull requests:**
 
-- Refactored all pattern modules to remove redundant `require('./utils.js')` calls; now use imported utilities directly.
-- Consolidated duplicate `isEngulfed` logic: only the utility version is used across the codebase.
-- Added `paramCount` to all multi-candle patterns in `patternChain` for correct match length in results.
-- Refactored `patternChain` to precompute candle properties once per call, improving efficiency and consistency.
-- Expanded and clarified tests:
-  - Direct tests for all utility functions, including edge cases (doji, no range, negative/extreme values).
-  - Added/updated tests for multi-candle pattern matches and edge cases in `patternChain`.
-- Updated documentation:
-  - README now includes explicit technical thresholds for patterns, performance tips, and a new FAQ.
-  - Clarified that the library does not mutate input data.
-  - Documented multi-candle match behavior and `paramCount` in pattern chaining.
-- Cleaned up packaging:
-  - Removed `test/` and non-existent `HISTORY.md` from npm package files.
-  - Ensured only relevant documentation and source files are included.
-
-**Other:**
-- All tests pass and coverage is 100%.
-
----
+- chore\(actions\): bump actions/first-interaction from 1 to 2 [\#23](https://github.com/cm45t3r/candlestick/pull/23) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(actions\): bump actions/checkout from 3 to 4 [\#22](https://github.com/cm45t3r/candlestick/pull/22) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(actions\): bump actions/setup-node from 3 to 4 [\#21](https://github.com/cm45t3r/candlestick/pull/21) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(actions\): bump heinrichreimer/github-changelog-generator-action from 2.3 to 2.4 [\#20](https://github.com/cm45t3r/candlestick/pull/20) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(actions\): bump github/codeql-action from 2 to 3 [\#19](https://github.com/cm45t3r/candlestick/pull/19) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.0.1](https://github.com/cm45t3r/candlestick/tree/v1.0.1) (2025-07-24)
 
-[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v1.0.0...v1.0.1)
-
-## [v1.0.0](https://github.com/cm45t3r/candlestick/tree/v1.0.0) (2025-07-24)
-
-[Full Changelog](https://github.com/cm45t3r/candlestick/compare/0.0.7...v1.0.0)
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/0.0.7...v1.0.1)
 
 **Implemented enhancements:**
 
