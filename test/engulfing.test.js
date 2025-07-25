@@ -1,17 +1,19 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
+const utils = require('../src/utils.js');
 const engulfing = require('../src/engulfing.js');
 
 describe('engulfing', () => {
   it('isEngulfed: detects engulfed body', () => {
-    const prev = { open: 10, close: 12 };
-    const curr = { open: 9, close: 13 };
-    assert.equal(engulfing.isEngulfed(prev, curr), true);
+    const prev = { open: 10, close: 15 };
+    const curr = { open: 8, close: 18 };
+    // Use utils.isEngulfed instead of engulfing.isEngulfed
+    assert.equal(utils.isEngulfed(prev, curr), true);
   });
   it('isEngulfed: rejects non-engulfed body', () => {
-    const prev = { open: 10, close: 12 };
-    const curr = { open: 11, close: 13 };
-    assert.equal(engulfing.isEngulfed(prev, curr), false);
+    const prev = { open: 10, close: 15 };
+    const curr = { open: 12, close: 14 };
+    assert.equal(utils.isEngulfed(prev, curr), false);
   });
   it('isBullishEngulfing: detects bullish engulfing', () => {
     const prev = { open: 12, high: 13, low: 10, close: 10 };

@@ -7,22 +7,24 @@ const reversal = require('./reversal.js');
 const doji = require('./doji.js');
 
 const allPatterns = [
-  { name: 'hammer', fn: hammer.hammer },
-  { name: 'bullishHammer', fn: hammer.bullishHammer },
-  { name: 'bearishHammer', fn: hammer.bearishHammer },
-  { name: 'invertedHammer', fn: invertedHammer.invertedHammer },
-  { name: 'bullishInvertedHammer', fn: invertedHammer.bullishInvertedHammer },
-  { name: 'bearishInvertedHammer', fn: invertedHammer.bearishInvertedHammer },
-  { name: 'bullishEngulfing', fn: engulfing.bullishEngulfing },
-  { name: 'bearishEngulfing', fn: engulfing.bearishEngulfing },
-  { name: 'bullishHarami', fn: harami.bullishHarami },
-  { name: 'bearishHarami', fn: harami.bearishHarami },
-  { name: 'bullishKicker', fn: kicker.bullishKicker },
-  { name: 'bearishKicker', fn: kicker.bearishKicker },
-  { name: 'hangingMan', fn: reversal.hangingMan },
-  { name: 'shootingStar', fn: reversal.shootingStar },
-  { name: 'doji', fn: doji.doji },
+  { name: 'hammer', fn: hammer.hammer, paramCount: 1 },
+  { name: 'bullishHammer', fn: hammer.bullishHammer, paramCount: 1 },
+  { name: 'bearishHammer', fn: hammer.bearishHammer, paramCount: 1 },
+  { name: 'invertedHammer', fn: invertedHammer.invertedHammer, paramCount: 1 },
+  { name: 'bullishInvertedHammer', fn: invertedHammer.bullishInvertedHammer, paramCount: 1 },
+  { name: 'bearishInvertedHammer', fn: invertedHammer.bearishInvertedHammer, paramCount: 1 },
+  { name: 'bullishEngulfing', fn: engulfing.bullishEngulfing, paramCount: 2 },
+  { name: 'bearishEngulfing', fn: engulfing.bearishEngulfing, paramCount: 2 },
+  { name: 'bullishHarami', fn: harami.bullishHarami, paramCount: 2 },
+  { name: 'bearishHarami', fn: harami.bearishHarami, paramCount: 2 },
+  { name: 'bullishKicker', fn: kicker.bullishKicker, paramCount: 2 },
+  { name: 'bearishKicker', fn: kicker.bearishKicker, paramCount: 2 },
+  { name: 'hangingMan', fn: reversal.hangingMan, paramCount: 2 },
+  { name: 'shootingStar', fn: reversal.shootingStar, paramCount: 2 },
+  { name: 'doji', fn: doji.doji, paramCount: 1 },
 ];
+
+const { precomputeCandleProps } = require('./utils.js');
 
 /**
  * Scans a candlestick series for a sequence of patterns.
@@ -31,12 +33,13 @@ const allPatterns = [
  * @returns {Array<{ index: number, pattern: string, match: Object|Array<Object> }>} Array of matches
  */
 function patternChain(candles, patterns = allPatterns) {
+  const precomputed = precomputeCandleProps(candles);
   const results = [];
   for (const pattern of patterns) {
     const { name, fn, paramCount = 1 } = pattern;
-    const indices = fn(candles);
+    const indices = fn(precomputed);
     for (const idx of indices) {
-      const match = candles.slice(idx, idx + paramCount);
+      const match = precomputed.slice(idx, idx + paramCount);
       results.push({ index: idx, pattern: name, match });
     }
   }

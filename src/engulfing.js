@@ -1,22 +1,7 @@
 // engulfing.js
 // Engulfing pattern logic extracted from candlestick.js
 
-const { findPattern, precomputeCandleProps } = require('./utils.js');
-
-/**
- * Returns true if the previous candle's body is engulfed by the current candle's body.
- * @param {Object} previous - { bodyEnds }
- * @param {Object} current - { bodyEnds }
- * @return {boolean}
- */
-function isEngulfed(previous, current) {
-  let p = previous, c = current;
-  if (!p.bodyEnds || !c.bodyEnds) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
-  }
-  return p.bodyEnds.top <= c.bodyEnds.top &&
-    p.bodyEnds.bottom >= c.bodyEnds.bottom;
-}
+const { findPattern, precomputeCandleProps, isEngulfed } = require('./utils.js');
 
 /**
  * Returns true if a bearish candle is followed by a bullish candle that engulfs the previous body (Bullish Engulfing).
@@ -27,7 +12,7 @@ function isEngulfed(previous, current) {
 function isBullishEngulfing(previous, current) {
   let p = previous, c = current;
   if (p.isBearish === undefined || c.isBullish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = precomputeCandleProps([previous, current]);
   }
   return p.isBearish && c.isBullish && isEngulfed(p, c);
 }
@@ -41,7 +26,7 @@ function isBullishEngulfing(previous, current) {
 function isBearishEngulfing(previous, current) {
   let p = previous, c = current;
   if (p.isBullish === undefined || c.isBearish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = precomputeCandleProps([previous, current]);
   }
   return p.isBullish && c.isBearish && isEngulfed(p, c);
 }
@@ -67,7 +52,6 @@ function bearishEngulfing(dataArray) {
 }
 
 module.exports = {
-  isEngulfed,
   isBullishEngulfing,
   isBearishEngulfing,
   bullishEngulfing,

@@ -52,4 +52,18 @@ describe('utils', () => {
     const indices = utils.findPattern(arr, utils.isBullish);
     assert.deepStrictEqual(indices, [0, 2]);
   });
+  it('bodyLen: returns 0 for open == close (doji)', () => {
+    assert.equal(utils.bodyLen({ open: 10, close: 10 }), 0);
+  });
+  it('wickLen: returns 0 for high == open == close', () => {
+    assert.equal(utils.wickLen({ open: 10, high: 10, close: 10 }), 0);
+  });
+  it('tailLen: returns 0 for low == open == close', () => {
+    assert.equal(utils.tailLen({ open: 10, low: 10, close: 10 }), 0);
+  });
+  it('handles negative and extreme values', () => {
+    assert.equal(utils.bodyLen({ open: -100, close: 100 }), 200);
+    assert.equal(utils.wickLen({ open: -100, high: 200, close: 100 }), 100);
+    assert.equal(utils.tailLen({ open: -100, low: -200, close: 100 }), 100);
+  });
 }); 

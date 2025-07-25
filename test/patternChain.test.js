@@ -1,10 +1,15 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { patternChain } = require('../src/patternChain.js');
+const { patternChain, allPatterns } = require('../src/patternChain.js');
 const hammer = require('../src/hammer.js');
 const doji = require('../src/doji.js');
 const engulfing = require('../src/engulfing.js');
 const utils = require('../src/utils.js');
+
+function stripComputed(candle) {
+  const { open, high, low, close } = candle;
+  return { open, high, low, close };
+}
 
 describe('patternChain', () => {
   it('finds multiple patterns in a series', () => {
@@ -27,9 +32,9 @@ describe('patternChain', () => {
         { index: 2, pattern: 'doji' },
       ]
     );
-    assert.deepStrictEqual(results[0].match, [candles[0]]);
-    assert.deepStrictEqual(results[1].match, [candles[1]]);
-    assert.deepStrictEqual(results[2].match, [candles[2]]);
+    assert.deepStrictEqual(results[0].match.map(stripComputed), [candles[0]]);
+    assert.deepStrictEqual(results[1].match.map(stripComputed), [candles[1]]);
+    assert.deepStrictEqual(results[2].match.map(stripComputed), [candles[2]]);
   });
 
   it('returns empty array if no patterns found', () => {
@@ -67,7 +72,11 @@ describe('patternChain', () => {
     const results = patternChain(candles, [
       { name: 'bullishEngulfing', fn: engulfing.bullishEngulfing, paramCount: 2 },
     ]);
-    assert.deepStrictEqual(results, [
+    assert.deepStrictEqual(results.map(r => ({
+      index: r.index,
+      pattern: r.pattern,
+      match: r.match.map(stripComputed),
+    })), [
       { index: 0, pattern: 'bullishEngulfing', match: [candles[0], candles[1]] },
     ]);
   });
@@ -108,15 +117,19 @@ describe('patternChain', () => {
       return a.open < a.close && b.open > b.close;
     }
     const candles = [
-      { open: 10, close: 20 }, // bullish
-      { open: 20, close: 10 }, // bearish
-      { open: 10, close: 20 }, // bullish
-      { open: 20, close: 10 }, // bearish
+      { open: 10, high: 20, low: 5, close: 20 }, // bullish
+      { open: 20, high: 21, low: 10, close: 10 }, // bearish
+      { open: 10, high: 20, low: 5, close: 20 }, // bullish
+      { open: 20, high: 21, low: 10, close: 10 }, // bearish
     ];
     const results = patternChain(candles, [
       { name: 'bullBear', fn: arr => utils.findPattern(arr, bullBear), paramCount: 2 },
     ]);
-    assert.deepStrictEqual(results, [
+    assert.deepStrictEqual(results.map(r => ({
+      index: r.index,
+      pattern: r.pattern,
+      match: r.match.map(stripComputed),
+    })), [
       { index: 0, pattern: 'bullBear', match: [candles[0], candles[1]] },
       { index: 2, pattern: 'bullBear', match: [candles[2], candles[3]] },
     ]);
@@ -127,5 +140,23 @@ describe('patternChain', () => {
       { name: 'bullishHammer', fn: hammer.bullishHammer },
     ]);
     assert.deepStrictEqual(results, []);
+  });
+
+  it('multi-candle patterns in allPatterns return correct match length', () => {
+    // Find all patterns with paramCount > 1
+    const multiPatterns = allPatterns.filter(p => p.paramCount > 1);
+    // Create a generic two-candle bullish/bearish sequence
+    const candles = [
+      { open: 10, high: 15, low: 9, close: 8 }, // bearish
+      { open: 8, high: 16, low: 7, close: 15 }, // bullish
+      { open: 15, high: 18, low: 14, close: 17 }, // bullish
+      { open: 17, high: 19, low: 16, close: 16 }, // bearish
+    ];
+    for (const pattern of multiPatterns) {
+      const results = patternChain(candles, [pattern]);
+      for (const r of results) {
+        assert.equal(r.match.length, pattern.paramCount, `Pattern ${pattern.name} should return match of length ${pattern.paramCount}`);
+      }
+    }
   });
 }); 

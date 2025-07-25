@@ -150,18 +150,22 @@ const matches = patternChain(dataArray, [
 ]);
 ```
 
+> **Multi-candle patterns:** Patterns like Engulfing, Harami, Kicker, Hanging Man, and Shooting Star span two candles. The `match` array in the result will contain both candles (length 2), thanks to the `paramCount` property. Single-candle patterns return a single-element array.
+
 ---
 
 ## Pattern Descriptions
 
-- **Hammer**: Small body near the top, long lower shadow. Signals possible bullish reversal.
-- **Inverted Hammer**: Small body near the bottom, long upper shadow. Bullish reversal signal.
-- **Doji**: Very small body, open ≈ close. Indicates indecision.
-- **Engulfing**: Second candle's body fully engulfs the previous. Bullish or bearish.
-- **Harami**: Second candle's body is inside the previous. Bullish or bearish.
+- **Hammer**: Small body near the top (body < 1/3 of range), long lower shadow (tail ≥ 2× body), small upper shadow. Signals possible bullish reversal.
+- **Inverted Hammer**: Small body near the bottom, long upper shadow (wick ≥ 2× body), small lower shadow. Bullish reversal signal.
+- **Doji**: Very small body (body < 10% of range), open ≈ close. Indicates indecision. Candle must have range (high > low).
+- **Engulfing**: Second candle's body fully engulfs the previous (body range covers previous body). Bullish or bearish.
+- **Harami**: Second candle's body is inside the previous (body range within previous body). Bullish or bearish.
 - **Kicker**: Strong reversal with a gap and opposite color. Bullish or bearish.
 - **Hanging Man**: Bullish candle followed by a bearish hammer with a gap up. Bearish reversal.
 - **Shooting Star**: Bullish candle followed by a bearish inverted hammer with a gap up. Bearish reversal.
+
+> **Note:** The library does not mutate your input data. All pattern functions return new objects with precomputed properties (e.g., `bodyLen`, `wickLen`, etc.) as needed. If you plan to run many pattern detectors on the same data, you can precompute properties once using `precomputeCandleProps` from the utilities for better performance.
 
 ---
 
@@ -245,6 +249,24 @@ npm test
 ## Changelog
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
+
+---
+
+## FAQ
+
+**Q: Why is my pattern not detected?**
+- Ensure your candle objects have all required fields (`open`, `high`, `low`, `close`).
+- Check that the pattern’s technical thresholds are met (see Pattern Descriptions above).
+- The library does not check for trend context (e.g., uptrend/downtrend) — it only looks at candle shapes.
+
+**Q: Does this library mutate my data?**
+- No. All computations are done on copies; your input data is never changed.
+
+**Q: Can I use this with TypeScript?**
+- The library is written in JS, but JSDoc comments provide some type hints. TypeScript support is planned (see ROADMAP.md).
+
+**Q: Are there visual examples of patterns?**
+- Not yet, but this is planned (see ROADMAP.md). For now, see the pattern descriptions and links to external resources.
 
 ---
 
