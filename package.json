@@ -86,7 +86,6 @@
     "@eslint/eslintrc": "latest",
     "@eslint/js": "latest",
     "c8": "latest",
-    "coveralls": "latest",
     "eslint": "latest",
     "eslint-config-prettier": "latest",
     "prettier": "latest"
