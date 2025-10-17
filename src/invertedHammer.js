@@ -1,7 +1,7 @@
 // invertedHammer.js
 // Inverted Hammer (Inverted Pinbar) pattern logic extracted from candlestick.js
 
-const { findPattern, precomputeCandleProps } = require('./utils.js');
+const { findPattern, precomputeCandleProps } = require("./utils.js");
 
 /**
  * Returns true if the candle is an Inverted Hammer (body in lower third, long upper shadow, small lower shadow).
@@ -10,8 +10,12 @@ const { findPattern, precomputeCandleProps } = require('./utils.js');
  */
 function isInvertedHammer(candlestick) {
   let c = candlestick;
-  if (c.bodyLen === undefined || c.wickLen === undefined || c.tailLen === undefined) {
-    c = require('./utils.js').precomputeCandleProps([candlestick])[0];
+  if (
+    c.bodyLen === undefined ||
+    c.wickLen === undefined ||
+    c.tailLen === undefined
+  ) {
+    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
   }
   const { bodyLen, tailLen, wickLen, high, low, open, close } = c;
   const range = high - low;
@@ -21,7 +25,7 @@ function isInvertedHammer(candlestick) {
     range > 0 &&
     wickLen >= 2 * bodyLen &&
     tailLen <= bodyLen + epsilon &&
-    (Math.min(open, close) <= high - range * 2 / 3 + epsilon)
+    Math.min(open, close) <= high - (range * 2) / 3 + epsilon
   );
 }
 
@@ -33,7 +37,7 @@ function isInvertedHammer(candlestick) {
 function isBullishInvertedHammer(candlestick) {
   let c = candlestick;
   if (c.isBullish === undefined) {
-    c = require('./utils.js').precomputeCandleProps([candlestick])[0];
+    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
   }
   return c.isBullish && isInvertedHammer(c);
 }
@@ -46,7 +50,7 @@ function isBullishInvertedHammer(candlestick) {
 function isBearishInvertedHammer(candlestick) {
   let c = candlestick;
   if (c.isBearish === undefined) {
-    c = require('./utils.js').precomputeCandleProps([candlestick])[0];
+    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
   }
   return c.isBearish && isInvertedHammer(c);
 }

@@ -1,6 +1,6 @@
 {
   "name": "candlestick",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "JavaScript library for candlestick patterns detection.",
   "homepage": "https://github.com/cm45t3r/candlestick",
   "author": {
@@ -31,10 +31,18 @@
     "technical-analysis-library",
     "technical-analysis-methods",
     "technical-analysis",
-    "technical-indicators"
+    "technical-indicators",
+    "trading",
+    "stocks",
+    "forex",
+    "crypto",
+    "chart-patterns"
   ],
   "files": [
     "src/",
+    "types/",
+    "cli/",
+    "bin/",
     "CHANGELOG.md",
     "index.js",
     "LICENSE",
@@ -42,9 +50,19 @@
     "package.json",
     "README.md"
   ],
-  "exports": {
-    ".": "./index.js"
+  "bin": {
+    "candlestick": "./bin/candlestick"
   },
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "require": "./index.js",
+      "types": "./types/index.d.ts"
+    }
+  },
+  "main": "index.js",
+  "module": "src/index.mjs",
+  "types": "types/index.d.ts",
   "sideEffects": false,
   "funding": {
     "type": "github",
@@ -52,14 +70,18 @@
   },
   "scripts": {
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "node --test",
+    "test:watch": "node --test --watch",
     "coverage": "c8 --reporter=text --reporter=lcov npm test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "bench": "node benchmark.js",
+    "prepublishOnly": "npm run lint && npm test"
   },
   "engines": {
     "node": ">=18"
   },
-  "main": "index.js",
   "devDependencies": {
     "@eslint/eslintrc": "latest",
     "@eslint/js": "latest",

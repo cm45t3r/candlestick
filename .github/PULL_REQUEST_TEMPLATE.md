@@ -1,9 +1,11 @@
 # Pull Request
 
 ## What does this PR do?
+
 Briefly describe your changes and link any related issues.
 
 ## Checklist
+
 - [ ] All tests pass (`npm test`)
 - [ ] Lint passes (`npm run lint`)
 - [ ] Code is formatted (Prettier)
@@ -11,4 +13,5 @@ Briefly describe your changes and link any related issues.
 - [ ] PR description explains the change
 
 ## Additional context
-Add any other context, screenshots, or details here. 
+
+Add any other context, screenshots, or details here.

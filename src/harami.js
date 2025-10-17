@@ -1,7 +1,11 @@
 // harami.js
 // Harami pattern logic extracted from candlestick.js
 
-const { isEngulfed, findPattern, precomputeCandleProps } = require('./utils.js');
+const {
+  isEngulfed,
+  findPattern,
+  precomputeCandleProps,
+} = require("./utils.js");
 
 /**
  * Returns true if a bearish candle is followed by a smaller bullish candle inside the previous body (Bullish Harami).
@@ -10,9 +14,10 @@ const { isEngulfed, findPattern, precomputeCandleProps } = require('./utils.js')
  * @return {boolean}
  */
 function isBullishHarami(previous, current) {
-  let p = previous, c = current;
+  let p = previous,
+    c = current;
   if (p.isBearish === undefined || c.isBullish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
   }
   return p.isBearish && c.isBullish && isEngulfed(c, p);
 }
@@ -24,9 +29,10 @@ function isBullishHarami(previous, current) {
  * @return {boolean}
  */
 function isBearishHarami(previous, current) {
-  let p = previous, c = current;
+  let p = previous,
+    c = current;
   if (p.isBullish === undefined || c.isBearish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
   }
   return p.isBullish && c.isBearish && isEngulfed(c, p);
 }

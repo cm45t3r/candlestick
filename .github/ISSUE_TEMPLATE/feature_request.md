@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea or improvement for Candlestick
 labels: enhancement
-assignees: ''
+assignees: ""
 ---
 
 **Is your feature request related to a problem? Please describe.**
@@ -16,6 +16,7 @@ Why is this feature important? Who would benefit from it?
 
 **Proposed API / Example**
 If applicable, sketch out what the API or usage might look like:
+
 ```js
 // Example usage
 ```
@@ -33,6 +34,7 @@ Does this feature have any security or privacy implications?
 Add any other context, screenshots, or details here.
 
 **Checklist**
+
 - [ ] I have searched for existing issues
 - [ ] I have described the use case and motivation
 - [ ] I have provided an example or API sketch (if applicable)

@@ -3,7 +3,7 @@ name: Release Automation
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   changelog:
@@ -39,4 +39,4 @@ jobs:
           release_name: Release ${{ github.ref_name }}
           body_path: CHANGELOG.md
           draft: false
-          prerelease: false 
+          prerelease: false

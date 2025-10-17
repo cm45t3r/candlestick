@@ -1,30 +1,58 @@
-const hammer = require('./hammer.js');
-const invertedHammer = require('./invertedHammer.js');
-const engulfing = require('./engulfing.js');
-const harami = require('./harami.js');
-const kicker = require('./kicker.js');
-const reversal = require('./reversal.js');
-const doji = require('./doji.js');
+const hammer = require("./hammer.js");
+const invertedHammer = require("./invertedHammer.js");
+const engulfing = require("./engulfing.js");
+const harami = require("./harami.js");
+const kicker = require("./kicker.js");
+const reversal = require("./reversal.js");
+const doji = require("./doji.js");
+const morningStar = require("./morningStar.js");
+const eveningStar = require("./eveningStar.js");
+const threeWhiteSoldiers = require("./threeWhiteSoldiers.js");
+const threeBlackCrows = require("./threeBlackCrows.js");
+const piercingLine = require("./piercingLine.js");
+const darkCloudCover = require("./darkCloudCover.js");
 
 const allPatterns = [
-  { name: 'hammer', fn: hammer.hammer, paramCount: 1 },
-  { name: 'bullishHammer', fn: hammer.bullishHammer, paramCount: 1 },
-  { name: 'bearishHammer', fn: hammer.bearishHammer, paramCount: 1 },
-  { name: 'invertedHammer', fn: invertedHammer.invertedHammer, paramCount: 1 },
-  { name: 'bullishInvertedHammer', fn: invertedHammer.bullishInvertedHammer, paramCount: 1 },
-  { name: 'bearishInvertedHammer', fn: invertedHammer.bearishInvertedHammer, paramCount: 1 },
-  { name: 'bullishEngulfing', fn: engulfing.bullishEngulfing, paramCount: 2 },
-  { name: 'bearishEngulfing', fn: engulfing.bearishEngulfing, paramCount: 2 },
-  { name: 'bullishHarami', fn: harami.bullishHarami, paramCount: 2 },
-  { name: 'bearishHarami', fn: harami.bearishHarami, paramCount: 2 },
-  { name: 'bullishKicker', fn: kicker.bullishKicker, paramCount: 2 },
-  { name: 'bearishKicker', fn: kicker.bearishKicker, paramCount: 2 },
-  { name: 'hangingMan', fn: reversal.hangingMan, paramCount: 2 },
-  { name: 'shootingStar', fn: reversal.shootingStar, paramCount: 2 },
-  { name: 'doji', fn: doji.doji, paramCount: 1 },
+  { name: "hammer", fn: hammer.hammer, paramCount: 1 },
+  { name: "bullishHammer", fn: hammer.bullishHammer, paramCount: 1 },
+  { name: "bearishHammer", fn: hammer.bearishHammer, paramCount: 1 },
+  { name: "invertedHammer", fn: invertedHammer.invertedHammer, paramCount: 1 },
+  {
+    name: "bullishInvertedHammer",
+    fn: invertedHammer.bullishInvertedHammer,
+    paramCount: 1,
+  },
+  {
+    name: "bearishInvertedHammer",
+    fn: invertedHammer.bearishInvertedHammer,
+    paramCount: 1,
+  },
+  { name: "bullishEngulfing", fn: engulfing.bullishEngulfing, paramCount: 2 },
+  { name: "bearishEngulfing", fn: engulfing.bearishEngulfing, paramCount: 2 },
+  { name: "bullishHarami", fn: harami.bullishHarami, paramCount: 2 },
+  { name: "bearishHarami", fn: harami.bearishHarami, paramCount: 2 },
+  { name: "bullishKicker", fn: kicker.bullishKicker, paramCount: 2 },
+  { name: "bearishKicker", fn: kicker.bearishKicker, paramCount: 2 },
+  { name: "hangingMan", fn: reversal.hangingMan, paramCount: 2 },
+  { name: "shootingStar", fn: reversal.shootingStar, paramCount: 2 },
+  { name: "piercingLine", fn: piercingLine.piercingLine, paramCount: 2 },
+  { name: "darkCloudCover", fn: darkCloudCover.darkCloudCover, paramCount: 2 },
+  { name: "doji", fn: doji.doji, paramCount: 1 },
+  { name: "morningStar", fn: morningStar.morningStar, paramCount: 3 },
+  { name: "eveningStar", fn: eveningStar.eveningStar, paramCount: 3 },
+  {
+    name: "threeWhiteSoldiers",
+    fn: threeWhiteSoldiers.threeWhiteSoldiers,
+    paramCount: 3,
+  },
+  {
+    name: "threeBlackCrows",
+    fn: threeBlackCrows.threeBlackCrows,
+    paramCount: 3,
+  },
 ];
 
-const { precomputeCandleProps } = require('./utils.js');
+const { precomputeCandleProps } = require("./utils.js");
 
 /**
  * Scans a candlestick series for a sequence of patterns.

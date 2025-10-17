@@ -1,7 +1,7 @@
 // doji.js
 // Doji pattern detection module
 
-const { findPattern, precomputeCandleProps } = require('./utils.js');
+const { findPattern, precomputeCandleProps } = require("./utils.js");
 
 /**
  * Returns true if the candlestick is a Doji (body is very small compared to the range, indicating indecision).
@@ -11,7 +11,7 @@ const { findPattern, precomputeCandleProps } = require('./utils.js');
 function isDoji(candlestick) {
   let c = candlestick;
   if (c.bodyLen === undefined) {
-    c = require('./utils.js').precomputeCandleProps([candlestick])[0];
+    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
   }
   const { high, low, bodyLen } = c;
   const range = high - low;

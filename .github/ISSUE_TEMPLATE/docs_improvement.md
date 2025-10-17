@@ -2,7 +2,7 @@
 name: Documentation Improvement
 about: Suggest or contribute improvements to the documentation
 labels: documentation
-assignees: ''
+assignees: ""
 ---
 
 **What part of the documentation needs improvement?**
@@ -18,6 +18,7 @@ Describe your proposed change or addition. If you have a PR, link it here.
 Add any other context, screenshots, or details here.
 
 **Checklist**
+
 - [ ] I have searched for existing documentation issues
 - [ ] I have described the unclear or missing part
-- [ ] I have proposed a change or addition 
+- [ ] I have proposed a change or addition

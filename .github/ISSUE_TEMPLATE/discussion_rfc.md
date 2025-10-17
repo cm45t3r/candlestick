@@ -2,7 +2,7 @@
 name: Discussion / RFC
 about: Propose a major design, API, or architectural change for discussion
 labels: discussion
-assignees: ''
+assignees: ""
 ---
 
 **What problem are you trying to solve?**
@@ -24,6 +24,7 @@ Link to any related issues, PRs, or external references.
 Add any other context, diagrams, or details here.
 
 **Checklist**
+
 - [ ] I have searched for existing discussions or RFCs
 - [ ] I have described the problem and proposed solution
-- [ ] I have considered alternatives and user impact 
+- [ ] I have considered alternatives and user impact

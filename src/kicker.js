@@ -1,9 +1,14 @@
 // kicker.js
 // Kicker pattern logic extracted from candlestick.js
 
-const { hasGapUp, hasGapDown, findPattern, precomputeCandleProps } = require('./utils.js');
-const { isHammer } = require('./hammer.js');
-const { isInvertedHammer } = require('./invertedHammer.js');
+const {
+  hasGapUp,
+  hasGapDown,
+  findPattern,
+  precomputeCandleProps,
+} = require("./utils.js");
+const { isHammer } = require("./hammer.js");
+const { isInvertedHammer } = require("./invertedHammer.js");
 
 /**
  * Returns true if a bearish candle is followed by a bullish candle with a gap up (not a hammer or inverted hammer). (Bullish Kicker)
@@ -12,11 +17,17 @@ const { isInvertedHammer } = require('./invertedHammer.js');
  * @return {boolean}
  */
 function isBullishKicker(previous, current) {
-  let p = previous, c = current;
+  let p = previous,
+    c = current;
   if (p.isBearish === undefined || c.isBullish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
   }
-  return p.isBearish && c.isBullish && hasGapUp(p, c) && !(isHammer(c) || isInvertedHammer(c));
+  return (
+    p.isBearish &&
+    c.isBullish &&
+    hasGapUp(p, c) &&
+    !(isHammer(c) || isInvertedHammer(c))
+  );
 }
 
 /**
@@ -26,11 +37,17 @@ function isBullishKicker(previous, current) {
  * @return {boolean}
  */
 function isBearishKicker(previous, current) {
-  let p = previous, c = current;
+  let p = previous,
+    c = current;
   if (p.isBullish === undefined || c.isBearish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
   }
-  return p.isBullish && c.isBearish && hasGapDown(p, c) && !(isHammer(c) || isInvertedHammer(c));
+  return (
+    p.isBullish &&
+    c.isBearish &&
+    hasGapDown(p, c) &&
+    !(isHammer(c) || isInvertedHammer(c))
+  );
 }
 
 /**

@@ -34,9 +34,9 @@ function tailLen(candlestick) {
  * @return {Object} { bottom, top }
  */
 function bodyEnds(candlestick) {
-  return candlestick.open <= candlestick.close ?
-    { bottom: candlestick.open, top: candlestick.close } :
-    { bottom: candlestick.close, top: candlestick.open };
+  return candlestick.open <= candlestick.close
+    ? { bottom: candlestick.open, top: candlestick.close }
+    : { bottom: candlestick.close, top: candlestick.open };
 }
 
 /**
@@ -84,8 +84,10 @@ function hasGapDown(previous, current) {
  * @return {boolean}
  */
 function isEngulfed(previous, current) {
-  return bodyEnds(previous).top <= bodyEnds(current).top &&
-    bodyEnds(previous).bottom >= bodyEnds(current).bottom;
+  return (
+    bodyEnds(previous).top <= bodyEnds(current).top &&
+    bodyEnds(previous).bottom >= bodyEnds(current).bottom
+  );
 }
 
 /**
@@ -117,15 +119,16 @@ function findPattern(dataArray, callback) {
  * @return {Array<Object>} Array of candles with cached properties
  */
 function precomputeCandleProps(dataArray) {
-  return dataArray.map(candle => {
+  return dataArray.map((candle) => {
     const body = Math.abs(candle.open - candle.close);
     const wick = candle.high - Math.max(candle.open, candle.close);
     const tail = Math.min(candle.open, candle.close) - candle.low;
     const bullish = candle.open < candle.close;
     const bearish = candle.open > candle.close;
-    const bodyEndsObj = candle.open <= candle.close
-      ? { bottom: candle.open, top: candle.close }
-      : { bottom: candle.close, top: candle.open };
+    const bodyEndsObj =
+      candle.open <= candle.close
+        ? { bottom: candle.open, top: candle.close }
+        : { bottom: candle.close, top: candle.open };
     return {
       ...candle,
       bodyLen: body,
@@ -136,6 +139,97 @@ function precomputeCandleProps(dataArray) {
       bodyEnds: bodyEndsObj,
     };
   });
+}
+
+/**
+ * Validate OHLC data structure and relationships.
+ * @param {any} candle - Candlestick data to validate
+ * @param {boolean} throwError - Whether to throw an error on validation failure (default: true)
+ * @return {boolean} True if valid, false otherwise
+ */
+function validateOHLC(candle, throwError = true) {
+  const errors = [];
+
+  // Check if candle is an object
+  if (!candle || typeof candle !== "object") {
+    errors.push("Candle must be an object");
+  } else {
+    // Check required fields
+    const requiredFields = ["open", "high", "low", "close"];
+    for (const field of requiredFields) {
+      if (!(field in candle)) {
+        errors.push(`Missing required field: ${field}`);
+      } else if (typeof candle[field] !== "number") {
+        errors.push(
+          `Field ${field} must be a number, got ${typeof candle[field]}`,
+        );
+      } else if (!Number.isFinite(candle[field])) {
+        errors.push(`Field ${field} must be a finite number`);
+      }
+    }
+
+    // Check OHLC relationships if all fields are present and valid
+    if (errors.length === 0) {
+      if (candle.high < candle.low) {
+        errors.push(`High (${candle.high}) must be >= Low (${candle.low})`);
+      }
+      if (candle.high < candle.open) {
+        errors.push(`High (${candle.high}) must be >= Open (${candle.open})`);
+      }
+      if (candle.high < candle.close) {
+        errors.push(`High (${candle.high}) must be >= Close (${candle.close})`);
+      }
+      if (candle.low > candle.open) {
+        errors.push(`Low (${candle.low}) must be <= Open (${candle.open})`);
+      }
+      if (candle.low > candle.close) {
+        errors.push(`Low (${candle.low}) must be <= Close (${candle.close})`);
+      }
+    }
+  }
+
+  if (errors.length > 0 && throwError) {
+    throw new Error(`Invalid OHLC data: ${errors.join(", ")}`);
+  }
+
+  return errors.length === 0;
+}
+
+/**
+ * Validate an array of OHLC data.
+ * @param {any[]} dataArray - Array of candlestick data to validate
+ * @param {boolean} throwError - Whether to throw an error on validation failure (default: true)
+ * @return {boolean} True if all candles are valid, false otherwise
+ */
+function validateOHLCArray(dataArray, throwError = true) {
+  if (!Array.isArray(dataArray)) {
+    if (throwError) {
+      throw new Error("Data must be an array");
+    }
+    return false;
+  }
+
+  if (dataArray.length === 0) {
+    if (throwError) {
+      throw new Error("Data array cannot be empty");
+    }
+    return false;
+  }
+
+  for (let i = 0; i < dataArray.length; i++) {
+    try {
+      if (!validateOHLC(dataArray[i], throwError)) {
+        return false;
+      }
+    } catch (error) {
+      if (throwError) {
+        throw new Error(`Invalid candle at index ${i}: ${error.message}`);
+      }
+      return false;
+    }
+  }
+
+  return true;
 }
 
 module.exports = {
@@ -150,4 +244,6 @@ module.exports = {
   findPattern,
   isEngulfed,
   precomputeCandleProps,
+  validateOHLC,
+  validateOHLCArray,
 };

@@ -2,7 +2,7 @@
 name: Question / Support Request
 about: Ask a question or request help with Candlestick
 labels: question
-assignees: ''
+assignees: ""
 ---
 
 **What are you trying to do?**
@@ -16,14 +16,16 @@ List any relevant docs, README sections, or issues you have checked.
 
 **Code sample (if applicable)**
 Paste a minimal code snippet that shows your question or problem:
+
 ```js
 // Your code here
 ```
 
 **Environment**
+
 - OS: [e.g. macOS, Linux, Windows]
 - Node.js version: [e.g. 20.10.0]
 - Candlestick version: [e.g. 1.0.0]
 
 **Additional context**
-Add any other context, screenshots, or details here. 
+Add any other context, screenshots, or details here.

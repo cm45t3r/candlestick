@@ -9,10 +9,10 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-    - uses: actions/first-interaction@v2
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: |
-          Thank you for contributing to candlestick! Please review our [Contributing Guidelines](https://github.com/cm45t3r/candlestick/blob/main/CONTRIBUTING.md) and [Code of Conduct](https://github.com/cm45t3r/candlestick/blob/main/CODE_OF_CONDUCT.md). Feel free to report any issue or ask for new features.
-        pr-message: |
-          Thank you very much for your meaningful contribution! Please make sure your PR follows our [Contributing Guidelines](https://github.com/cm45t3r/candlestick/blob/main/CONTRIBUTING.md) and [Code of Conduct](https://github.com/cm45t3r/candlestick/blob/main/CODE_OF_CONDUCT.md). We will review it as soon as possible.
+      - uses: actions/first-interaction@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            Thank you for contributing to candlestick! Please review our [Contributing Guidelines](https://github.com/cm45t3r/candlestick/blob/main/CONTRIBUTING.md) and [Code of Conduct](https://github.com/cm45t3r/candlestick/blob/main/CODE_OF_CONDUCT.md). Feel free to report any issue or ask for new features.
+          pr-message: |
+            Thank you very much for your meaningful contribution! Please make sure your PR follows our [Contributing Guidelines](https://github.com/cm45t3r/candlestick/blob/main/CONTRIBUTING.md) and [Code of Conduct](https://github.com/cm45t3r/candlestick/blob/main/CODE_OF_CONDUCT.md). We will review it as soon as possible.

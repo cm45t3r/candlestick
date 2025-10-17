@@ -1,9 +1,9 @@
 // reversal.js
 // Hanging Man and Shooting Star pattern logic extracted from candlestick.js
 
-const { findPattern, precomputeCandleProps } = require('./utils.js');
-const { isBearishHammer } = require('./hammer.js');
-const { isBearishInvertedHammer } = require('./invertedHammer.js');
+const { findPattern, precomputeCandleProps } = require("./utils.js");
+const { isBearishHammer } = require("./hammer.js");
+const { isBearishInvertedHammer } = require("./invertedHammer.js");
 
 /**
  * Returns true if a bullish candle is followed by a bearish hammer with a gap up (Hanging Man).
@@ -12,9 +12,10 @@ const { isBearishInvertedHammer } = require('./invertedHammer.js');
  * @return {boolean}
  */
 function isHangingMan(previous, current) {
-  let p = previous, c = current;
+  let p = previous,
+    c = current;
   if (p.isBullish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
   }
   return p.isBullish && isBearishHammer(c) && c.open > p.high;
 }
@@ -26,9 +27,10 @@ function isHangingMan(previous, current) {
  * @return {boolean}
  */
 function isShootingStar(previous, current) {
-  let p = previous, c = current;
+  let p = previous,
+    c = current;
   if (p.isBullish === undefined) {
-    [p, c] = require('./utils.js').precomputeCandleProps([previous, current]);
+    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
   }
   return p.isBullish && isBearishInvertedHammer(c) && c.open > p.high;
 }

@@ -1,7 +1,7 @@
 // hammer.js
 // Hammer (Pinbar) pattern logic extracted from candlestick.js
 
-const { findPattern, precomputeCandleProps } = require('./utils.js');
+const { findPattern, precomputeCandleProps } = require("./utils.js");
 
 /**
  * Returns true if the candle is a Hammer (body in upper third, long lower shadow, small upper shadow).
@@ -10,7 +10,11 @@ const { findPattern, precomputeCandleProps } = require('./utils.js');
  */
 function isHammer(candlestick) {
   let c = candlestick;
-  if (c.bodyLen === undefined || c.wickLen === undefined || c.tailLen === undefined) {
+  if (
+    c.bodyLen === undefined ||
+    c.wickLen === undefined ||
+    c.tailLen === undefined
+  ) {
     c = precomputeCandleProps([candlestick])[0];
   }
   const { bodyLen, tailLen, wickLen, high, low, open, close } = c;
@@ -20,7 +24,7 @@ function isHammer(candlestick) {
     range > 0 &&
     tailLen >= 2 * bodyLen &&
     wickLen <= bodyLen &&
-    (Math.max(open, close) > low + range * 2 / 3)
+    Math.max(open, close) > low + (range * 2) / 3
   );
 }
 

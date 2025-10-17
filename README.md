@@ -12,9 +12,21 @@
 
 A modern, modular JavaScript library for candlestick pattern detection. Detects classic reversal and continuation patterns in OHLC data, with a clean API and no native dependencies.
 
+**✨ New in this version:**
+
+- 🎯 16 candlestick patterns (was 8, +100% increase!)
+- 📦 ESM & CommonJS support (dual export)
+- 🔷 Full TypeScript definitions
+- ✅ 224 tests with 99.66% coverage (96.90% branches, 100% functions)
+- 🔌 Plugin system for custom patterns
+- ✅ Data validation system
+- 📊 Pattern metadata (confidence, type, strength)
+- 💻 CLI tool for CSV/JSON analysis
+
 ---
 
 ## Table of Contents
+
 - [Why Candlestick?](#why-candlestick)
 - [Features](#features)
 - [Quick Start](#quick-start)
@@ -35,6 +47,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 ---
 
 ## Why Candlestick?
+
 - **No native dependencies**: 100% JavaScript, works everywhere Node.js runs.
 - **Modular**: Each pattern is its own module, easy to extend or customize.
 - **Consistent API**: All pattern functions use a standard interface.
@@ -46,31 +59,72 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 ---
 
 ## Features
-- Modular pattern logic
-- Consistent, easy-to-use API
-- Pattern chaining for multi-pattern scans
-- 100% test coverage, CI/CD ready
-- Modern code style and documentation
+
+- **16 Candlestick Patterns**: Comprehensive pattern detection library
+- **Dual Module Support**: CommonJS and ESM exports
+- **TypeScript**: Complete type definitions with IntelliSense
+- **Data Validation**: Robust OHLC validation system
+- **Plugin System**: Register custom patterns
+- **Pattern Chaining**: Multi-pattern detection in single pass
+- **Zero Dependencies**: Pure JavaScript, works everywhere
+- **Excellent Test Coverage**: 224 tests with 99.66% coverage (96.90% branches, 100% functions)
+- **High Performance**: 37K+ candles/sec throughput
+- **Well Documented**: Architecture guides, examples, and API docs
 
 ---
 
 ## Quick Start
 
+### Installation
+
 ```bash
 npm install candlestick
 ```
 
-```js
-const { isHammer, hammer, patternChain } = require('candlestick');
+### CommonJS (Node.js)
 
+```js
+const { isHammer, hammer, patternChain, allPatterns } = require("candlestick");
+
+// Check single candle
 const candle = { open: 10, high: 15, low: 8, close: 14 };
 console.log(isHammer(candle)); // true or false
 
-const candles = [/* array of OHLC objects */];
-console.log(hammer(candles)); // [indices]
+// Find patterns in series
+const candles = [
+  /* array of OHLC objects */
+];
+console.log(hammer(candles)); // [indices where pattern found]
 
-const results = patternChain(candles);
+// Detect all patterns at once
+const results = patternChain(candles, allPatterns);
 console.log(results); // [{ index, pattern, match }]
+```
+
+### ESM (Modern JavaScript)
+
+```js
+import { isHammer, hammer, patternChain, allPatterns } from "candlestick";
+
+const candles = [
+  /* array of OHLC objects */
+];
+const results = patternChain(candles, allPatterns);
+console.log(results);
+```
+
+### TypeScript
+
+```typescript
+import { OHLC, PatternMatch, patternChain, allPatterns } from "candlestick";
+
+const candles: OHLC[] = [
+  { open: 10, high: 15, low: 8, close: 12 },
+  { open: 12, high: 16, low: 11, close: 14 },
+];
+
+const results: PatternMatch[] = patternChain(candles, allPatterns);
+// Full IntelliSense support ✓
 ```
 
 ---
@@ -79,16 +133,30 @@ console.log(results); // [{ index, pattern, match }]
 
 ### Importing
 
-```js
-// Import all patterns (CommonJS)
-const candlestick = require('candlestick');
+**CommonJS (Node.js):**
 
-// Or import only what you need (recommended for tree-shaking in ESM)
-const { isHammer, hammer, patternChain } = require('candlestick');
+```js
+// Import all patterns
+const candlestick = require("candlestick");
+
+// Or import only what you need
+const { isHammer, hammer, patternChain } = require("candlestick");
+```
+
+**ESM (Modern JavaScript):**
+
+```js
+// Import all patterns
+import candlestick from "candlestick";
+
+// Or import only what you need (recommended for tree-shaking)
+import { isHammer, hammer, patternChain } from "candlestick";
 ```
 
 ### OHLC Format
+
 All functions expect objects with at least:
+
 ```js
 {
   open: Number,
@@ -103,6 +171,7 @@ All functions expect objects with at least:
 ## Pattern Detection Functions
 
 ### Boolean (Single/Pair) Detection
+
 - `isHammer(candle)`
 - `isBullishHammer(candle)` / `isBearishHammer(candle)`
 - `isInvertedHammer(candle)`
@@ -115,6 +184,7 @@ All functions expect objects with at least:
 - `isShootingStar(prev, curr)`
 
 ### Array (Series) Detection
+
 - `hammer(dataArray)` / `bullishHammer(dataArray)` / `bearishHammer(dataArray)`
 - `invertedHammer(dataArray)` / `bullishInvertedHammer(dataArray)` / `bearishInvertedHammer(dataArray)`
 - `doji(dataArray)`
@@ -132,7 +202,7 @@ All array functions return an array of indices where the pattern occurs.
 Scan a series for multiple patterns in one pass:
 
 ```js
-const { patternChain, allPatterns } = require('candlestick');
+const { patternChain, allPatterns } = require("candlestick");
 
 const matches = patternChain(dataArray, allPatterns);
 // matches: [
@@ -143,10 +213,11 @@ const matches = patternChain(dataArray, allPatterns);
 ```
 
 You can also pass a custom list of patterns:
+
 ```js
 const matches = patternChain(dataArray, [
-  { name: 'doji', fn: candlestick.doji },
-  { name: 'bullishEngulfing', fn: candlestick.bullishEngulfing, paramCount: 2 },
+  { name: "doji", fn: candlestick.doji },
+  { name: "bullishEngulfing", fn: candlestick.bullishEngulfing, paramCount: 2 },
 ]);
 ```
 
@@ -156,14 +227,28 @@ const matches = patternChain(dataArray, [
 
 ## Pattern Descriptions
 
+### Single Candle Patterns
+
 - **Hammer**: Small body near the top (body < 1/3 of range), long lower shadow (tail ≥ 2× body), small upper shadow. Signals possible bullish reversal.
 - **Inverted Hammer**: Small body near the bottom, long upper shadow (wick ≥ 2× body), small lower shadow. Bullish reversal signal.
 - **Doji**: Very small body (body < 10% of range), open ≈ close. Indicates indecision. Candle must have range (high > low).
+
+### Two Candle Patterns
+
 - **Engulfing**: Second candle's body fully engulfs the previous (body range covers previous body). Bullish or bearish.
 - **Harami**: Second candle's body is inside the previous (body range within previous body). Bullish or bearish.
 - **Kicker**: Strong reversal with a gap and opposite color. Bullish or bearish.
 - **Hanging Man**: Bullish candle followed by a bearish hammer with a gap up. Bearish reversal.
 - **Shooting Star**: Bullish candle followed by a bearish inverted hammer with a gap up. Bearish reversal.
+- **Piercing Line**: Bullish reversal. Bearish candle followed by bullish candle that opens below first's low and closes above its midpoint.
+- **Dark Cloud Cover**: Bearish reversal. Bullish candle followed by bearish candle that opens above first's high and closes below its midpoint.
+
+### Three Candle Patterns
+
+- **Morning Star**: Bullish reversal. Long bearish candle, small-bodied star that gaps down, long bullish candle closing well into first candle's body.
+- **Evening Star**: Bearish reversal. Long bullish candle, small-bodied star that gaps up, long bearish candle closing well into first candle's body.
+- **Three White Soldiers**: Three consecutive bullish candles, each opening within previous body and closing higher. Limited upper shadows. Signals strong bullish continuation/reversal.
+- **Three Black Crows**: Three consecutive bearish candles, each opening within previous body and closing lower. Limited lower shadows. Signals strong bearish continuation/reversal.
 
 > **Note:** The library does not mutate your input data. All pattern functions return new objects with precomputed properties (e.g., `bodyLen`, `wickLen`, etc.) as needed. If you plan to run many pattern detectors on the same data, you can precompute properties once using `precomputeCandleProps` from the utilities for better performance.
 
@@ -172,8 +257,9 @@ const matches = patternChain(dataArray, [
 ## Examples
 
 ### Boolean Detection
+
 ```js
-const { isBullishKicker, isBearishKicker } = require('candlestick');
+const { isBullishKicker, isBearishKicker } = require("candlestick");
 
 const prev = { open: 40.18, high: 41.03, low: 40.09, close: 40.86 };
 const curr = { open: 39.61, high: 39.35, low: 38.71, close: 38.92 };
@@ -183,8 +269,9 @@ console.log(isBearishKicker(prev, curr)); // true
 ```
 
 ### Finding Patterns in Series
+
 ```js
-const { shootingStar } = require('candlestick');
+const { shootingStar } = require("candlestick");
 
 const data = [
   { open: 29.01, high: 29.03, low: 28.56, close: 28.64 },
@@ -195,12 +282,78 @@ console.log(shootingStar(data)); // [index, ...]
 ```
 
 ### Pattern Chaining
+
 ```js
-const { patternChain, allPatterns } = require('candlestick');
+const { patternChain, allPatterns } = require("candlestick");
 const matches = patternChain(data, allPatterns);
 console.log(matches);
 // [ { index: 3, pattern: 'hammer', match: [Object] }, ... ]
 ```
+
+### Data Validation (New!)
+
+```js
+const { validateOHLC, validateOHLCArray } = require("candlestick").utils;
+
+// Validate single candle
+try {
+  validateOHLC({ open: 10, high: 15, low: 8, close: 12 });
+  console.log("Valid candle ✓");
+} catch (error) {
+  console.error("Invalid:", error.message);
+}
+
+// Validate array of candles
+validateOHLCArray(candles); // throws on invalid data
+```
+
+### Plugin System (New!)
+
+```js
+const { plugins, patternChain } = require('candlestick');
+
+// Register custom pattern
+plugins.registerPattern({
+  name: 'myCustomPattern',
+  fn: (dataArray) => {
+    // Your detection logic
+    return dataArray
+      .map((c, i) => /* condition */ ? i : -1)
+      .filter(idx => idx !== -1);
+  },
+  paramCount: 1,
+  metadata: { type: 'reversal', confidence: 0.85 }
+});
+
+// Use with patternChain
+const customPattern = plugins.getPattern('myCustomPattern');
+const results = patternChain(data, [customPattern]);
+```
+
+For more details on the plugin system, see [docs/PLUGIN_API.md](./docs/PLUGIN_API.md).
+
+### CLI Tool (New!)
+
+Detect patterns from command line:
+
+```bash
+# Install globally
+npm install -g candlestick
+
+# Detect patterns in JSON file
+candlestick -i data.json --output table --metadata
+
+# Filter by confidence
+candlestick -i data.csv --confidence 0.85 --output csv
+
+# Bullish reversals only
+candlestick -i data.json --type reversal --direction bullish
+
+# Use with pipes
+cat data.json | candlestick --output table
+```
+
+For complete CLI documentation, see [docs/CLI_GUIDE.md](./docs/CLI_GUIDE.md).
 
 ---
 
@@ -208,14 +361,27 @@ console.log(matches);
 
 See the [`examples/`](./examples/) directory for runnable, copy-pasteable usage of every pattern and utility:
 
+**Single Candle Patterns:**
+
 - [`examples/hammer.js`](./examples/hammer.js) — Hammer pattern detection
 - [`examples/invertedHammer.js`](./examples/invertedHammer.js) — Inverted Hammer pattern detection
 - [`examples/doji.js`](./examples/doji.js) — Doji pattern detection
+
+**Two Candle Patterns:**
+
 - [`examples/engulfing.js`](./examples/engulfing.js) — Engulfing pattern detection
 - [`examples/harami.js`](./examples/harami.js) — Harami pattern detection
 - [`examples/kicker.js`](./examples/kicker.js) — Kicker pattern detection
 - [`examples/reversal.js`](./examples/reversal.js) — Hanging Man and Shooting Star
+
+**Multi-Pattern Detection:**
+
 - [`examples/patternChain.js`](./examples/patternChain.js) — Multi-pattern detection with patternChain
+- [`examples/newPatterns.js`](./examples/newPatterns.js) — 3-candle patterns (Morning/Evening Star, Three Soldiers/Crows)
+- [`examples/esm-example.mjs`](./examples/esm-example.mjs) — ESM module syntax example
+
+**Utilities:**
+
 - [`examples/utils.js`](./examples/utils.js) — Utility functions: bodyLen, wickLen, tailLen, isBullish, isBearish, hasGapUp, hasGapDown, findPattern
 
 See [`examples/README.md`](./examples/README.md) for more details and instructions.
@@ -223,6 +389,7 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 ---
 
 ## Linting & Formatting
+
 - **ESLint**: Modern flat config (`eslint.config.js`)
 - **Prettier**: For code formatting
 - Run `npm run lint` and `npm run format` (if configured)
@@ -250,22 +417,37 @@ npm test
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
+**Latest (v1.1.0):**
+
+- 6 new candlestick patterns
+- ESM support (dual CommonJS/ESM)
+- TypeScript definitions
+- Plugin system
+- Data validation
+- Pattern metadata system
+- CLI tool
+- 173 tests with 92.5% coverage
+
 ---
 
 ## FAQ
 
 **Q: Why is my pattern not detected?**
+
 - Ensure your candle objects have all required fields (`open`, `high`, `low`, `close`).
 - Check that the pattern’s technical thresholds are met (see Pattern Descriptions above).
 - The library does not check for trend context (e.g., uptrend/downtrend) — it only looks at candle shapes.
 
 **Q: Does this library mutate my data?**
+
 - No. All computations are done on copies; your input data is never changed.
 
 **Q: Can I use this with TypeScript?**
-- The library is written in JS, but JSDoc comments provide some type hints. TypeScript support is planned (see ROADMAP.md).
+
+- Yes! The library now includes complete TypeScript definitions in `types/index.d.ts`. Full type safety and IntelliSense support available.
 
 **Q: Are there visual examples of patterns?**
+
 - Not yet, but this is planned (see ROADMAP.md). For now, see the pattern descriptions and links to external resources.
 
 ---
