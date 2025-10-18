@@ -1,4 +1,4 @@
-// Type definitions for candlestick v1.1.0
+// Type definitions for candlestick v1.2.0
 // Project: https://github.com/cm45t3r/candlestick
 // Definitions by: cm45t3r
 
@@ -374,6 +374,102 @@ export function isThreeBlackCrows(
  */
 export function threeBlackCrows(dataArray: OHLC[]): number[];
 
+// ========== Marubozu Pattern ==========
+
+/**
+ * Returns true if the candle is a Marubozu (strong directional candle with minimal shadows)
+ */
+export function isMarubozu(candle: OHLC): boolean;
+
+/**
+ * Returns true if the candle is a Bullish Marubozu
+ */
+export function isBullishMarubozu(candle: OHLC): boolean;
+
+/**
+ * Returns true if the candle is a Bearish Marubozu
+ */
+export function isBearishMarubozu(candle: OHLC): boolean;
+
+/**
+ * Finds all Marubozu patterns in a series
+ */
+export function marubozu(dataArray: OHLC[]): number[];
+
+/**
+ * Finds all Bullish Marubozu patterns in a series
+ */
+export function bullishMarubozu(dataArray: OHLC[]): number[];
+
+/**
+ * Finds all Bearish Marubozu patterns in a series
+ */
+export function bearishMarubozu(dataArray: OHLC[]): number[];
+
+// ========== Spinning Top Pattern ==========
+
+/**
+ * Returns true if the candle is a Spinning Top (small body, long shadows - indecision)
+ */
+export function isSpinningTop(candle: OHLC): boolean;
+
+/**
+ * Returns true if the candle is a Bullish Spinning Top
+ */
+export function isBullishSpinningTop(candle: OHLC): boolean;
+
+/**
+ * Returns true if the candle is a Bearish Spinning Top
+ */
+export function isBearishSpinningTop(candle: OHLC): boolean;
+
+/**
+ * Finds all Spinning Top patterns in a series
+ */
+export function spinningTop(dataArray: OHLC[]): number[];
+
+/**
+ * Finds all Bullish Spinning Top patterns in a series
+ */
+export function bullishSpinningTop(dataArray: OHLC[]): number[];
+
+/**
+ * Finds all Bearish Spinning Top patterns in a series
+ */
+export function bearishSpinningTop(dataArray: OHLC[]): number[];
+
+// ========== Tweezers Patterns ==========
+
+/**
+ * Returns true if the pattern is a Tweezers (top or bottom)
+ */
+export function isTweezers(first: OHLC, second: OHLC): boolean;
+
+/**
+ * Returns true if the pattern is a Tweezers Top (bearish reversal)
+ */
+export function isTweezersTop(first: OHLC, second: OHLC): boolean;
+
+/**
+ * Returns true if the pattern is a Tweezers Bottom (bullish reversal)
+ */
+export function isTweezersBottom(first: OHLC, second: OHLC): boolean;
+
+/**
+ * Finds all Tweezers patterns in a series
+ */
+export function tweezers(dataArray: OHLC[]): number[];
+
+/**
+ * Finds all Tweezers Top patterns in a series
+ */
+export function tweezersTop(dataArray: OHLC[]): number[];
+
+/**
+ * Finds all Tweezers Bottom patterns in a series
+ */
+export function tweezersBottom(dataArray: OHLC[]): number[];
+
 // ========== Pattern Chain ==========
 
 /**
@@ -507,4 +603,48 @@ export const metadata: {
    * Sort pattern results by confidence (descending)
    */
   sortByConfidence: (results: PatternMatch[]) => PatternMatch[];
+};
+
+// ========== Streaming API ==========
+
+/**
+ * Streaming options interface
+ */
+export interface StreamOptions {
+  patterns?: string[] | string | null;
+  chunkSize?: number;
+  onMatch?: (match: PatternMatch) => void;
+  onProgress?: (progress: {
+    processed: number;
+    matchesFound: number;
+    complete?: boolean;
+  }) => void;
+  enrichMetadata?: boolean;
+}
+
+/**
+ * Stream processor interface
+ */
+export interface StreamProcessor {
+  process(chunk: OHLC[]): void;
+  end(): { totalProcessed: number; patternsDetected: number };
+  reset(): void;
+}
+
+/**
+ * Streaming system namespace
+ */
+export const streaming: {
+  /**
+   * Create a streaming pattern detector for processing large datasets in chunks
+   */
+  createStream: (options?: StreamOptions) => StreamProcessor;
+
+  /**
+   * Helper function to process large dataset in streaming fashion
+   */
+  processLargeDataset: (
+    data: OHLC[],
+    options?: StreamOptions,
+  ) => PatternMatch[];
 };

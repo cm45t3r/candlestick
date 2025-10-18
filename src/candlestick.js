@@ -17,8 +17,12 @@ module.exports = {
   ...require("./threeBlackCrows.js"),
   ...require("./piercingLine.js"),
   ...require("./darkCloudCover.js"),
+  ...require("./marubozu.js"),
+  ...require("./spinningTop.js"),
+  ...require("./tweezers.js"),
   ...require("./patternChain.js"),
   utils: require("./utils.js"),
   plugins: require("./pluginManager.js"),
   metadata: require("./patternMetadata.js"),
+  streaming: require("./streaming.js"),
 };

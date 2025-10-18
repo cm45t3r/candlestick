@@ -3,21 +3,24 @@
 [![Node.js CI workflow](https://github.com/cm45t3r/candlestick/actions/workflows/node.js.yml/badge.svg)](https://github.com/cm45t3r/candlestick/actions/workflows/node.js.yml)
 [![npm](https://img.shields.io/npm/v/candlestick.svg)](https://www.npmjs.com/package/candlestick)
 [![npm downloads](https://img.shields.io/npm/dm/candlestick.svg)](https://www.npmjs.com/package/candlestick)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/candlestick)](https://bundlephobia.com/package/candlestick)
 [![Coverage Status](https://coveralls.io/repos/github/cm45t3r/candlestick/badge.svg?branch=main)](https://coveralls.io/github/cm45t3r/candlestick?branch=main)
+[![Known Vulnerabilities](https://snyk.io/test/github/cm45t3r/candlestick/badge.svg)](https://snyk.io/test/github/cm45t3r/candlestick)
 [![ESLint](https://img.shields.io/badge/code%20style-eslint-brightgreen.svg)](https://eslint.org/)
 [![code style: prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg?style=flat)](https://prettier.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/cm45t3r/candlestick/pulls)
 [![Contributors](https://img.shields.io/github/contributors/cm45t3r/candlestick.svg)](https://github.com/cm45t3r/candlestick/graphs/contributors)
+[![Last Commit](https://img.shields.io/github/last-commit/cm45t3r/candlestick)](https://github.com/cm45t3r/candlestick/commits/main)
 
 A modern, modular JavaScript library for candlestick pattern detection. Detects classic reversal and continuation patterns in OHLC data, with a clean API and no native dependencies.
 
 **✨ New in this version:**
 
-- 🎯 16 candlestick patterns (was 8, +100% increase!)
+- 🎯 19 candlestick patterns, 29 variants (was 8, +137% increase!)
 - 📦 ESM & CommonJS support (dual export)
 - 🔷 Full TypeScript definitions
-- ✅ 224 tests with 99.66% coverage (96.90% branches, 100% functions)
+- ✅ 282 tests with 99.73% coverage (97.24% branches, 100% functions)
 - 🔌 Plugin system for custom patterns
 - ✅ Data validation system
 - 📊 Pattern metadata (confidence, type, strength)
@@ -60,14 +63,14 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 
 ## Features
 
-- **16 Candlestick Patterns**: Comprehensive pattern detection library
+- **19 Candlestick Patterns** (29 variants): Comprehensive pattern detection library
 - **Dual Module Support**: CommonJS and ESM exports
 - **TypeScript**: Complete type definitions with IntelliSense
 - **Data Validation**: Robust OHLC validation system
 - **Plugin System**: Register custom patterns
 - **Pattern Chaining**: Multi-pattern detection in single pass
 - **Zero Dependencies**: Pure JavaScript, works everywhere
-- **Excellent Test Coverage**: 224 tests with 99.66% coverage (96.90% branches, 100% functions)
+- **Excellent Test Coverage**: 282 tests with 99.73% coverage (97.24% branches, 100% functions)
 - **High Performance**: 37K+ candles/sec throughput
 - **Well Documented**: Architecture guides, examples, and API docs
 
@@ -232,6 +235,8 @@ const matches = patternChain(dataArray, [
 - **Hammer**: Small body near the top (body < 1/3 of range), long lower shadow (tail ≥ 2× body), small upper shadow. Signals possible bullish reversal.
 - **Inverted Hammer**: Small body near the bottom, long upper shadow (wick ≥ 2× body), small lower shadow. Bullish reversal signal.
 - **Doji**: Very small body (body < 10% of range), open ≈ close. Indicates indecision. Candle must have range (high > low).
+- **Marubozu**: Long body (≥ 70% of range) with minimal shadows (< 10% of body). Strong directional move. Bullish Marubozu shows strong buying, Bearish shows strong selling.
+- **Spinning Top**: Small body (< 30% of range) with long upper and lower shadows (each > 20% of range). Indicates market indecision or potential reversal.
 
 ### Two Candle Patterns
 
@@ -242,6 +247,8 @@ const matches = patternChain(dataArray, [
 - **Shooting Star**: Bullish candle followed by a bearish inverted hammer with a gap up. Bearish reversal.
 - **Piercing Line**: Bullish reversal. Bearish candle followed by bullish candle that opens below first's low and closes above its midpoint.
 - **Dark Cloud Cover**: Bearish reversal. Bullish candle followed by bearish candle that opens above first's high and closes below its midpoint.
+- **Tweezers Top**: Bearish reversal. Bullish candle followed by bearish candle with matching highs (within 1% tolerance). Indicates resistance level.
+- **Tweezers Bottom**: Bullish reversal. Bearish candle followed by bullish candle with matching lows (within 1% tolerance). Indicates support level.
 
 ### Three Candle Patterns
 
@@ -289,6 +296,37 @@ const matches = patternChain(data, allPatterns);
 console.log(matches);
 // [ { index: 3, pattern: 'hammer', match: [Object] }, ... ]
 ```
+
+### Streaming API (v1.2.0+)
+
+For processing very large datasets efficiently with reduced memory usage:
+
+```js
+const { streaming } = require("candlestick");
+
+// Option 1: Using createStream with callbacks
+const stream = streaming.createStream({
+  patterns: ["hammer", "doji", "marubozu"],
+  chunkSize: 1000,
+  onMatch: (match) => console.log(match),
+  enrichMetadata: true,
+});
+
+// Process data in chunks
+for (const chunk of dataChunks) {
+  stream.process(chunk);
+}
+stream.end();
+
+// Option 2: Simple helper for large datasets
+const results = streaming.processLargeDataset(largeData, {
+  patterns: null, // all patterns
+  chunkSize: 1000,
+  enrichMetadata: true,
+});
+```
+
+**Benefits:** Reduces memory usage by ~70% for datasets > 100K candles
 
 ### Data Validation (New!)
 

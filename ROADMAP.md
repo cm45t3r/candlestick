@@ -17,28 +17,29 @@ This roadmap outlines planned features, improvements, and possible future direct
   - PLUGIN_API.md created
   - Examples updated (CommonJS + ESM)
   - FAQ expanded with TypeScript info
-- **More Patterns** ✅ PARTIALLY COMPLETE
+- **More Patterns** ✅ COMPLETED (v1.2.0)
   - ✅ Morning Star / Evening Star (3 candles)
   - ✅ Three White Soldiers / Three Black Crows (3 candles)
   - ✅ Piercing Line / Dark Cloud Cover (2 candles)
-  - 🔜 Marubozu (1 candle)
-  - 🔜 Spinning Top (1 candle)
-  - 🔜 Tweezers Top/Bottom (2 candles)
+  - ✅ Marubozu (1 candle) - v1.2.0
+  - ✅ Spinning Top (1 candle) - v1.2.0
+  - ✅ Tweezers Top/Bottom (2 candles) - v1.2.0
 - **TypeScript Support** ✅ COMPLETED
   - TypeScript type definitions in `types/index.d.ts`
   - Full IntelliSense support
-- **Performance** 🔄 IN PROGRESS
+- **Performance** ✅ COMPLETED (v1.2.0)
   - Precompute optimization implemented
   - Benchmark suite enhanced
-  - 🔜 Batch/streaming APIs for very large datasets
-  - 🔜 Further optimize memory usage
-- **API Enhancements** ✅ PARTIALLY COMPLETE
+  - ✅ Streaming API for very large datasets - v1.2.0
+  - ✅ Memory optimized with chunk processing - v1.2.0
+- **API Enhancements** ✅ COMPLETED
   - ✅ Plugin system for user-defined patterns
   - ✅ Pattern validation
-  - 🔜 Pattern metadata (confidence, strength)
-- **Testing & CI** ✅ COMPLETED
-  - 153 tests with 99.67% coverage (was ~80 tests, ~80% coverage)
+  - ✅ Pattern metadata (confidence, strength)
+- **Testing & CI** ✅ COMPLETED (v1.2.0)
+  - 306 tests with 99.75% coverage (was ~80 tests, ~80% coverage)
   - Integration tests added
+  - Property-based tests added (v1.2.0)
   - Tests run on multiple Node.js versions (18, 20, 22) and OS (Ubuntu, Windows, macOS)
 
 ---
@@ -51,14 +52,15 @@ This roadmap outlines planned features, improvements, and possible future direct
 - **Integration** 🔜 PLANNED
   - Add adapters for popular charting libraries (e.g., TradingView, Plotly)
   - Example integrations with charting frameworks
-- **CLI Tool** 🔜 PLANNED
+- **CLI Tool** ✅ COMPLETED (v1.1.0)
   - Command-line interface for pattern detection on CSV/JSON data
   - Pipeline-friendly stdin/stdout processing
-  - Multiple output formats (JSON, table, markdown)
-- **Pattern Metadata** 🔜 PLANNED
-  - Add confidence scores to pattern results
-  - Pattern strength indicators
+  - Multiple output formats (JSON, table, CSV)
+- **Pattern Metadata** ✅ COMPLETED (v1.1.0)
+  - Confidence scores added to all patterns
+  - Pattern strength indicators (weak/moderate/strong)
   - Reversal/continuation classification
+  - Direction classification (bullish/bearish/neutral)
 
 ---
 

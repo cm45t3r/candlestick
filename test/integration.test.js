@@ -33,8 +33,8 @@ describe("Integration Tests", () => {
     }
   });
 
-  it("allPatterns contains 21 pattern definitions", () => {
-    assert.equal(candlestick.allPatterns.length, 21);
+  it("allPatterns contains 29 pattern definitions", () => {
+    assert.equal(candlestick.allPatterns.length, 29);
   });
 
   it("utils object is available with all utilities", () => {

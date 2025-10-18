@@ -76,14 +76,39 @@ export const {
   isDarkCloudCover,
   darkCloudCover,
 
+  // Marubozu
+  isMarubozu,
+  isBullishMarubozu,
+  isBearishMarubozu,
+  marubozu,
+  bullishMarubozu,
+  bearishMarubozu,
+
+  // Spinning Top
+  isSpinningTop,
+  isBullishSpinningTop,
+  isBearishSpinningTop,
+  spinningTop,
+  bullishSpinningTop,
+  bearishSpinningTop,
+
+  // Tweezers
+  isTweezers,
+  isTweezersTop,
+  isTweezersBottom,
+  tweezers,
+  tweezersTop,
+  tweezersBottom,
+
   // Pattern Chain
   patternChain,
   allPatterns,
 
-  // Utils, Plugins, and Metadata
+  // Utils, Plugins, Metadata, and Streaming
   utils,
   plugins,
   metadata,
+  streaming,
 } = candlestickModule;
 
 // Default export for convenience

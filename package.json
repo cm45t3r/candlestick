@@ -1,6 +1,6 @@
 {
   "name": "candlestick",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "JavaScript library for candlestick patterns detection.",
   "homepage": "https://github.com/cm45t3r/candlestick",
   "author": {
@@ -88,6 +88,7 @@
     "c8": "latest",
     "eslint": "latest",
     "eslint-config-prettier": "latest",
+    "fast-check": "^4.3.0",
     "prettier": "latest"
   }
 }

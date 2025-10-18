@@ -162,6 +162,68 @@ const patternMetadata = {
     strength: "strong",
     description: "Strong bearish continuation with three declining candles",
   },
+
+  // Marubozu patterns
+  marubozu: {
+    type: "continuation",
+    direction: "neutral",
+    confidence: 0.8,
+    strength: "strong",
+    description: "Strong directional move with minimal shadows",
+  },
+  bullishMarubozu: {
+    type: "continuation",
+    direction: "bullish",
+    confidence: 0.85,
+    strength: "strong",
+    description: "Very strong bullish candle with no shadows",
+  },
+  bearishMarubozu: {
+    type: "continuation",
+    direction: "bearish",
+    confidence: 0.85,
+    strength: "strong",
+    description: "Very strong bearish candle with no shadows",
+  },
+
+  // Spinning Top patterns
+  spinningTop: {
+    type: "neutral",
+    direction: "neutral",
+    confidence: 0.6,
+    strength: "weak",
+    description: "Indecision candle, potential reversal or consolidation",
+  },
+  bullishSpinningTop: {
+    type: "neutral",
+    direction: "neutral",
+    confidence: 0.58,
+    strength: "weak",
+    description: "Spinning top with slight bullish bias",
+  },
+  bearishSpinningTop: {
+    type: "neutral",
+    direction: "neutral",
+    confidence: 0.58,
+    strength: "weak",
+    description: "Spinning top with slight bearish bias",
+  },
+
+  // Tweezers patterns
+  tweezersTop: {
+    type: "reversal",
+    direction: "bearish",
+    confidence: 0.75,
+    strength: "moderate",
+    description: "Bearish reversal with matching highs",
+  },
+  tweezersBottom: {
+    type: "reversal",
+    direction: "bullish",
+    confidence: 0.75,
+    strength: "moderate",
+    description: "Bullish reversal with matching lows",
+  },
 };
 
 /**

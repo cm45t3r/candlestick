@@ -11,6 +11,9 @@ const threeWhiteSoldiers = require("./threeWhiteSoldiers.js");
 const threeBlackCrows = require("./threeBlackCrows.js");
 const piercingLine = require("./piercingLine.js");
 const darkCloudCover = require("./darkCloudCover.js");
+const marubozu = require("./marubozu.js");
+const spinningTop = require("./spinningTop.js");
+const tweezers = require("./tweezers.js");
 
 const allPatterns = [
   { name: "hammer", fn: hammer.hammer, paramCount: 1 },
@@ -50,6 +53,22 @@ const allPatterns = [
     fn: threeBlackCrows.threeBlackCrows,
     paramCount: 3,
   },
+  { name: "marubozu", fn: marubozu.marubozu, paramCount: 1 },
+  { name: "bullishMarubozu", fn: marubozu.bullishMarubozu, paramCount: 1 },
+  { name: "bearishMarubozu", fn: marubozu.bearishMarubozu, paramCount: 1 },
+  { name: "spinningTop", fn: spinningTop.spinningTop, paramCount: 1 },
+  {
+    name: "bullishSpinningTop",
+    fn: spinningTop.bullishSpinningTop,
+    paramCount: 1,
+  },
+  {
+    name: "bearishSpinningTop",
+    fn: spinningTop.bearishSpinningTop,
+    paramCount: 1,
+  },
+  { name: "tweezersTop", fn: tweezers.tweezersTop, paramCount: 2 },
+  { name: "tweezersBottom", fn: tweezers.tweezersBottom, paramCount: 2 },
 ];
 
 const { precomputeCandleProps } = require("./utils.js");
