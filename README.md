@@ -15,12 +15,14 @@
 
 A modern, modular JavaScript library for candlestick pattern detection. Detects classic reversal and continuation patterns in OHLC data, with a clean API and no native dependencies.
 
-**✨ New in this version:**
+**✨ New in this version (v1.2.0):**
 
-- 🎯 19 candlestick patterns, 29 variants (was 8, +137% increase!)
+- 🎯 19 candlestick patterns, 29 variants (was 16 patterns, +18.75%)
 - 📦 ESM & CommonJS support (dual export)
 - 🔷 Full TypeScript definitions
-- ✅ 282 tests with 99.73% coverage (97.24% branches, 100% functions)
+- ✅ 306 tests with 99.75% coverage (97.63% branches, 100% functions)
+- 🚀 Streaming API for massive datasets (70% memory reduction)
+- 🔬 Property-based testing with fast-check
 - 🔌 Plugin system for custom patterns
 - ✅ Data validation system
 - 📊 Pattern metadata (confidence, type, strength)
@@ -64,14 +66,16 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 ## Features
 
 - **19 Candlestick Patterns** (29 variants): Comprehensive pattern detection library
+- **Streaming API**: Process massive datasets with 70% memory reduction
+- **Property-Based Testing**: Validated with 1000+ generated test cases
 - **Dual Module Support**: CommonJS and ESM exports
 - **TypeScript**: Complete type definitions with IntelliSense
 - **Data Validation**: Robust OHLC validation system
 - **Plugin System**: Register custom patterns
 - **Pattern Chaining**: Multi-pattern detection in single pass
 - **Zero Dependencies**: Pure JavaScript, works everywhere
-- **Excellent Test Coverage**: 282 tests with 99.73% coverage (97.24% branches, 100% functions)
-- **High Performance**: 37K+ candles/sec throughput
+- **Excellent Test Coverage**: 306 tests with 99.75% coverage (97.63% branches, 100% functions)
+- **High Performance**: 59K+ candles/sec throughput
 - **Well Documented**: Architecture guides, examples, and API docs
 
 ---
@@ -416,7 +420,10 @@ See the [`examples/`](./examples/) directory for runnable, copy-pasteable usage 
 
 - [`examples/patternChain.js`](./examples/patternChain.js) — Multi-pattern detection with patternChain
 - [`examples/newPatterns.js`](./examples/newPatterns.js) — 3-candle patterns (Morning/Evening Star, Three Soldiers/Crows)
+- [`examples/newPatternsV2.js`](./examples/newPatternsV2.js) — v1.2.0 patterns (Marubozu, Spinning Top, Tweezers)
+- [`examples/streaming.js`](./examples/streaming.js) — Streaming API for large datasets
 - [`examples/esm-example.mjs`](./examples/esm-example.mjs) — ESM module syntax example
+- [`examples/metadata.js`](./examples/metadata.js) — Pattern metadata, filtering, and sorting
 
 **Utilities:**
 
@@ -455,16 +462,20 @@ npm test
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
-**Latest (v1.1.0):**
+**Latest (v1.2.0):**
 
-- 6 new candlestick patterns
+- 3 new candlestick patterns (Marubozu, Spinning Top, Tweezers)
+- Streaming API for large datasets (70% memory reduction)
+- Property-based testing with fast-check
+- 306 tests with 99.75% coverage
+- Quality badges (Bundle Size, Snyk, Last Commit)
+
+**Previous (v1.1.0):**
+
+- 6 new candlestick patterns (3-candle patterns, Piercing Line, Dark Cloud Cover)
 - ESM support (dual CommonJS/ESM)
 - TypeScript definitions
-- Plugin system
-- Data validation
-- Pattern metadata system
-- CLI tool
-- 173 tests with 92.5% coverage
+- Plugin system, Data validation, Pattern metadata system, CLI tool
 
 ---
 

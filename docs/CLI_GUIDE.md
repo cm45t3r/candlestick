@@ -185,6 +185,12 @@ Use these names with the `--patterns` option:
 - `morningStar`, `eveningStar`
 - `threeWhiteSoldiers`, `threeBlackCrows`
 
+**v1.2.0 Patterns:**
+
+- `marubozu`, `bullishMarubozu`, `bearishMarubozu`
+- `spinningTop`, `bullishSpinningTop`, `bearishSpinningTop`
+- `tweezers`, `tweezersTop`, `tweezersBottom`
+
 ## Advanced Usage
 
 ### Filter Strong Bullish Signals
@@ -225,9 +231,9 @@ If data is invalid, the CLI will exit with error code 1 and show descriptive err
 
 The CLI tool uses the same high-performance engine as the library:
 
-- **Throughput:** 37,000+ candles/second
-- **Memory:** Efficient for large datasets
-- **Patterns:** All 21 pattern variants
+- **Throughput:** 59,000+ candles/second
+- **Memory:** Efficient for large datasets (Streaming API available)
+- **Patterns:** All 29 pattern variants
 
 ## TypeScript Users
 
@@ -264,4 +270,4 @@ const results = processData(data, { confidence: 0.8 });
 
 ---
 
-**CLI Tool is part of Candlestick v1.1.0+**
+**CLI Tool is part of Candlestick v1.1.0+** (Enhanced in v1.2.0 with more patterns)

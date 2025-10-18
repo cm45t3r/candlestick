@@ -23,10 +23,11 @@ Complete guide to all documentation in the Candlestick library.
 - Quick Start (CommonJS, ESM, TypeScript)
 - Installation
 - Usage examples
-- All 16 patterns documented
+- All 19 patterns documented (29 variants)
 - Pattern chaining
 - Data validation
 - Plugin system basics
+- Streaming API
 - FAQ
 
 ### [ARCHITECTURE.md](./ARCHITECTURE.md)
@@ -45,12 +46,14 @@ Complete guide to all documentation in the Candlestick library.
 
 **Release history**
 
-- v1.1.0 (2025-10-17) - Latest
+- v1.2.0 (2025-10-18) - Latest
+  - 3 new patterns (Marubozu, Spinning Top, Tweezers)
+  - Streaming API for large datasets
+  - Property-based testing
+  - 306 tests, 99.75% coverage
+- v1.1.0 (2025-10-17)
   - 6 new patterns
-  - ESM support
-  - TypeScript definitions
-  - Plugin system
-  - Data validation
+  - ESM support, TypeScript, Plugin system
 - Previous versions
 
 ### [ROADMAP.md](./ROADMAP.md)
@@ -116,12 +119,12 @@ Complete guide to all documentation in the Candlestick library.
 **Examples guide**
 
 - How to run examples
-- Available examples (11 total):
+- Available examples (14 total):
   - Single candle patterns (3)
   - Two candle patterns (4)
-  - Multi-pattern detection (3)
-  - ESM example (1)
+  - Multi-pattern detection (5)
   - Utilities (1)
+  - Metadata (1)
 
 ---
 
@@ -175,18 +178,25 @@ candlestick/
 - [Roadmap](./ROADMAP.md)
 - [Security Policy](./SECURITY.md)
 
+**docs/ Directory:**
+
+The `docs/` directory contains specialized guides:
+- [PLUGIN_API.md](./docs/PLUGIN_API.md) - Complete plugin development guide
+- [CLI_GUIDE.md](./docs/CLI_GUIDE.md) - Command-line tool documentation
+
 ---
 
 ## 📊 Stats
 
-- **Total Docs:** 12 markdown files
-- **Examples:** 12 working examples
-- **Patterns Documented:** 16 unique patterns (21 variants)
-- **API Functions Documented:** 43+
-- **Tests:** 173 (92.5% coverage, 99.73% in src/)
+- **Total Docs:** 10 markdown files (essential documentation)
+- **Examples:** 14 working examples
+- **Patterns Documented:** 19 unique patterns (29 variants)
+- **API Functions Documented:** 53+
+- **Tests:** 306 (99.75% coverage)
 - **CLI Commands:** 1 (candlestick)
 - **Metadata System:** Complete (confidence, type, strength, direction)
-- **Last Updated:** October 17, 2025
+- **Streaming API:** Available for large datasets
+- **Last Updated:** October 18, 2025 (v1.2.0)
 
 ---
 

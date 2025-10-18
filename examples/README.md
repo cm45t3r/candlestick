@@ -41,7 +41,10 @@ This directory contains runnable examples for each pattern module and utility in
 ### Multi-Pattern Detection
 
 - `patternChain.js` — Multi-pattern detection with patternChain API
-- `newPatterns.js` — New 3-candle patterns (Morning/Evening Star, Three Soldiers/Crows)
+- `newPatterns.js` — New 3-candle patterns (Morning/Evening Star, Three Soldiers/Crows, Piercing Line, Dark Cloud Cover)
+- `newPatternsV2.js` — v1.2.0 patterns (Marubozu, Spinning Top, Tweezers)
+- `streaming.js` — Streaming API for large datasets with memory optimization
+- `metadata.js` — Pattern metadata, filtering, and sorting
 - `esm-example.mjs` — ESM module syntax example (import/export)
 
 ### Utilities
