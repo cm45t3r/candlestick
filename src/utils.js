@@ -85,8 +85,8 @@ function hasGapDown(previous, current) {
  */
 function isEngulfed(previous, current) {
   return (
-    bodyEnds(previous).top <= bodyEnds(current).top &&
-    bodyEnds(previous).bottom >= bodyEnds(current).bottom
+    bodyEnds(previous).top < bodyEnds(current).top &&
+    bodyEnds(previous).bottom > bodyEnds(current).bottom
   );
 }
 

@@ -181,6 +181,7 @@ candlestick/
 **docs/ Directory:**
 
 The `docs/` directory contains specialized guides:
+
 - [PLUGIN_API.md](./docs/PLUGIN_API.md) - Complete plugin development guide
 - [CLI_GUIDE.md](./docs/CLI_GUIDE.md) - Command-line tool documentation
 

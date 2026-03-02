@@ -15,6 +15,11 @@ describe("engulfing", () => {
     const curr = { open: 12, close: 14 };
     assert.equal(utils.isEngulfed(prev, curr), false);
   });
+  it("isEngulfed: rejects same sized body where the open and close are the same", () => {
+    const prev = { open: 12, close: 14 };
+    const curr = { open: 12, close: 14 };
+    assert.equal(utils.isEngulfed(prev, curr), false);
+  });
   it("isBullishEngulfing: detects bullish engulfing", () => {
     const prev = { open: 12, high: 13, low: 10, close: 10 };
     const curr = { open: 9, high: 14, low: 8, close: 15 };
