@@ -7,7 +7,7 @@ const candlestick = require("../index.js");
 
 const HELP_TEXT = `
 ╔══════════════════════════════════════════════════════════════╗
-║          Candlestick Pattern Detection CLI v1.1.0            ║
+║          Candlestick Pattern Detection CLI v1.2.0            ║
 ╚══════════════════════════════════════════════════════════════╝
 
 Usage: candlestick [options]
@@ -34,9 +34,9 @@ Input Format:
   CSV:  Headers: open,high,low,close (first line)
 
 Supported Patterns:
-  1-candle: hammer, invertedHammer, doji
+  1-candle: hammer, invertedHammer, doji, marubozu, spinningTop
   2-candle: engulfing, harami, kicker, hangingMan, shootingStar,
-            piercingLine, darkCloudCover
+            piercingLine, darkCloudCover, tweezersTop, tweezersBottom
   3-candle: morningStar, eveningStar, threeWhiteSoldiers, threeBlackCrows
 `;
 

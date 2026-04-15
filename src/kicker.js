@@ -20,7 +20,7 @@ function isBullishKicker(previous, current) {
   let p = previous,
     c = current;
   if (p.isBearish === undefined || c.isBullish === undefined) {
-    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
+    [p, c] = precomputeCandleProps([previous, current]);
   }
   return (
     p.isBearish &&
@@ -40,7 +40,7 @@ function isBearishKicker(previous, current) {
   let p = previous,
     c = current;
   if (p.isBullish === undefined || c.isBearish === undefined) {
-    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
+    [p, c] = precomputeCandleProps([previous, current]);
   }
   return (
     p.isBullish &&

@@ -11,7 +11,7 @@ const {
     filterByDirection,
     sortByConfidence,
   },
-} = require("../index.js");
+} = require("candlestick");
 
 console.log("=".repeat(60));
 console.log("Pattern Metadata System - Examples");

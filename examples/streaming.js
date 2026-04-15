@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 // Example: Using Streaming API for large datasets
 
-const candlestick = require("../index.js");
+const candlestick = require("candlestick");
 
 // Generate large dataset
 function generateLargeDataset(size) {

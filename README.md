@@ -15,17 +15,17 @@
 
 A modern, modular JavaScript library for candlestick pattern detection. Detects classic reversal and continuation patterns in OHLC data, with a clean API and no native dependencies.
 
-**✨ New in this version (v1.2.0):**
+**✨ Highlights:**
 
-- 🎯 19 candlestick patterns, 29 variants (was 16 patterns, +18.75%)
+- 🎯 18 candlestick patterns, 29 variants across single, two, and three-candle formations
 - 📦 ESM & CommonJS support (dual export)
-- 🔷 Full TypeScript definitions
-- ✅ 306 tests with 99.75% coverage (97.63% branches, 100% functions)
-- 🚀 Streaming API for massive datasets (70% memory reduction)
-- 🔬 Property-based testing with fast-check
+- 🔷 Full TypeScript definitions with IntelliSense
+- ✅ 306 tests — 99.75% line coverage, 100% function coverage
+- 🚀 Streaming API for massive datasets (~70% memory reduction)
+- 🔬 Property-based testing with fast-check (1000+ generated scenarios)
 - 🔌 Plugin system for custom patterns
-- ✅ Data validation system
-- 📊 Pattern metadata (confidence, type, strength)
+- ✅ Data validation (`validateOHLC`, `validateOHLCArray`)
+- 📊 Pattern metadata (confidence, strength, type, direction)
 - 💻 CLI tool for CSV/JSON analysis
 
 ---
@@ -45,6 +45,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - [Running Tests](#running-tests)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
+- [FAQ](#faq)
 - [Roadmap](#roadmap)
 - [Code of Conduct](#code-of-conduct)
 - [License](#license)
@@ -65,7 +66,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 
 ## Features
 
-- **19 Candlestick Patterns** (29 variants): Comprehensive pattern detection library
+- **18 Candlestick Patterns** (29 variants): Comprehensive pattern detection library
 - **Streaming API**: Process massive datasets with 70% memory reduction
 - **Property-Based Testing**: Validated with 1000+ generated test cases
 - **Dual Module Support**: CommonJS and ESM exports
@@ -93,9 +94,9 @@ npm install candlestick
 ```js
 const { isHammer, hammer, patternChain, allPatterns } = require("candlestick");
 
-// Check single candle
-const candle = { open: 10, high: 15, low: 8, close: 14 };
-console.log(isHammer(candle)); // true or false
+// Check single candle (small body in upper third, long lower shadow, tiny upper shadow)
+const candle = { open: 14, high: 15, low: 8, close: 14.5 };
+console.log(isHammer(candle)); // true
 
 // Find patterns in series
 const candles = [
@@ -179,26 +180,45 @@ All functions expect objects with at least:
 
 ### Boolean (Single/Pair) Detection
 
-- `isHammer(candle)`
-- `isBullishHammer(candle)` / `isBearishHammer(candle)`
-- `isInvertedHammer(candle)`
-- `isBullishInvertedHammer(candle)` / `isBearishInvertedHammer(candle)`
+**Single candle:**
+- `isHammer(candle)` / `isBullishHammer(candle)` / `isBearishHammer(candle)`
+- `isInvertedHammer(candle)` / `isBullishInvertedHammer(candle)` / `isBearishInvertedHammer(candle)`
 - `isDoji(candle)`
+- `isMarubozu(candle)` / `isBullishMarubozu(candle)` / `isBearishMarubozu(candle)`
+- `isSpinningTop(candle)` / `isBullishSpinningTop(candle)` / `isBearishSpinningTop(candle)`
+
+**Two candles:**
 - `isBullishEngulfing(prev, curr)` / `isBearishEngulfing(prev, curr)`
 - `isBullishHarami(prev, curr)` / `isBearishHarami(prev, curr)`
 - `isBullishKicker(prev, curr)` / `isBearishKicker(prev, curr)`
-- `isHangingMan(prev, curr)`
-- `isShootingStar(prev, curr)`
+- `isHangingMan(prev, curr)` / `isShootingStar(prev, curr)`
+- `isPiercingLine(prev, curr)` / `isDarkCloudCover(prev, curr)`
+- `isTweezersTop(prev, curr)` / `isTweezersBottom(prev, curr)`
+
+**Three candles:**
+- `isMorningStar(c1, c2, c3)` / `isEveningStar(c1, c2, c3)`
+- `isThreeWhiteSoldiers(c1, c2, c3)` / `isThreeBlackCrows(c1, c2, c3)`
 
 ### Array (Series) Detection
 
+**Single candle:**
 - `hammer(dataArray)` / `bullishHammer(dataArray)` / `bearishHammer(dataArray)`
 - `invertedHammer(dataArray)` / `bullishInvertedHammer(dataArray)` / `bearishInvertedHammer(dataArray)`
 - `doji(dataArray)`
+- `marubozu(dataArray)` / `bullishMarubozu(dataArray)` / `bearishMarubozu(dataArray)`
+- `spinningTop(dataArray)` / `bullishSpinningTop(dataArray)` / `bearishSpinningTop(dataArray)`
+
+**Two candles:**
 - `bullishEngulfing(dataArray)` / `bearishEngulfing(dataArray)`
 - `bullishHarami(dataArray)` / `bearishHarami(dataArray)`
 - `bullishKicker(dataArray)` / `bearishKicker(dataArray)`
 - `hangingMan(dataArray)` / `shootingStar(dataArray)`
+- `piercingLine(dataArray)` / `darkCloudCover(dataArray)`
+- `tweezersTop(dataArray)` / `tweezersBottom(dataArray)`
+
+**Three candles:**
+- `morningStar(dataArray)` / `eveningStar(dataArray)`
+- `threeWhiteSoldiers(dataArray)` / `threeBlackCrows(dataArray)`
 
 All array functions return an array of indices where the pattern occurs.
 
@@ -228,7 +248,7 @@ const matches = patternChain(dataArray, [
 ]);
 ```
 
-> **Multi-candle patterns:** Patterns like Engulfing, Harami, Kicker, Hanging Man, and Shooting Star span two candles. The `match` array in the result will contain both candles (length 2), thanks to the `paramCount` property. Single-candle patterns return a single-element array.
+> **Multi-candle patterns:** Two-candle patterns (Engulfing, Harami, Kicker, Hanging Man, Shooting Star, Piercing Line, Dark Cloud Cover, Tweezers Top/Bottom) return a `match` array with 2 candles. Three-candle patterns (Morning Star, Evening Star, Three White Soldiers, Three Black Crows) return 3. Single-candle patterns return 1. This is driven by the `paramCount` property on each pattern definition.
 
 ---
 
@@ -272,8 +292,9 @@ const matches = patternChain(dataArray, [
 ```js
 const { isBullishKicker, isBearishKicker } = require("candlestick");
 
-const prev = { open: 40.18, high: 41.03, low: 40.09, close: 40.86 };
-const curr = { open: 39.61, high: 39.35, low: 38.71, close: 38.92 };
+// Bullish candle, then bearish candle gapping down → bearish kicker
+const prev = { open: 40, high: 41, low: 39.5, close: 40.8 };
+const curr = { open: 39.5, high: 39.8, low: 38.5, close: 38.9 };
 
 console.log(isBullishKicker(prev, curr)); // false
 console.log(isBearishKicker(prev, curr)); // true
@@ -332,7 +353,7 @@ const results = streaming.processLargeDataset(largeData, {
 
 **Benefits:** Reduces memory usage by ~70% for datasets > 100K candles
 
-### Data Validation (New!)
+### Data Validation
 
 ```js
 const { validateOHLC, validateOHLCArray } = require("candlestick").utils;
@@ -349,7 +370,7 @@ try {
 validateOHLCArray(candles); // throws on invalid data
 ```
 
-### Plugin System (New!)
+### Plugin System
 
 ```js
 const { plugins, patternChain } = require('candlestick');
@@ -374,7 +395,7 @@ const results = patternChain(data, [customPattern]);
 
 For more details on the plugin system, see [docs/PLUGIN_API.md](./docs/PLUGIN_API.md).
 
-### CLI Tool (New!)
+### CLI Tool
 
 Detect patterns from command line:
 
@@ -419,7 +440,7 @@ See the [`examples/`](./examples/) directory for runnable, copy-pasteable usage 
 **Multi-Pattern Detection:**
 
 - [`examples/patternChain.js`](./examples/patternChain.js) — Multi-pattern detection with patternChain
-- [`examples/newPatterns.js`](./examples/newPatterns.js) — 3-candle patterns (Morning/Evening Star, Three Soldiers/Crows)
+- [`examples/newPatterns.js`](./examples/newPatterns.js) — v1.1.0 patterns: Morning/Evening Star, Three Soldiers/Crows (3-candle), Piercing Line, Dark Cloud Cover (2-candle)
 - [`examples/newPatternsV2.js`](./examples/newPatternsV2.js) — v1.2.0 patterns (Marubozu, Spinning Top, Tweezers)
 - [`examples/streaming.js`](./examples/streaming.js) — Streaming API for large datasets
 - [`examples/esm-example.mjs`](./examples/esm-example.mjs) — ESM module syntax example
@@ -437,7 +458,7 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 
 - **ESLint**: Modern flat config (`eslint.config.js`)
 - **Prettier**: For code formatting
-- Run `npm run lint` and `npm run format` (if configured)
+- Run `npm run lint` and `npm run format`
 
 ---
 
@@ -493,7 +514,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
 **Q: Can I use this with TypeScript?**
 
-- Yes! The library now includes complete TypeScript definitions in `types/index.d.ts`. Full type safety and IntelliSense support available.
+- Yes. The library includes complete TypeScript definitions in `types/index.d.ts`. Full type safety and IntelliSense support available.
 
 **Q: Are there visual examples of patterns?**
 

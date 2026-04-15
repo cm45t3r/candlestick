@@ -57,75 +57,24 @@ export interface PatternDefinition {
   paramCount?: number;
 }
 
-// ========== Utility Functions ==========
+// ========== Utility Functions (internal type helpers, accessed via utils namespace) ==========
 
-/**
- * Absolute distance between open and close
- */
-export function bodyLen(candlestick: OHLC): number;
-
-/**
- * Absolute distance between high and max(open, close)
- */
-export function wickLen(candlestick: OHLC): number;
-
-/**
- * Absolute distance between min(open, close) and low
- */
-export function tailLen(candlestick: OHLC): number;
-
-/**
- * Returns top and bottom ends from a body
- */
-export function bodyEnds(candlestick: OHLC): { bottom: number; top: number };
-
-/**
- * Returns true if close is greater than open (bullish candle)
- */
-export function isBullish(candlestick: OHLC): boolean;
-
-/**
- * Returns true if close is less than open (bearish candle)
- */
-export function isBearish(candlestick: OHLC): boolean;
-
-/**
- * Returns true if previous top is less than current bottom (gap up)
- */
-export function hasGapUp(previous: OHLC, current: OHLC): boolean;
-
-/**
- * Returns true if previous bottom is greater than current top (gap down)
- */
-export function hasGapDown(previous: OHLC, current: OHLC): boolean;
-
-/**
- * Returns true if previous body is engulfed by current body
- */
-export function isEngulfed(previous: OHLC, current: OHLC): boolean;
-
-/**
- * Generalized pattern search utility for arrays
- */
-export function findPattern(
+declare function bodyLen(candlestick: OHLC): number;
+declare function wickLen(candlestick: OHLC): number;
+declare function tailLen(candlestick: OHLC): number;
+declare function bodyEnds(candlestick: OHLC): { bottom: number; top: number };
+declare function isBullish(candlestick: OHLC): boolean;
+declare function isBearish(candlestick: OHLC): boolean;
+declare function hasGapUp(previous: OHLC, current: OHLC): boolean;
+declare function hasGapDown(previous: OHLC, current: OHLC): boolean;
+declare function isEngulfed(previous: OHLC, current: OHLC): boolean;
+declare function findPattern(
   dataArray: OHLC[],
   callback: (...args: OHLC[]) => boolean,
 ): number[];
-
-/**
- * Precompute and cache all relevant properties for each candle in a series
- */
-export function precomputeCandleProps(dataArray: OHLC[]): OHLCExtended[];
-
-/**
- * Validate OHLC data structure and relationships
- */
-export function validateOHLC(candle: any, throwError?: boolean): boolean;
-
-/**
- * Validate array of OHLC data
- */
-export function validateOHLCArray(
+declare function precomputeCandleProps(dataArray: OHLC[]): OHLCExtended[];
+declare function validateOHLC(candle: any, throwError?: boolean): boolean;
+declare function validateOHLCArray(
   dataArray: any[],
   throwError?: boolean,
 ): boolean;
@@ -231,12 +180,12 @@ export function bearishEngulfing(dataArray: OHLC[]): number[];
 // ========== Harami Patterns ==========
 
 /**
- * Returns true if a bullish candle is followed by a smaller bullish/bearish candle inside it
+ * Returns true if a bearish candle is followed by a smaller bullish candle inside it (bullish reversal signal)
  */
 export function isBullishHarami(previous: OHLC, current: OHLC): boolean;
 
 /**
- * Returns true if a bearish candle is followed by a smaller bullish/bearish candle inside it
+ * Returns true if a bullish candle is followed by a smaller bearish candle inside it (bearish reversal signal)
  */
 export function isBearishHarami(previous: OHLC, current: OHLC): boolean;
 

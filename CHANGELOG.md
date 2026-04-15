@@ -4,6 +4,14 @@
 
 [Full Changelog](https://github.com/cm45t3r/candlestick/compare/v1.1.0...v1.2.0)
 
+**New features:**
+
+- 3 new candlestick patterns: Marubozu, Spinning Top, Tweezers Top/Bottom
+- Streaming API (`streaming.createStream`, `streaming.processLargeDataset`) for large datasets with ~70% memory reduction
+- Property-based testing with fast-check (1000+ generated OHLC scenarios per invariant)
+- Test suite expanded to 306 tests (99.75% line coverage, 97.63% branch coverage)
+- Benchmark suite enhanced with throughput metrics (59K+ candles/sec)
+
 **Merged pull requests:**
 
 - chore\(actions\): bump actions/stale from 9 to 10 [\#36](https://github.com/cm45t3r/candlestick/pull/36) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -11,6 +19,16 @@
 ## [v1.1.0](https://github.com/cm45t3r/candlestick/tree/v1.1.0) (2025-10-17)
 
 [Full Changelog](https://github.com/cm45t3r/candlestick/compare/v1.0.2...v1.1.0)
+
+**New features:**
+
+- 6 new candlestick patterns: Morning Star, Evening Star, Three White Soldiers, Three Black Crows, Piercing Line, Dark Cloud Cover
+- Dual CommonJS/ESM export via `package.json` conditional exports (`src/index.mjs`)
+- Full TypeScript definitions in `types/index.d.ts` with IntelliSense support
+- Plugin system (`plugins.registerPattern`) for user-defined custom patterns
+- Data validation system (`validateOHLC`, `validateOHLCArray`) with structural and relational checks
+- Pattern metadata system (confidence scores, strength indicators, type and direction classification)
+- CLI tool (`candlestick` binary) for CSV/JSON file analysis with multiple output formats
 
 **Merged pull requests:**
 

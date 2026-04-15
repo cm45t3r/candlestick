@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 // Example: Using new patterns from v1.2.0 (Marubozu, Spinning Top, Tweezers)
 
-const candlestick = require("../index.js");
+const candlestick = require("candlestick");
 
 // Sample OHLC data
 const data = [

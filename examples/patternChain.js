@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 // Example usage of patternChain for multi-pattern detection
-const { patternChain, allPatterns } = require("candlestick");
+const { patternChain, allPatterns, utils } = require("candlestick");
 
 const candles = [
   { open: 10, high: 15, low: 8, close: 14 }, // bullish hammer
@@ -20,7 +20,7 @@ function bullBear(a, b) {
 const customResults = patternChain(candles, [
   {
     name: "bullBear",
-    fn: (arr) => require("candlestick").utils.findPattern(arr, bullBear),
+    fn: (arr) => utils.findPattern(arr, bullBear),
     paramCount: 2,
   },
 ]);

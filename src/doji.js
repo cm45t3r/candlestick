@@ -11,7 +11,7 @@ const { findPattern, precomputeCandleProps } = require("./utils.js");
 function isDoji(candlestick) {
   let c = candlestick;
   if (c.bodyLen === undefined) {
-    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
+    c = precomputeCandleProps([candlestick])[0];
   }
   const { high, low, bodyLen } = c;
   const range = high - low;

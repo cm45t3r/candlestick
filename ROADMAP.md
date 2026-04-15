@@ -1,88 +1,63 @@
 # Candlestick Roadmap
 
-This roadmap outlines planned features, improvements, and possible future directions for the Candlestick project. Community feedback and contributions are welcome!
+This roadmap outlines planned features and future directions for the Candlestick project. Community feedback and contributions are welcome!
 
 ---
 
-## Near-Term Goals
+## Planned
 
-- **Release v1.1.0** ✅ COMPLETED
-  - TypeScript definitions added
-  - ESM support implemented
-  - 6 new patterns added
-  - Plugin system implemented
-  - Data validation system added
-- **Documentation** ✅ COMPLETED
-  - ARCHITECTURE.md created
-  - PLUGIN_API.md created
-  - Examples updated (CommonJS + ESM)
-  - FAQ expanded with TypeScript info
-- **More Patterns** ✅ COMPLETED (v1.2.0)
-  - ✅ Morning Star / Evening Star (3 candles)
-  - ✅ Three White Soldiers / Three Black Crows (3 candles)
-  - ✅ Piercing Line / Dark Cloud Cover (2 candles)
-  - ✅ Marubozu (1 candle) - v1.2.0
-  - ✅ Spinning Top (1 candle) - v1.2.0
-  - ✅ Tweezers Top/Bottom (2 candles) - v1.2.0
-- **TypeScript Support** ✅ COMPLETED
-  - TypeScript type definitions in `types/index.d.ts`
-  - Full IntelliSense support
-- **Performance** ✅ COMPLETED (v1.2.0)
-  - Precompute optimization implemented
-  - Benchmark suite enhanced
-  - ✅ Streaming API for very large datasets - v1.2.0
-  - ✅ Memory optimized with chunk processing - v1.2.0
-- **API Enhancements** ✅ COMPLETED
-  - ✅ Plugin system for user-defined patterns
-  - ✅ Pattern validation
-  - ✅ Pattern metadata (confidence, strength)
-- **Testing & CI** ✅ COMPLETED (v1.2.0)
-  - 306 tests with 99.75% coverage (was ~80 tests, ~80% coverage)
-  - Integration tests added
-  - Property-based tests added (v1.2.0)
-  - Tests run on multiple Node.js versions (18, 20, 22) and OS (Ubuntu, Windows, macOS)
+### Visualization
+
+- Provide example scripts or integrations for plotting detected patterns
+- SVG/Canvas visual representations of patterns
+
+### Integrations
+
+- Adapters for popular charting libraries (e.g., TradingView, Plotly)
+- Example integrations with charting frameworks
+
+### Long-Term / Stretch Goals
+
+- **WebAssembly (WASM) Port** — Ultra-fast browser or cross-language usage
+- **Machine Learning** — Pattern recognition using ML for fuzzy/novel patterns
+- **Live Data Streaming** — Real-time pattern detection for live feeds
+- **Mobile Support** — Example apps or SDKs for mobile platforms
 
 ---
 
-## Medium-Term Goals
+## Completed
 
-- **Visualization** 🔜 PLANNED
-  - Provide example scripts or integrations for plotting detected patterns
-  - SVG/Canvas visual representations of patterns
-- **Integration** 🔜 PLANNED
-  - Add adapters for popular charting libraries (e.g., TradingView, Plotly)
-  - Example integrations with charting frameworks
-- **CLI Tool** ✅ COMPLETED (v1.1.0)
-  - Command-line interface for pattern detection on CSV/JSON data
-  - Pipeline-friendly stdin/stdout processing
-  - Multiple output formats (JSON, table, CSV)
-- **Pattern Metadata** ✅ COMPLETED (v1.1.0)
-  - Confidence scores added to all patterns
-  - Pattern strength indicators (weak/moderate/strong)
-  - Reversal/continuation classification
-  - Direction classification (bullish/bearish/neutral)
+### v1.2.0 (2025-10-18)
 
----
+- 3 new patterns: Marubozu (1-candle), Spinning Top (1-candle), Tweezers Top/Bottom (2-candle)
+- Streaming API (`streaming.createStream`, `streaming.processLargeDataset`) with ~70% memory reduction
+- Property-based testing with fast-check (1000+ generated OHLC scenarios)
+- Test suite: 306 tests, 99.75% line coverage, 97.63% branch coverage
+- Benchmark suite with throughput metrics (59K+ candles/sec)
 
-## Long-Term / Stretch Goals
+### v1.1.0 (2025-10-17)
 
-- **WebAssembly (WASM) Port**
-  - For ultra-fast browser or cross-language usage
-- **Machine Learning**
-  - Pattern recognition using ML for fuzzy/novel patterns
-- **Live Data Streaming**
-  - Real-time pattern detection for live feeds
-- **Mobile Support**
-  - Example apps or SDKs for mobile platforms
+- 6 new patterns: Morning Star, Evening Star, Three White Soldiers, Three Black Crows, Piercing Line, Dark Cloud Cover
+- Dual CommonJS/ESM export via `package.json` conditional exports
+- TypeScript definitions in `types/index.d.ts` with full IntelliSense support
+- Plugin system (`plugins.registerPattern`) for user-defined custom patterns
+- Data validation system (`validateOHLC`, `validateOHLCArray`)
+- Pattern metadata: confidence scores, strength indicators, type and direction classification
+- CLI tool (`candlestick` binary) for CSV/JSON analysis with JSON, table, and CSV output
+
+### v1.0.x (2024–2025)
+
+- Pattern chaining: multi-pattern detection in a single pass
+- Doji pattern detection
+- Pre-computation performance optimization (`precomputeCandleProps`)
+- CI/CD across Node.js 18, 20, 22 on Ubuntu, Windows, and macOS
 
 ---
 
 ## Community
 
-- Encourage and review community PRs for new patterns and features
-- Maintain high code quality and documentation standards
-- Respond to issues and feature requests in a timely manner
+Suggestions and contributions are always welcome. Open an [issue](https://github.com/cm45t3r/candlestick/issues) or [pull request](https://github.com/cm45t3r/candlestick/pulls) to discuss ideas.
 
 ---
 
-_This roadmap is a living document. Suggestions and contributions are always welcome!_
+_This roadmap is a living document._

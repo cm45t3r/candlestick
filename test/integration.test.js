@@ -5,23 +5,30 @@ const assert = require("node:assert/strict");
 const candlestick = require("../index.js");
 
 describe("Integration Tests", () => {
-  it("all 16 unique patterns are available", () => {
-    // Count unique pattern detection functions (not including variants like bullish/bearish)
+  it("all 18 unique patterns are available", () => {
+    // Count unique pattern detection functions (not including directional variants like bullish/bearish)
     const uniquePatterns = [
+      // Single candle (5)
       "hammer",
       "invertedHammer",
       "doji",
+      "marubozu",
+      "spinningTop",
+      // Two candle (9)
       "bullishEngulfing",
       "bullishHarami",
       "bullishKicker",
       "hangingMan",
       "shootingStar",
+      "piercingLine",
+      "darkCloudCover",
+      "tweezersTop",
+      "tweezersBottom",
+      // Three candle (4)
       "morningStar",
       "eveningStar",
       "threeWhiteSoldiers",
       "threeBlackCrows",
-      "piercingLine",
-      "darkCloudCover",
     ];
 
     for (const pattern of uniquePatterns) {

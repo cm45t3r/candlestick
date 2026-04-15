@@ -6,9 +6,13 @@ const {
   eveningStar,
   threeWhiteSoldiers,
   threeBlackCrows,
+  isPiercingLine,
+  piercingLine,
+  isDarkCloudCover,
+  darkCloudCover,
   patternChain,
   allPatterns,
-} = require("../index.js");
+} = require("candlestick");
 
 console.log("=".repeat(60));
 console.log("New Candlestick Patterns - Examples");
@@ -71,8 +75,36 @@ const blackCrowsResults = threeBlackCrows(strongBearishData);
 console.log("Pattern found at indices:", blackCrowsResults);
 console.log("Interpretation: Strong bearish momentum");
 
+// Piercing Line Example
+console.log("\n5. Piercing Line (Bullish Reversal)");
+console.log("-------------------------------------");
+const piercingLineData = [
+  { open: 50, high: 51, low: 40, close: 41 }, // bearish, body > 50%
+  { open: 39, high: 48, low: 37, close: 47 }, // bullish, opens below first's low, closes above midpoint
+];
+console.log(
+  "isPiercingLine:",
+  isPiercingLine(piercingLineData[0], piercingLineData[1]),
+);
+console.log("piercingLine indices:", piercingLine(piercingLineData));
+console.log("Interpretation: Bullish reversal — second candle pierces into bearish body");
+
+// Dark Cloud Cover Example
+console.log("\n6. Dark Cloud Cover (Bearish Reversal)");
+console.log("----------------------------------------");
+const darkCloudData = [
+  { open: 40, high: 50, low: 39, close: 49 }, // bullish, body > 50%
+  { open: 51, high: 52, low: 42, close: 43 }, // bearish, opens above first's high, closes below midpoint
+];
+console.log(
+  "isDarkCloudCover:",
+  isDarkCloudCover(darkCloudData[0], darkCloudData[1]),
+);
+console.log("darkCloudCover indices:", darkCloudCover(darkCloudData));
+console.log("Interpretation: Bearish reversal — dark cloud covers the bullish candle");
+
 // Pattern Chain with All Patterns
-console.log("\n5. Pattern Chain (All Patterns Including New Ones)");
+console.log("\n7. Pattern Chain (All Patterns Including New Ones)");
 console.log("--------------------------------------------------");
 const allData = [
   ...bullishTrendData,
@@ -89,12 +121,17 @@ chainResults.forEach((result) => {
 });
 
 // Filter by specific pattern types
-console.log("\n6. Filter Results by Pattern Type");
+console.log("\n8. Filter Results by Pattern Type");
 console.log("----------------------------------");
 const reversalPatterns = chainResults.filter((r) =>
-  ["morningStar", "eveningStar", "hangingMan", "shootingStar"].includes(
-    r.pattern,
-  ),
+  [
+    "morningStar",
+    "eveningStar",
+    "hangingMan",
+    "shootingStar",
+    "piercingLine",
+    "darkCloudCover",
+  ].includes(r.pattern),
 );
 console.log("Reversal patterns:", reversalPatterns.length);
 reversalPatterns.forEach((r) =>

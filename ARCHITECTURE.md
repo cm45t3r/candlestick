@@ -18,21 +18,36 @@ Candlestick is a modular JavaScript library for detecting candlestick patterns i
 
 ```
 candlestick/
-├── src/                    # Source code
-│   ├── candlestick.js     # Main entry point (aggregates all patterns)
-│   ├── utils.js           # Utility functions (bodyLen, wickLen, etc.)
-│   ├── hammer.js          # Hammer pattern detection
-│   ├── invertedHammer.js  # Inverted Hammer pattern detection
-│   ├── doji.js            # Doji pattern detection
-│   ├── engulfing.js       # Engulfing pattern detection
-│   ├── harami.js          # Harami pattern detection
-│   ├── kicker.js          # Kicker pattern detection
-│   ├── reversal.js        # Reversal patterns (Hanging Man, Shooting Star)
-│   └── patternChain.js    # Multi-pattern detection
-├── test/                   # Unit tests (one file per module)
-├── types/                  # TypeScript definitions
-├── examples/               # Usage examples (excluded from npm package)
-└── index.js               # Package entry point
+├── src/                      # Source code
+│   ├── candlestick.js        # Main entry point (aggregates all patterns)
+│   ├── index.mjs             # ESM re-export surface
+│   ├── utils.js              # Utility functions (bodyLen, wickLen, etc.)
+│   ├── patternChain.js       # Multi-pattern detection + allPatterns registry
+│   ├── patternMetadata.js    # Pattern confidence and strength metadata
+│   ├── pluginManager.js      # Plugin system for custom patterns
+│   ├── streaming.js          # Chunk-based streaming processor
+│   ├── hammer.js             # Hammer pattern detection
+│   ├── invertedHammer.js     # Inverted Hammer pattern detection
+│   ├── doji.js               # Doji pattern detection
+│   ├── marubozu.js           # Marubozu pattern detection
+│   ├── spinningTop.js        # Spinning Top pattern detection
+│   ├── engulfing.js          # Engulfing pattern detection
+│   ├── harami.js             # Harami pattern detection
+│   ├── kicker.js             # Kicker pattern detection
+│   ├── reversal.js           # Reversal patterns (Hanging Man, Shooting Star)
+│   ├── piercingLine.js       # Piercing Line pattern detection
+│   ├── darkCloudCover.js     # Dark Cloud Cover pattern detection
+│   ├── tweezers.js           # Tweezers Top/Bottom pattern detection
+│   ├── morningStar.js        # Morning Star pattern detection
+│   ├── eveningStar.js        # Evening Star pattern detection
+│   ├── threeWhiteSoldiers.js # Three White Soldiers pattern detection
+│   └── threeBlackCrows.js    # Three Black Crows pattern detection
+├── test/                     # Unit tests (one file per module)
+├── types/                    # TypeScript definitions
+├── cli/                      # CLI implementation
+├── bin/                      # CLI entry point
+├── examples/                 # Usage examples (excluded from npm package)
+└── index.js                  # Package entry point (CJS proxy to src/candlestick.js)
 
 ```
 
@@ -196,33 +211,9 @@ The library never modifies input data. Pre-computation returns new objects with 
 
 ## Future Considerations
 
-### ESM Support
-
-Current implementation uses CommonJS. Future versions may:
-
-- Add dual CommonJS/ESM builds
-- Use conditional exports in package.json
-- Provide tree-shakeable ESM modules
-
-### Plugin System
-
-A plugin API would allow users to:
-
-- Register custom patterns
-- Add pre/post-processing hooks
-- Extend pattern metadata
-
-### Streaming API
-
-For real-time data processing:
-
-- Incremental pattern detection
-- Sliding window approach
-- Memory-efficient for continuous data streams
-
 ### WebAssembly
 
-For ultra-high performance:
+For ultra-high performance scenarios:
 
 - Port critical functions to WASM
 - Maintain JS fallback for compatibility

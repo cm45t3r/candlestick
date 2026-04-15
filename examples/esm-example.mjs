@@ -6,7 +6,7 @@ import {
   morningStar,
   piercingLine,
   utils,
-} from "../src/index.mjs";
+} from "candlestick";
 
 console.log("=".repeat(60));
 console.log("ESM Example - Modern JavaScript Modules");

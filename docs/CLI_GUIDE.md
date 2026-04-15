@@ -189,7 +189,7 @@ Use these names with the `--patterns` option:
 
 - `marubozu`, `bullishMarubozu`, `bearishMarubozu`
 - `spinningTop`, `bullishSpinningTop`, `bearishSpinningTop`
-- `tweezers`, `tweezersTop`, `tweezersBottom`
+- `tweezersTop`, `tweezersBottom`
 
 ## Advanced Usage
 

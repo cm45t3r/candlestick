@@ -15,7 +15,7 @@ function isInvertedHammer(candlestick) {
     c.wickLen === undefined ||
     c.tailLen === undefined
   ) {
-    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
+    c = precomputeCandleProps([candlestick])[0];
   }
   const { bodyLen, tailLen, wickLen, high, low, open, close } = c;
   const range = high - low;
@@ -37,7 +37,7 @@ function isInvertedHammer(candlestick) {
 function isBullishInvertedHammer(candlestick) {
   let c = candlestick;
   if (c.isBullish === undefined) {
-    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
+    c = precomputeCandleProps([candlestick])[0];
   }
   return c.isBullish && isInvertedHammer(c);
 }
@@ -50,7 +50,7 @@ function isBullishInvertedHammer(candlestick) {
 function isBearishInvertedHammer(candlestick) {
   let c = candlestick;
   if (c.isBearish === undefined) {
-    c = require("./utils.js").precomputeCandleProps([candlestick])[0];
+    c = precomputeCandleProps([candlestick])[0];
   }
   return c.isBearish && isInvertedHammer(c);
 }

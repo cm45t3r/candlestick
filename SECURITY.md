@@ -4,10 +4,10 @@
 
 The following versions are currently supported with security updates:
 
-| Version    | Supported          |
-| ---------- | ------------------ |
-| `>= 0.0.6` | :white_check_mark: |
-| `< 0.0.6`  | :x:                |
+| Version   | Supported          |
+| --------- | ------------------ |
+| `>= 1.0.0` | :white_check_mark: |
+| `< 1.0.0`  | :x:                |
 
 Please use the latest version for all security-critical applications.
 

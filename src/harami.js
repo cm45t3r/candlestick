@@ -17,7 +17,7 @@ function isBullishHarami(previous, current) {
   let p = previous,
     c = current;
   if (p.isBearish === undefined || c.isBullish === undefined) {
-    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
+    [p, c] = precomputeCandleProps([previous, current]);
   }
   return p.isBearish && c.isBullish && isEngulfed(c, p);
 }
@@ -32,7 +32,7 @@ function isBearishHarami(previous, current) {
   let p = previous,
     c = current;
   if (p.isBullish === undefined || c.isBearish === undefined) {
-    [p, c] = require("./utils.js").precomputeCandleProps([previous, current]);
+    [p, c] = precomputeCandleProps([previous, current]);
   }
   return p.isBullish && c.isBearish && isEngulfed(c, p);
 }
