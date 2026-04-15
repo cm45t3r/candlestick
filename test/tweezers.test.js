@@ -78,6 +78,12 @@ describe("Tweezers", () => {
       const second = { open: 50, high: 55, low: 40, close: 51 };
       assert.equal(isTweezersBottom(first, second), false);
     });
+
+    it("rejects when range is zero", () => {
+      const first = { open: 50, high: 50, low: 50, close: 50 };
+      const second = { open: 50, high: 50, low: 50, close: 50 };
+      assert.equal(isTweezersBottom(first, second), false);
+    });
   });
 
   describe("isTweezers", () => {

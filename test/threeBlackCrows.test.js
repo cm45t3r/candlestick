@@ -97,4 +97,19 @@ describe("threeBlackCrows", () => {
 
     assert.equal(isThreeBlackCrows(candles[0], candles[1], candles[2]), false);
   });
+
+  it("rejects when second candle has large lower shadow (c1 passes, c2 fails)", () => {
+    // c1 and c2 pass body check (>= 60% of range) but c2's tail > 30% of body
+    const first = { open: 30, high: 30.5, low: 20, close: 21 }; // body=9, tail=1, ok
+    const second = { open: 26, high: 26.5, low: 14, close: 17 }; // body=9, range=12.5, tail=3 > 2.7
+    const third = { open: 22, high: 22.5, low: 12, close: 13 }; // body=9, tail=1, ok
+    assert.equal(isThreeBlackCrows(first, second, third), false);
+  });
+
+  it("rejects when third candle has large lower shadow (c1 and c2 pass, c3 fails)", () => {
+    const first = { open: 30, high: 30.5, low: 20, close: 21 }; // body=9, tail=1, ok
+    const second = { open: 26, high: 26.5, low: 17, close: 17.5 }; // body=8.5, tail=0.5, ok
+    const third = { open: 22, high: 22.5, low: 10, close: 13 }; // body=9, range=12.5, tail=3 > 2.7
+    assert.equal(isThreeBlackCrows(first, second, third), false);
+  });
 });

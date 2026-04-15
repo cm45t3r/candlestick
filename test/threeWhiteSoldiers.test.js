@@ -93,4 +93,19 @@ describe("threeWhiteSoldiers", () => {
       false,
     );
   });
+
+  it("rejects when second candle has large upper shadow (c1 passes, c2 fails)", () => {
+    // c2 body >= 60% of range but wick > 30% of body
+    const first = { open: 10, high: 19.5, low: 9, close: 19 }; // body=9, wick=0.5, ok
+    const second = { open: 15, high: 28, low: 14, close: 24 }; // body=9, range=14, wick=4 > 2.7
+    const third = { open: 20, high: 29.5, low: 19, close: 29 }; // body=9, wick=0.5, ok
+    assert.equal(isThreeWhiteSoldiers(first, second, third), false);
+  });
+
+  it("rejects when third candle has large upper shadow (c1 and c2 pass, c3 fails)", () => {
+    const first = { open: 10, high: 19.5, low: 9, close: 19 }; // body=9, wick=0.5, ok
+    const second = { open: 15, high: 24.5, low: 14, close: 24 }; // body=9, wick=0.5, ok
+    const third = { open: 20, high: 32, low: 19, close: 29 }; // body=9, range=13, wick=3 > 2.7
+    assert.equal(isThreeWhiteSoldiers(first, second, third), false);
+  });
 });

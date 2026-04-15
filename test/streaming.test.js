@@ -191,5 +191,28 @@ describe("Streaming API", () => {
       // Should process without errors
       assert.ok(true);
     });
+
+    it("uses default chunkSize when not provided", () => {
+      const data = generateCandles(50);
+      // No chunkSize in options — exercises the || 1000 default fallback
+      const results = processLargeDataset(data, { patterns: ["hammer"] });
+      assert.ok(Array.isArray(results));
+    });
+  });
+
+  describe("createStream edge cases", () => {
+    it("accepts patterns as a single string instead of array", () => {
+      const matches = [];
+      // Passing a string directly exercises the Array.isArray branch → [patterns]
+      const stream = createStream({
+        patterns: "hammer",
+        chunkSize: 50,
+        onMatch: (m) => matches.push(m),
+      });
+      const data = generateCandles(100);
+      stream.process(data);
+      stream.end();
+      assert.ok(Array.isArray(matches));
+    });
   });
 });

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { describe, it, beforeEach, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 

@@ -5,7 +5,6 @@
 [![npm downloads](https://img.shields.io/npm/dm/candlestick.svg)](https://www.npmjs.com/package/candlestick)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/candlestick)](https://bundlephobia.com/package/candlestick)
 [![Coverage Status](https://coveralls.io/repos/github/cm45t3r/candlestick/badge.svg?branch=main)](https://coveralls.io/github/cm45t3r/candlestick?branch=main)
-[![Known Vulnerabilities](https://snyk.io/test/github/cm45t3r/candlestick/badge.svg)](https://snyk.io/test/github/cm45t3r/candlestick)
 [![ESLint](https://img.shields.io/badge/code%20style-eslint-brightgreen.svg)](https://eslint.org/)
 [![code style: prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg?style=flat)](https://prettier.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -242,9 +241,11 @@ const matches = patternChain(dataArray, allPatterns);
 You can also pass a custom list of patterns:
 
 ```js
+const { patternChain, doji, bullishEngulfing } = require("candlestick");
+
 const matches = patternChain(dataArray, [
-  { name: "doji", fn: candlestick.doji },
-  { name: "bullishEngulfing", fn: candlestick.bullishEngulfing, paramCount: 2 },
+  { name: "doji", fn: doji },
+  { name: "bullishEngulfing", fn: bullishEngulfing, paramCount: 2 },
 ]);
 ```
 
@@ -322,7 +323,7 @@ console.log(matches);
 // [ { index: 3, pattern: 'hammer', match: [Object] }, ... ]
 ```
 
-### Streaming API (v1.2.0+)
+### Streaming API
 
 For processing very large datasets efficiently with reduced memory usage:
 
@@ -489,7 +490,6 @@ See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 - Streaming API for large datasets (70% memory reduction)
 - Property-based testing with fast-check
 - 306 tests with 99.75% coverage
-- Quality badges (Bundle Size, Snyk, Last Commit)
 
 **Previous (v1.1.0):**
 
@@ -518,7 +518,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
 **Q: Are there visual examples of patterns?**
 
-- Not yet, but this is planned (see ROADMAP.md). For now, see the pattern descriptions and links to external resources.
+- Not yet, but this is planned (see ROADMAP.md). For now, see the Pattern Descriptions section above.
 
 ---
 
