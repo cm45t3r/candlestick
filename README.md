@@ -59,7 +59,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - **Pattern Chaining**: Scan for multiple patterns in a single pass.
 - **Comprehensive Test Suite**: Each pattern and utility is unit tested.
 - **Modern Tooling**: Uses ESLint (flat config) and Prettier for code quality and formatting.
-- **Actively Maintained**: See [ROADMAP.md](./ROADMAP.md) and [CHANGELOG.md](./CHANGELOG.md).
+- **Actively Maintained**: See [ROADMAP.md](./docs/ROADMAP.md) and [CHANGELOG.md](./CHANGELOG.md).
 
 ---
 
@@ -518,13 +518,13 @@ See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
 **Q: Are there visual examples of patterns?**
 
-- Not yet, but this is planned (see ROADMAP.md). For now, see the Pattern Descriptions section above.
+- Not yet, but this is planned (see [ROADMAP.md](./docs/ROADMAP.md)). For now, see the Pattern Descriptions section above.
 
 ---
 
 ## Roadmap
 
-See [ROADMAP.md](./ROADMAP.md) for planned features and future directions.
+See [ROADMAP.md](./docs/ROADMAP.md) for planned features and future directions.
 
 ---
 

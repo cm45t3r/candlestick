@@ -266,7 +266,7 @@ const results = processData(data, { confidence: 0.8 });
 
 - [README.md](../README.md) - Main documentation
 - [examples/](../examples/) - Code examples
-- [ARCHITECTURE.md](../ARCHITECTURE.md) - Technical details
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical details
 
 ---
 

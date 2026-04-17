@@ -69,7 +69,7 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
 
 ## Architecture
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed information about the project structure and design patterns.
+See [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for detailed information about the project structure and design patterns.
 
 ## Adding New Patterns
 
@@ -84,7 +84,7 @@ When adding a new pattern:
 7. Update README.md pattern descriptions
 8. Add example in `examples/` if helpful
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed guidelines.
+See [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for detailed guidelines.
 
 ## Code of Conduct
 
