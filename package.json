@@ -51,7 +51,7 @@
     "README.md"
   ],
   "bin": {
-    "candlestick": "./bin/candlestick"
+    "candlestick": "bin/candlestick"
   },
   "exports": {
     ".": {
