@@ -173,6 +173,26 @@ All functions expect objects with at least:
 }
 ```
 
+Extra fields (`date`, `volume`, etc.) are **preserved unchanged** and passed through to every `match` result, so you can attach any metadata you need:
+
+```js
+const data = [
+  {
+    date: "2024-01-06",
+    open: 41490,
+    high: 41500,
+    low: 39200,
+    close: 41500,
+    volume: 61000,
+  },
+  // ...
+];
+
+const results = patternChain(data, allPatterns);
+console.log(results[0].match[0].date); // "2024-01-06"
+console.log(results[0].match[0].volume); // 61000
+```
+
 ---
 
 ## Pattern Detection Functions
@@ -180,6 +200,7 @@ All functions expect objects with at least:
 ### Boolean (Single/Pair) Detection
 
 **Single candle:**
+
 - `isHammer(candle)` / `isBullishHammer(candle)` / `isBearishHammer(candle)`
 - `isInvertedHammer(candle)` / `isBullishInvertedHammer(candle)` / `isBearishInvertedHammer(candle)`
 - `isDoji(candle)`
@@ -187,6 +208,7 @@ All functions expect objects with at least:
 - `isSpinningTop(candle)` / `isBullishSpinningTop(candle)` / `isBearishSpinningTop(candle)`
 
 **Two candles:**
+
 - `isBullishEngulfing(prev, curr)` / `isBearishEngulfing(prev, curr)`
 - `isBullishHarami(prev, curr)` / `isBearishHarami(prev, curr)`
 - `isBullishKicker(prev, curr)` / `isBearishKicker(prev, curr)`
@@ -195,12 +217,14 @@ All functions expect objects with at least:
 - `isTweezersTop(prev, curr)` / `isTweezersBottom(prev, curr)`
 
 **Three candles:**
+
 - `isMorningStar(c1, c2, c3)` / `isEveningStar(c1, c2, c3)`
 - `isThreeWhiteSoldiers(c1, c2, c3)` / `isThreeBlackCrows(c1, c2, c3)`
 
 ### Array (Series) Detection
 
 **Single candle:**
+
 - `hammer(dataArray)` / `bullishHammer(dataArray)` / `bearishHammer(dataArray)`
 - `invertedHammer(dataArray)` / `bullishInvertedHammer(dataArray)` / `bearishInvertedHammer(dataArray)`
 - `doji(dataArray)`
@@ -208,6 +232,7 @@ All functions expect objects with at least:
 - `spinningTop(dataArray)` / `bullishSpinningTop(dataArray)` / `bearishSpinningTop(dataArray)`
 
 **Two candles:**
+
 - `bullishEngulfing(dataArray)` / `bearishEngulfing(dataArray)`
 - `bullishHarami(dataArray)` / `bearishHarami(dataArray)`
 - `bullishKicker(dataArray)` / `bearishKicker(dataArray)`
@@ -216,6 +241,7 @@ All functions expect objects with at least:
 - `tweezersTop(dataArray)` / `tweezersBottom(dataArray)`
 
 **Three candles:**
+
 - `morningStar(dataArray)` / `eveningStar(dataArray)`
 - `threeWhiteSoldiers(dataArray)` / `threeBlackCrows(dataArray)`
 
@@ -283,6 +309,23 @@ const matches = patternChain(dataArray, [
 - **Three Black Crows**: Three consecutive bearish candles, each opening within previous body and closing lower. Limited lower shadows. Signals strong bearish continuation/reversal.
 
 > **Note:** The library does not mutate your input data. All pattern functions return new objects with precomputed properties (e.g., `bodyLen`, `wickLen`, etc.) as needed. If you plan to run many pattern detectors on the same data, you can precompute properties once using `precomputeCandleProps` from the utilities for better performance.
+
+### Performance: precomputeCandleProps
+
+When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to compute `bodyLen`, `wickLen`, `tailLen`, `isBullish`, `isBearish`, and `bodyEnds` once instead of repeatedly:
+
+```js
+const { patternChain, allPatterns, utils } = require("candlestick");
+
+// Without precomputation: each pattern recalculates candle props internally.
+// With precomputation: props are computed once and reused across all patterns.
+const precomputed = utils.precomputeCandleProps(data);
+
+// Pass to any pattern function or patternChain — extra fields (date, volume) are preserved.
+const results = patternChain(precomputed, allPatterns);
+```
+
+This is most beneficial when running `allPatterns` (29 patterns) on large datasets.
 
 ---
 
@@ -450,6 +493,7 @@ See the [`examples/`](./examples/) directory for runnable, copy-pasteable usage 
 **Utilities:**
 
 - [`examples/utils.js`](./examples/utils.js) — Utility functions: bodyLen, wickLen, tailLen, isBullish, isBearish, hasGapUp, hasGapDown, findPattern
+- [`examples/real-data.js`](./examples/real-data.js) — Real market data with date/volume fields, precomputeCandleProps, gap detection, and frequency breakdown
 
 See [`examples/README.md`](./examples/README.md) for more details and instructions.
 

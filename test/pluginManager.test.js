@@ -194,6 +194,42 @@ describe("pluginManager", () => {
     });
   });
 
+  describe("extra OHLC fields pass-through", () => {
+    it("plugin fn receives extra fields (e.g. volume) intact", () => {
+      const received = [];
+
+      registerPattern({
+        name: "volumeSpike",
+        fn: (dataArray) => {
+          const hits = [];
+          for (let i = 0; i < dataArray.length; i++) {
+            received.push(dataArray[i]);
+            if ((dataArray[i].volume ?? 0) > 1000) hits.push(i);
+          }
+          return hits;
+        },
+        paramCount: 1,
+        metadata: { type: "custom", confidence: 0.75 },
+      });
+
+      const data = [
+        { open: 10, high: 15, low: 9, close: 14, volume: 500 },
+        { open: 14, high: 18, low: 13, close: 17, volume: 1500 },
+        { open: 17, high: 19, low: 16, close: 18, volume: 800 },
+      ];
+
+      const { patternChain } = require("../src/patternChain.js");
+      const pattern = getPattern("volumeSpike");
+      const results = patternChain(data, [pattern]);
+
+      // Only index 1 has volume > 1000
+      assert.equal(results.length, 1);
+      assert.equal(results[0].index, 1);
+      // volume field must have arrived at the fn
+      assert.ok(received.every((c) => c.volume !== undefined));
+    });
+  });
+
   describe("integration test", () => {
     it("custom pattern works with patternChain", () => {
       const { patternChain } = require("../src/patternChain.js");

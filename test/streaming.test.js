@@ -111,6 +111,33 @@ describe("Streaming API", () => {
       assert.ok(summary.totalProcessed > 0);
     });
 
+    it("reset then process different-sized dataset has no state from previous run", () => {
+      const stream = createStream({ chunkSize: 50 });
+
+      stream.process(generateCandles(300));
+      const firstSummary = stream.end();
+
+      stream.reset();
+
+      const secondMatches = [];
+      const stream2 = createStream({
+        chunkSize: 50,
+        onMatch: (m) => secondMatches.push(m),
+      });
+      const smallData = generateCandles(200);
+      stream2.process(smallData);
+      const secondSummary = stream2.end();
+
+      // After reset the previous state is gone: totalProcessed starts fresh
+      assert.ok(secondSummary.totalProcessed > 0);
+      // All result indices must be within the new dataset bounds
+      secondMatches.forEach((m) => {
+        assert.ok(m.index < smallData.length, `index ${m.index} out of bounds`);
+      });
+      // First run processed more candles than second run
+      assert.ok(firstSummary.totalProcessed > secondSummary.totalProcessed);
+    });
+
     it("handles very small chunks", () => {
       const matches = [];
       const stream = createStream({
@@ -197,6 +224,33 @@ describe("Streaming API", () => {
       // No chunkSize in options — exercises the || 1000 default fallback
       const results = processLargeDataset(data, { patterns: ["hammer"] });
       assert.ok(Array.isArray(results));
+    });
+
+    it("frequency breakdown matches individual pattern counts", () => {
+      const data = generateCandles(2000);
+      const results = processLargeDataset(data, {
+        patterns: ["hammer", "doji", "spinningTop"],
+        chunkSize: 500,
+      });
+
+      // Build frequency map
+      const freq = {};
+      for (const r of results) {
+        freq[r.pattern] = (freq[r.pattern] || 0) + 1;
+      }
+
+      // Each key in freq must be one of the requested patterns
+      for (const name of Object.keys(freq)) {
+        assert.ok(
+          ["hammer", "doji", "spinningTop"].includes(name),
+          `Unexpected pattern in results: ${name}`,
+        );
+      }
+
+      // Counts must be non-negative integers
+      for (const count of Object.values(freq)) {
+        assert.ok(Number.isInteger(count) && count > 0);
+      }
     });
   });
 

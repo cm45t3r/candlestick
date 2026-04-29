@@ -126,6 +126,40 @@ describe("CLI", () => {
       assert.throws(() => processData(invalidData, args), /Invalid OHLC data/);
     });
 
+    it("combined filter: type=reversal + direction=bullish + confidence=0.7 returns only matching results", () => {
+      const data = [
+        { open: 50, high: 51, low: 40, close: 41 },
+        { open: 38, high: 48, low: 37, close: 47 },
+        { open: 40, high: 50, low: 39, close: 49 },
+        { open: 52, high: 53, low: 42, close: 43 },
+        { open: 50, high: 51, low: 40, close: 41 },
+        { open: 38.75, high: 40, low: 38, close: 38.25 },
+        { open: 39, high: 48, low: 38.5, close: 47 },
+      ];
+
+      const args = {
+        patterns: null,
+        confidence: 0.7,
+        type: "reversal",
+        direction: "bullish",
+        validate: false,
+        metadata: true,
+      };
+
+      const results = processData(data, args);
+
+      assert.ok(Array.isArray(results));
+      results.forEach((r) => {
+        assert.ok(r.metadata, `result ${r.pattern} missing metadata`);
+        assert.equal(r.metadata.type, "reversal");
+        assert.equal(r.metadata.direction, "bullish");
+        assert.ok(
+          r.metadata.confidence >= 0.7,
+          `confidence ${r.metadata.confidence} < 0.7`,
+        );
+      });
+    });
+
     it("processes with specific patterns", () => {
       const data = [
         { open: 50, high: 51, low: 40, close: 41 },
