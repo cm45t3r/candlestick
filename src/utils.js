@@ -131,7 +131,7 @@ function precomputeCandleProps(dataArray) {
 }
 
 function ensurePrecomputed(dataArray) {
-  return dataArray.length > 0 && dataArray[0].bodyLen !== undefined
+  return dataArray.length > 0 && typeof dataArray[0].bodyLen === "number"
     ? dataArray
     : precomputeCandleProps(dataArray);
 }

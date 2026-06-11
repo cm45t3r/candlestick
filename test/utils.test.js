@@ -73,3 +73,36 @@ describe("utils", () => {
     assert.equal(utils.tailLen({ open: -100, low: -200, close: 100 }), 100);
   });
 });
+
+describe("ensurePrecomputed", () => {
+  const raw = { open: 100, high: 110, low: 90, close: 95 };
+
+  it("precomputes raw candles that lack bodyLen", () => {
+    const result = utils.ensurePrecomputed([raw]);
+    assert.equal(typeof result[0].bodyLen, "number");
+    assert.equal(result[0].bodyLen, Math.abs(raw.open - raw.close));
+  });
+
+  it("returns already-enriched candles as-is (no redundant recompute)", () => {
+    const enriched = utils.precomputeCandleProps([raw]);
+    const result = utils.ensurePrecomputed(enriched);
+    assert.strictEqual(result, enriched);
+  });
+
+  it("failure mode A: candle with bodyLen as a non-numeric string triggers recompute", () => {
+    const withStringBodyLen = [{ ...raw, bodyLen: "0.05" }];
+    const result = utils.ensurePrecomputed(withStringBodyLen);
+    assert.equal(result[0].bodyLen, Math.abs(raw.open - raw.close));
+  });
+
+  it("failure mode A: candle with bodyLen: null triggers recompute", () => {
+    const withNullBodyLen = [{ ...raw, bodyLen: null }];
+    const result = utils.ensurePrecomputed(withNullBodyLen);
+    assert.equal(result[0].bodyLen, Math.abs(raw.open - raw.close));
+  });
+
+  it("returns empty array unchanged", () => {
+    const result = utils.ensurePrecomputed([]);
+    assert.deepStrictEqual(result, []);
+  });
+});
