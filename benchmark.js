@@ -145,3 +145,36 @@ for (const r of results) {
 }
 
 console.log("\nBenchmark completed successfully! ✓");
+
+// Streaming benchmark
+console.log("\n" + "=".repeat(60));
+console.log("STREAMING BENCHMARK");
+console.log("=".repeat(60));
+
+const { createStream } = require("./src/streaming.js");
+
+function runStreamBenchmark(label, totalCandles, chunkSize) {
+  const data = generateCandles(totalCandles);
+  const chunks = [];
+  for (let i = 0; i < data.length; i += chunkSize) {
+    chunks.push(data.slice(i, i + chunkSize));
+  }
+
+  const start = performance.now();
+  const stream = createStream({ patterns: ["hammer", "doji"], chunkSize: 1000 });
+  for (const chunk of chunks) stream.process(chunk);
+  stream.end();
+  const elapsed = performance.now() - start;
+
+  console.log(
+    `  ${label}: ${totalCandles.toLocaleString()} candles, chunks of ${chunkSize} → ${elapsed.toFixed(2)} ms (${((totalCandles / elapsed) * 1000).toFixed(0)} candles/sec)`,
+  );
+}
+
+console.log("\nBatch mode (large chunks):");
+runStreamBenchmark("10k  / chunk=500 ", 10_000, 500);
+runStreamBenchmark("100k / chunk=1000", 100_000, 1000);
+
+console.log("\nTick-by-tick mode (chunk=1):");
+runStreamBenchmark("1k ticks ", 1_000, 1);
+runStreamBenchmark("10k ticks", 10_000, 1);
