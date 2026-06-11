@@ -1,4 +1,8 @@
-const { precomputeCandleProps, findPattern } = require("./utils.js");
+const {
+  precomputeCandleProps,
+  findPattern,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Tweezers Top - Two candles with matching or near-matching highs
@@ -89,7 +93,7 @@ function isTweezers(first, second) {
  * Find all Tweezers Top patterns in array
  */
 function tweezersTop(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isTweezersTop);
 }
 
@@ -97,7 +101,7 @@ function tweezersTop(dataArray) {
  * Find all Tweezers Bottom patterns in array
  */
 function tweezersBottom(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isTweezersBottom);
 }
 
@@ -105,7 +109,7 @@ function tweezersBottom(dataArray) {
  * Find all Tweezers patterns (top or bottom) in array
  */
 function tweezers(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isTweezers);
 }
 

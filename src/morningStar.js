@@ -1,7 +1,11 @@
 // morningStar.js
 // Morning Star pattern detection module
 
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Returns true if the pattern is a Morning Star (bullish reversal).
@@ -57,7 +61,7 @@ function isMorningStar(first, second, third) {
  * @return {Array<number>}
  */
 function morningStar(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isMorningStar);
 }
 

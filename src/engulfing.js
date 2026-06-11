@@ -4,6 +4,7 @@
 const {
   findPattern,
   precomputeCandleProps,
+  ensurePrecomputed,
   isEngulfed,
 } = require("./utils.js");
 
@@ -43,7 +44,7 @@ function isBearishEngulfing(previous, current) {
  * @return {Array<number>}
  */
 function bullishEngulfing(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBullishEngulfing);
 }
 
@@ -53,7 +54,7 @@ function bullishEngulfing(dataArray) {
  * @return {Array<number>}
  */
 function bearishEngulfing(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBearishEngulfing);
 }
 

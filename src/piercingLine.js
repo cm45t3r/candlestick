@@ -1,7 +1,11 @@
 // piercingLine.js
 // Piercing Line pattern detection module (bullish reversal)
 
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Returns true if the pattern is a Piercing Line (bullish reversal).
@@ -49,7 +53,7 @@ function isPiercingLine(first, second) {
  * @return {Array<number>}
  */
 function piercingLine(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isPiercingLine);
 }
 

@@ -5,6 +5,7 @@ const {
   isEngulfed,
   findPattern,
   precomputeCandleProps,
+  ensurePrecomputed,
 } = require("./utils.js");
 
 /**
@@ -43,7 +44,7 @@ function isBearishHarami(previous, current) {
  * @return {Array<number>}
  */
 function bullishHarami(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBullishHarami);
 }
 
@@ -53,7 +54,7 @@ function bullishHarami(dataArray) {
  * @return {Array<number>}
  */
 function bearishHarami(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBearishHarami);
 }
 

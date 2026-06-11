@@ -1,4 +1,8 @@
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Marubozu - A candlestick with a long body and little to no shadows/wicks
@@ -64,7 +68,7 @@ function isBearishMarubozu(candle) {
  * Find all Marubozu patterns in array
  */
 function marubozu(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isMarubozu);
 }
 
@@ -72,7 +76,7 @@ function marubozu(dataArray) {
  * Find all Bullish Marubozu patterns in array
  */
 function bullishMarubozu(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBullishMarubozu);
 }
 
@@ -80,7 +84,7 @@ function bullishMarubozu(dataArray) {
  * Find all Bearish Marubozu patterns in array
  */
 function bearishMarubozu(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBearishMarubozu);
 }
 

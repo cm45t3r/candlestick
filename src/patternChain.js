@@ -71,7 +71,7 @@ const allPatterns = [
   { name: "tweezersBottom", fn: tweezers.tweezersBottom, paramCount: 2 },
 ];
 
-const { precomputeCandleProps } = require("./utils.js");
+const { ensurePrecomputed } = require("./utils.js");
 
 /**
  * Scans a candlestick series for a sequence of patterns.
@@ -80,7 +80,7 @@ const { precomputeCandleProps } = require("./utils.js");
  * @returns {Array<{ index: number, pattern: string, match: Object|Array<Object> }>} Array of matches
  */
 function patternChain(candles, patterns = allPatterns) {
-  const precomputed = precomputeCandleProps(candles);
+  const precomputed = ensurePrecomputed(candles);
   const results = [];
   for (const pattern of patterns) {
     const { name, fn, paramCount = 1 } = pattern;

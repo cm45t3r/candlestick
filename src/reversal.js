@@ -1,7 +1,7 @@
 // reversal.js
 // Hanging Man and Shooting Star pattern logic extracted from candlestick.js
 
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const { findPattern, ensurePrecomputed } = require("./utils.js");
 const { isBearishHammer } = require("./hammer.js");
 const { isBearishInvertedHammer } = require("./invertedHammer.js");
 
@@ -41,7 +41,7 @@ function isShootingStar(previous, current) {
  * @return {Array<number>}
  */
 function hangingMan(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isHangingMan);
 }
 
@@ -51,7 +51,7 @@ function hangingMan(dataArray) {
  * @return {Array<number>}
  */
 function shootingStar(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isShootingStar);
 }
 

@@ -1,7 +1,11 @@
 // threeWhiteSoldiers.js
 // Three White Soldiers pattern detection module
 
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Returns true if the pattern is Three White Soldiers (bullish continuation/reversal).
@@ -64,7 +68,7 @@ function isThreeWhiteSoldiers(first, second, third) {
  * @return {Array<number>}
  */
 function threeWhiteSoldiers(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isThreeWhiteSoldiers);
 }
 

@@ -1,4 +1,8 @@
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Spinning Top - A candlestick with a small body and long upper/lower shadows
@@ -66,7 +70,7 @@ function isBearishSpinningTop(candle) {
  * Find all Spinning Top patterns in array
  */
 function spinningTop(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isSpinningTop);
 }
 
@@ -74,7 +78,7 @@ function spinningTop(dataArray) {
  * Find all Bullish Spinning Top patterns in array
  */
 function bullishSpinningTop(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBullishSpinningTop);
 }
 
@@ -82,7 +86,7 @@ function bullishSpinningTop(dataArray) {
  * Find all Bearish Spinning Top patterns in array
  */
 function bearishSpinningTop(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBearishSpinningTop);
 }
 

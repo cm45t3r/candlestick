@@ -1,7 +1,11 @@
 // invertedHammer.js
 // Inverted Hammer (Inverted Pinbar) pattern logic extracted from candlestick.js
 
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Returns true if the candle is an Inverted Hammer (body in lower third, long upper shadow, small lower shadow).
@@ -61,7 +65,7 @@ function isBearishInvertedHammer(candlestick) {
  * @return {Array<number>}
  */
 function invertedHammer(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isInvertedHammer);
 }
 
@@ -71,7 +75,7 @@ function invertedHammer(dataArray) {
  * @return {Array<number>}
  */
 function bullishInvertedHammer(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBullishInvertedHammer);
 }
 
@@ -81,7 +85,7 @@ function bullishInvertedHammer(dataArray) {
  * @return {Array<number>}
  */
 function bearishInvertedHammer(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBearishInvertedHammer);
 }
 

@@ -1,7 +1,11 @@
 // darkCloudCover.js
 // Dark Cloud Cover pattern detection module (bearish reversal)
 
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Returns true if the pattern is a Dark Cloud Cover (bearish reversal).
@@ -49,7 +53,7 @@ function isDarkCloudCover(first, second) {
  * @return {Array<number>}
  */
 function darkCloudCover(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isDarkCloudCover);
 }
 

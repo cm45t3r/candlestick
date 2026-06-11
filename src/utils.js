@@ -130,6 +130,12 @@ function precomputeCandleProps(dataArray) {
   }));
 }
 
+function ensurePrecomputed(dataArray) {
+  return dataArray.length > 0 && dataArray[0].bodyLen !== undefined
+    ? dataArray
+    : precomputeCandleProps(dataArray);
+}
+
 /**
  * Validate OHLC data structure and relationships.
  * @param {any} candle - Candlestick data to validate
@@ -233,6 +239,7 @@ module.exports = {
   findPattern,
   isEngulfed,
   precomputeCandleProps,
+  ensurePrecomputed,
   validateOHLC,
   validateOHLCArray,
 };

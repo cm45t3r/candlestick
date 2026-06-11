@@ -6,6 +6,7 @@ const {
   hasGapDown,
   findPattern,
   precomputeCandleProps,
+  ensurePrecomputed,
 } = require("./utils.js");
 const { isHammer } = require("./hammer.js");
 const { isInvertedHammer } = require("./invertedHammer.js");
@@ -56,7 +57,7 @@ function isBearishKicker(previous, current) {
  * @return {Array<number>}
  */
 function bullishKicker(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBullishKicker);
 }
 
@@ -66,7 +67,7 @@ function bullishKicker(dataArray) {
  * @return {Array<number>}
  */
 function bearishKicker(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isBearishKicker);
 }
 

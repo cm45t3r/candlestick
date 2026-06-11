@@ -1,7 +1,11 @@
 // eveningStar.js
 // Evening Star pattern detection module
 
-const { findPattern, precomputeCandleProps } = require("./utils.js");
+const {
+  findPattern,
+  precomputeCandleProps,
+  ensurePrecomputed,
+} = require("./utils.js");
 
 /**
  * Returns true if the pattern is an Evening Star (bearish reversal).
@@ -57,7 +61,7 @@ function isEveningStar(first, second, third) {
  * @return {Array<number>}
  */
 function eveningStar(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isEveningStar);
 }
 
