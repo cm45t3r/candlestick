@@ -22,6 +22,10 @@ function createStream(options = {}) {
     enrichMetadata = false,
   } = options;
 
+  if (!Number.isInteger(chunkSize) || chunkSize < 1) {
+    throw new Error(`chunkSize must be a positive integer, got: ${chunkSize}`);
+  }
+
   // Get pattern functions
   const candlestick = require("../index.js");
   let patternFns;

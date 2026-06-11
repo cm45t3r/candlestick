@@ -269,6 +269,27 @@ describe("Streaming API", () => {
       assert.ok(Array.isArray(matches));
     });
 
+    it("throws when chunkSize is 0", () => {
+      assert.throws(
+        () => createStream({ chunkSize: 0 }),
+        /chunkSize must be a positive integer/,
+      );
+    });
+
+    it("throws when chunkSize is negative", () => {
+      assert.throws(
+        () => createStream({ chunkSize: -1 }),
+        /chunkSize must be a positive integer/,
+      );
+    });
+
+    it("throws when chunkSize is a non-integer", () => {
+      assert.throws(
+        () => createStream({ chunkSize: 1.5 }),
+        /chunkSize must be a positive integer/,
+      );
+    });
+
     it("throws when patterns array contains only unknown names", () => {
       assert.throws(
         () => createStream({ patterns: ["nonExistentPattern"] }),
