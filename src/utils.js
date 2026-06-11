@@ -119,26 +119,15 @@ function findPattern(dataArray, callback) {
  * @return {Array<Object>} Array of candles with cached properties
  */
 function precomputeCandleProps(dataArray) {
-  return dataArray.map((candle) => {
-    const body = Math.abs(candle.open - candle.close);
-    const wick = candle.high - Math.max(candle.open, candle.close);
-    const tail = Math.min(candle.open, candle.close) - candle.low;
-    const bullish = candle.open < candle.close;
-    const bearish = candle.open > candle.close;
-    const bodyEndsObj =
-      candle.open <= candle.close
-        ? { bottom: candle.open, top: candle.close }
-        : { bottom: candle.close, top: candle.open };
-    return {
-      ...candle,
-      bodyLen: body,
-      wickLen: wick,
-      tailLen: tail,
-      isBullish: bullish,
-      isBearish: bearish,
-      bodyEnds: bodyEndsObj,
-    };
-  });
+  return dataArray.map((candle) => ({
+    ...candle,
+    bodyLen: bodyLen(candle),
+    wickLen: wickLen(candle),
+    tailLen: tailLen(candle),
+    isBullish: isBullish(candle),
+    isBearish: isBearish(candle),
+    bodyEnds: bodyEnds(candle),
+  }));
 }
 
 /**
