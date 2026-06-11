@@ -72,16 +72,8 @@ function createStream(options = {}) {
         ? candlestick.metadata.enrichWithMetadata(results)
         : results;
 
-      // Adjust indices to global offset
-      finalResults.forEach((result) => {
-        result.index += globalOffset;
-
-        if (onMatch) {
-          onMatch(result);
-        }
-      });
-
-      // Update state
+      // Update state before callbacks so a throwing onMatch doesn't corrupt stream state
+      const chunkOffset = globalOffset;
       buffer = overlap;
       globalOffset += chunkSize - maxPatternSize + 1;
       totalProcessed += toProcess.length;
@@ -93,6 +85,14 @@ function createStream(options = {}) {
           matchesFound: finalResults.length,
         });
       }
+
+      // Adjust indices to global offset and fire callbacks
+      finalResults.forEach((result) => {
+        result.index += chunkOffset;
+        if (onMatch) {
+          onMatch(result);
+        }
+      });
     }
   }
 
@@ -110,16 +110,16 @@ function createStream(options = {}) {
         ? candlestick.metadata.enrichWithMetadata(results)
         : results;
 
-      finalResults.forEach((result) => {
-        result.index += globalOffset;
-        finalMatches++;
+      const endOffset = globalOffset;
+      totalProcessed += buffer.length;
+      finalMatches = finalResults.length;
 
+      finalResults.forEach((result) => {
+        result.index += endOffset;
         if (onMatch) {
           onMatch(result);
         }
       });
-
-      totalProcessed += buffer.length;
     }
 
     // Final progress
