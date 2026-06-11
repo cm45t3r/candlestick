@@ -173,12 +173,13 @@ function processLargeDataset(data, options = {}) {
 
   // Process in chunks
   const chunkSize = options.chunkSize || 1000;
-  for (let i = 0; i < data.length; i += chunkSize) {
-    const chunk = data.slice(i, i + chunkSize);
-    stream.process(chunk);
+  try {
+    for (let i = 0; i < data.length; i += chunkSize) {
+      stream.process(data.slice(i, i + chunkSize));
+    }
+  } finally {
+    stream.end();
   }
-
-  stream.end();
   return results;
 }
 

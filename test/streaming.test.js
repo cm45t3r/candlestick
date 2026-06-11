@@ -254,6 +254,65 @@ describe("Streaming API", () => {
     });
   });
 
+  describe("processLargeDataset error handling", () => {
+    it("calls end() and fires onProgress complete:true even when process() throws", () => {
+      // processLargeDataset overrides onMatch internally, so we trigger the throw via
+      // onProgress (the only user callback that flows through stream.process()).
+      // It throws once; end() then runs cleanly and fires onProgress with complete:true.
+      const data = generateCandles(5000);
+      let completeFired = false;
+      let thrown = false;
+
+      assert.throws(
+        () =>
+          processLargeDataset(data, {
+            chunkSize: 50,
+            onProgress: ({ complete }) => {
+              if (complete) {
+                completeFired = true;
+                return;
+              }
+              if (!thrown) {
+                thrown = true;
+                throw new Error("progress callback failure");
+              }
+            },
+          }),
+        /progress callback failure/,
+      );
+
+      assert.ok(completeFired, "onProgress({ complete: true }) must fire even after a throw");
+    });
+
+    it("flushes buffered candles via end() before re-throwing", () => {
+      // onProgress throws once during the loop; end() still runs and onProgress fires
+      // with complete:true, confirming the buffer was drained and totalProcessed is set.
+      const data = generateCandles(5000);
+      let finalProcessed = 0;
+      let thrown = false;
+
+      assert.throws(
+        () =>
+          processLargeDataset(data, {
+            chunkSize: 50,
+            onProgress: ({ processed, complete }) => {
+              if (complete) {
+                finalProcessed = processed;
+                return;
+              }
+              if (!thrown) {
+                thrown = true;
+                throw new Error("trigger");
+              }
+            },
+          }),
+        /trigger/,
+      );
+
+      assert.ok(finalProcessed > 0, "end() must have flushed the buffer before re-throwing");
+    });
+  });
+
   describe("createStream edge cases", () => {
     it("accepts patterns as a single string instead of array", () => {
       const matches = [];
