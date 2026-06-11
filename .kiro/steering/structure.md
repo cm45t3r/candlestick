@@ -76,4 +76,5 @@ Beyond pattern modules, several purpose-specific modules live at the same `src/`
 - No circular dependencies: `utils.js` has no imports; pattern modules import only `utils.js`; `patternChain.js` imports pattern modules; `candlestick.js` imports everything.
 
 ---
+
 _Document patterns, not file trees. New files following patterns shouldn't require updates_

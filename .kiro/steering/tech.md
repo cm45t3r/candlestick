@@ -70,4 +70,5 @@ No production runtime dependencies.
 - **Streaming via overlap buffer**: `createStream` retains a trailing overlap of `maxPatternSize - 1` candles between chunks to detect patterns that span chunk boundaries.
 
 ---
+
 _Document standards and patterns, not every dependency_

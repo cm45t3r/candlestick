@@ -1,6 +1,7 @@
 # Gap Analysis Process
 
 ## Objective
+
 Analyze the gap between requirements and existing codebase to inform implementation strategy decisions.
 
 ## Analysis Framework
@@ -38,6 +39,7 @@ Analyze the gap between requirements and existing codebase to inform implementat
 ### 3. Implementation Approach Options
 
 #### Option A: Extend Existing Components
+
 **When to consider**: Feature fits naturally into existing structure
 
 - **Which files/modules to extend**:
@@ -56,12 +58,14 @@ Analyze the gap between requirements and existing codebase to inform implementat
   - Assess if file size remains manageable
 
 **Trade-offs**:
+
 - ✅ Minimal new files, faster initial development
 - ✅ Leverages existing patterns and infrastructure
 - ❌ Risk of bloating existing components
 - ❌ May complicate existing logic
 
 #### Option B: Create New Components
+
 **When to consider**: Feature has distinct responsibility or existing components are already complex
 
 - **Rationale for new creation**:
@@ -80,6 +84,7 @@ Analyze the gap between requirements and existing codebase to inform implementat
   - Data flow and control flow
 
 **Trade-offs**:
+
 - ✅ Clean separation of concerns
 - ✅ Easier to test in isolation
 - ✅ Reduces complexity in existing components
@@ -87,6 +92,7 @@ Analyze the gap between requirements and existing codebase to inform implementat
 - ❌ Requires careful interface design
 
 #### Option C: Hybrid Approach
+
 **When to consider**: Complex features requiring both extension and new creation
 
 - **Combination strategy**:
@@ -105,10 +111,12 @@ Analyze the gap between requirements and existing codebase to inform implementat
   - Rollback strategy
 
 **Trade-offs**:
+
 - ✅ Balanced approach for complex features
 - ✅ Allows iterative refinement
 - ❌ More complex planning required
 - ❌ Potential for inconsistency if not well-coordinated
+
 ### 4. Out-of-Scope for Gap Analysis
 
 - Defer deep research activities to the design phase.
@@ -116,15 +124,15 @@ Analyze the gap between requirements and existing codebase to inform implementat
 
 ### 5. Implementation Complexity & Risk
 
-  - Effort:
-    - S (1–3 days): existing patterns, minimal deps, straightforward integration
-    - M (3–7 days): some new patterns/integrations, moderate complexity
-    - L (1–2 weeks): significant functionality, multiple integrations or workflows
-    - XL (2+ weeks): architectural changes, unfamiliar tech, broad impact
-  - Risk:
-    - High: unknown tech, complex integrations, architectural shifts, unclear perf/security path
-    - Medium: new patterns with guidance, manageable integrations, known perf solutions
-    - Low: extend established patterns, familiar tech, clear scope, minimal integration
+- Effort:
+  - S (1–3 days): existing patterns, minimal deps, straightforward integration
+  - M (3–7 days): some new patterns/integrations, moderate complexity
+  - L (1–2 weeks): significant functionality, multiple integrations or workflows
+  - XL (2+ weeks): architectural changes, unfamiliar tech, broad impact
+- Risk:
+  - High: unknown tech, complex integrations, architectural shifts, unclear perf/security path
+  - Medium: new patterns with guidance, manageable integrations, known perf solutions
+  - Low: extend established patterns, familiar tech, clear scope, minimal integration
 
 ### Output Checklist
 

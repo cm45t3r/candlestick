@@ -15,4 +15,5 @@
 [What makes this product unique or valuable]
 
 ---
+
 _Focus on patterns and purpose, not exhaustive feature lists_

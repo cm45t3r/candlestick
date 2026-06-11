@@ -87,7 +87,9 @@ console.log(
   isPiercingLine(piercingLineData[0], piercingLineData[1]),
 );
 console.log("piercingLine indices:", piercingLine(piercingLineData));
-console.log("Interpretation: Bullish reversal — second candle pierces into bearish body");
+console.log(
+  "Interpretation: Bullish reversal — second candle pierces into bearish body",
+);
 
 // Dark Cloud Cover Example
 console.log("\n6. Dark Cloud Cover (Bearish Reversal)");
@@ -101,7 +103,9 @@ console.log(
   isDarkCloudCover(darkCloudData[0], darkCloudData[1]),
 );
 console.log("darkCloudCover indices:", darkCloudCover(darkCloudData));
-console.log("Interpretation: Bearish reversal — dark cloud covers the bullish candle");
+console.log(
+  "Interpretation: Bearish reversal — dark cloud covers the bullish candle",
+);
 
 // Pattern Chain with All Patterns
 console.log("\n7. Pattern Chain (All Patterns Including New Ones)");

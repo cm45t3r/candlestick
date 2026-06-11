@@ -4,8 +4,8 @@
 
 The following versions are currently supported with security updates:
 
-| Version   | Supported          |
-| --------- | ------------------ |
+| Version    | Supported          |
+| ---------- | ------------------ |
 | `>= 1.0.0` | :white_check_mark: |
 | `< 1.0.0`  | :x:                |
 

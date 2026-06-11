@@ -161,7 +161,10 @@ function runStreamBenchmark(label, totalCandles, chunkSize) {
   }
 
   const start = performance.now();
-  const stream = createStream({ patterns: ["hammer", "doji"], chunkSize: 1000 });
+  const stream = createStream({
+    patterns: ["hammer", "doji"],
+    chunkSize: 1000,
+  });
   for (const chunk of chunks) stream.process(chunk);
   stream.end();
   const elapsed = performance.now() - start;

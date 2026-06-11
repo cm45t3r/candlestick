@@ -36,6 +36,7 @@ Before writing `design.md`, review the draft design and repair local issues unti
 ## Mechanical Checks
 
 Before applying judgment, verify these mechanically:
+
 - **Requirements traceability**: Extract all numeric requirement IDs from `requirements.md`. Scan the design draft for each ID. Report any IDs not found in the design.
 - **Boundary section populated**: `Boundary Commitments`, `Out of Boundary`, `Allowed Dependencies`, and `Revalidation Triggers` must not be empty or placeholder-only.
 - **File Structure Plan populated**: The File Structure Plan section must contain concrete file paths (not just "TBD" or empty). Scan for placeholder text in that section.

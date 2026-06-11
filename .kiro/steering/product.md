@@ -22,4 +22,5 @@
 Pure JavaScript with no native dependencies — runs anywhere Node.js runs. The consistent, modular API (one module per pattern) makes the library easy to extend, tree-shake, and audit. Dual CJS/ESM exports and full TypeScript definitions provide compatibility across all modern JavaScript environments.
 
 ---
+
 _Focus on patterns and purpose, not exhaustive feature lists_

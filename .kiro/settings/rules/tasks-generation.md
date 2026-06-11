@@ -3,9 +3,11 @@
 ## Core Principles
 
 ### 1. Natural Language Descriptions
+
 Focus on capabilities and outcomes, not code structure.
 
 **Describe**:
+
 - What functionality to achieve
 - Business logic and behavior
 - Features and capabilities
@@ -13,6 +15,7 @@ Focus on capabilities and outcomes, not code structure.
 - Data relationships and workflows
 
 **Avoid**:
+
 - File paths and directory structure
 - Function/method names and signatures
 - Type definitions and interfaces
@@ -26,6 +29,7 @@ Focus on capabilities and outcomes, not code structure.
 **Order implies dependency**: Task N implicitly depends on all tasks before it. This is the primary dependency mechanism.
 
 **Tasks must follow this phase order**:
+
 1. **Foundation**: Environment setup, test infrastructure, shared utilities, database schema, configuration
 2. **Core**: Primary feature implementation (parallel-capable tasks grouped here)
 3. **Integration**: Wiring components together, cross-boundary connections
@@ -36,6 +40,7 @@ Focus on capabilities and outcomes, not code structure.
 ### 3. Task Integration & Progression
 
 **Every task must**:
+
 - Build on previous outputs (no orphaned code)
 - Connect to the overall system (no hanging features)
 - Progress incrementally (no big jumps in complexity)
@@ -50,6 +55,7 @@ Focus on capabilities and outcomes, not code structure.
 **Default**: Sequential ordering handles most dependencies (task N depends on tasks before it).
 
 **Explicit declaration required when**:
+
 - A task depends on a specific task in a different major-task group (cross-boundary)
 - The dependency is non-obvious from ordering alone
 - A task can skip ahead of its position (declared via `(P)`) but still needs specific prior work
@@ -61,6 +67,7 @@ Focus on capabilities and outcomes, not code structure.
 ### 5. Boundary Scope
 
 **Each task should declare its component boundary** using design.md component/module names:
+
 - `_Boundary: AuthService_` or `_Boundary: API Layer, UserRepository_`
 - Helps validate parallel safety: tasks with non-overlapping boundaries are parallel candidates
 - Helps agents understand scope: what to touch and what not to touch
@@ -68,6 +75,7 @@ Focus on capabilities and outcomes, not code structure.
 **When to use**: Required for tasks marked `(P)` to validate parallel safety. Omit for sequential tasks where scope is obvious from the description.
 
 **Boundary rule**:
+
 - Each executable task should stay within a single responsibility boundary
 - If work must cross boundaries, make it an explicit integration task rather than a normal implementation task
 - Do not hide cross-boundary coordination inside a task that appears local
@@ -75,6 +83,7 @@ Focus on capabilities and outcomes, not code structure.
 ### 6. Flexible Task Sizing
 
 **Guidelines**:
+
 - **Major tasks**: As many sub-tasks as logically needed (group by cohesion)
 - **Sub-tasks**: 1-3 hours each, 3-10 details per sub-task
 - Balance between too granular and too broad
@@ -84,6 +93,7 @@ Focus on capabilities and outcomes, not code structure.
 ### 7. Requirements Mapping
 
 **End each task detail section with**:
+
 - `_Requirements: X.X, Y.Y_` listing **only numeric requirement IDs** (comma-separated). Never append descriptive text, parentheses, translations, or free-form labels.
 - For cross-cutting requirements, list every relevant requirement ID. All requirements MUST have numeric IDs in requirements.md. If an ID is missing, stop and correct requirements.md before generating tasks.
 - Reference components/interfaces from design.md when helpful (e.g., `_Contracts: AuthService API`)
@@ -91,6 +101,7 @@ Focus on capabilities and outcomes, not code structure.
 ### 7.5 Observable Completion
 
 **Each executable task must include at least one detail bullet that describes the observable completed state**:
+
 - Phrase it as a deliverable, runtime behavior, persisted state, UI state, endpoint behavior, test result, or integration outcome
 - Avoid vague bullets like "implement support", "wire things up", or "handle logic" unless paired with a concrete observable result
 - Prefer making one detail bullet clearly answer: "What will be true when this task is done?"
@@ -99,11 +110,13 @@ Focus on capabilities and outcomes, not code structure.
 ### 8. Code-Only Focus
 
 **Include ONLY**:
+
 - Coding tasks (implementation)
 - Testing tasks (unit, integration, E2E)
 - Technical setup tasks (infrastructure, configuration)
 
 **Exclude**:
+
 - Deployment tasks
 - Documentation tasks
 - User testing
@@ -148,6 +161,7 @@ Before writing `tasks.md`, review the draft task plan and repair local issues un
 ## Task Hierarchy Rules
 
 ### Maximum 2 Levels
+
 - **Level 1**: Major tasks (1, 2, 3, 4...)
 - **Level 2**: Sub-tasks (1.1, 1.2, 2.1, 2.2...)
 - **No deeper nesting** (no 1.1.1)
@@ -155,11 +169,13 @@ Before writing `tasks.md`, review the draft task plan and repair local issues un
 - When a major task exists purely as a container, keep the checkbox description concise and avoid duplicating detailed bullets—reserve specifics for its sub-tasks.
 
 ### Sequential Numbering
+
 - Major tasks MUST increment: 1, 2, 3, 4, 5...
 - Sub-tasks reset per major task: 1.1, 1.2, then 2.1, 2.2...
 - Never repeat major task numbers
 
 ### Parallel Analysis (default)
+
 - Assume parallel analysis is enabled unless explicitly disabled (e.g. `--sequential` flag).
 - `(P)` means: this task has no dependency on its immediately preceding peers and can run concurrently with them.
 - Identify tasks that can run concurrently when **all** conditions hold:
@@ -180,6 +196,7 @@ Before writing `tasks.md`, review the draft task plan and repair local issues un
 - Explicitly call out dependencies that prevent `(P)` even when tasks look similar.
 
 ### Checkbox Format
+
 ```markdown
 - [ ] 1. Foundation: environment and test infrastructure setup
 - [ ] 1.1 Sub-task description
@@ -212,6 +229,7 @@ Before writing `tasks.md`, review the draft task plan and repair local issues un
 ## Requirements Coverage
 
 **Mandatory Check**:
+
 - ALL requirements from requirements.md MUST be covered
 - Cross-reference every requirement ID with task mappings
 - If gaps found: Return to requirements or design phase
