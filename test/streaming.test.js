@@ -282,5 +282,16 @@ describe("Streaming API", () => {
         /No matching patterns found/,
       );
     });
+
+    it("handles chunks larger than 100k elements without stack overflow", () => {
+      // Regression for #75: buffer.push(...chunk) throws RangeError for chunks
+      // above ~100–150k elements (V8 argument limit). for...of push has no limit.
+      const BIG = 150_000;
+      const candle = { open: 10, high: 12, low: 8, close: 11 };
+      const chunk = Array(BIG).fill(candle);
+
+      const stream = createStream({ patterns: ["hammer"], chunkSize: BIG + 1 });
+      assert.doesNotThrow(() => stream.process(chunk));
+    });
   });
 });
