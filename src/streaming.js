@@ -56,8 +56,8 @@ function createStream(options = {}) {
       return;
     }
 
-    // Add to buffer
-    buffer = buffer.concat(chunk);
+    // Add to buffer (for...of avoids the RangeError that push(...chunk) triggers on large chunks)
+    for (const candle of chunk) buffer.push(candle);
 
     // Process buffer if it's large enough
     while (buffer.length >= chunkSize + maxPatternSize) {
