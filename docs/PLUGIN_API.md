@@ -396,6 +396,22 @@ candlestick.plugins.registerPattern({
 - Detection functions must return an array of indices
 - Cannot override built-in patterns (they're in a separate namespace)
 
+## Singleton Behavior and Test Isolation
+
+The plugin registry (`customPatterns`) is a module-level `Map`. Because Node.js caches modules, a pattern registered in one file or test remains registered for the entire process lifetime.
+
+When writing tests that register custom patterns, always call `clearAllPatterns()` unconditionally after each test — use `afterEach` rather than a manual call at the end of the test body so the cleanup runs even if the test throws:
+
+```javascript
+const { plugins } = require('candlestick');
+
+afterEach(() => {
+  plugins.clearAllPatterns();
+});
+```
+
+Forgetting the cleanup will leave the registry dirty for all subsequent tests, which can cause false failures or false passes.
+
 ## TypeScript Support
 
 TypeScript definitions for the plugin system are included in `types/index.d.ts`.

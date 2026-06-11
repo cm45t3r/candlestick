@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased]
+
+**Performance improvements:**
+
+- perf(patternChain): eliminate up to 29x redundant `precomputeCandleProps` calls. Added `ensurePrecomputed()` to `src/utils.js`; all 29 series functions and `patternChain` now use it instead of unconditionally re-precomputing. Result: ~2x speedup on raw input, ~2.6x on pre-enriched input at 10k candles. Fixes [\#80](https://github.com/cm45t3r/candlestick/issues/80)
+- perf(streaming): replace `buffer.concat()` with a `for...of` push loop in `src/streaming.js`. `concat` allocated a new array on every `process()` call — up to 8x slower in tick-by-tick usage. `push(...chunk)` is unsafe for chunks >~100k elements (V8 stack limit), so `for...of` is used instead. Fixes [\#75](https://github.com/cm45t3r/candlestick/issues/75)
+
+**Refactoring:**
+
+- refactor(utils): `precomputeCandleProps` now delegates to the existing utility functions (`bodyLen`, `wickLen`, `tailLen`, `isBullish`, `isBearish`, `bodyEnds`) instead of duplicating their math inline. Eliminates silent divergence risk if any formula changes. Fixes [\#76](https://github.com/cm45t3r/candlestick/issues/76)
+
+**Maintenance:**
+
+- chore(deps): replaced `"latest"` with explicit semver ranges for all devDependencies in `package.json`. Fixes [\#77](https://github.com/cm45t3r/candlestick/issues/77)
+- chore(security): resolved moderate `brace-expansion` DoS vulnerability (GHSA-jxxr-4gwj-5jf2) in transitive devDependency path via eslint. Fixes [\#78](https://github.com/cm45t3r/candlestick/issues/78)
+- test(integration): plugin singleton cleanup now guarded by `afterEach` so the global `Map` is always cleared even when a test throws before reaching `clearAllPatterns()`. Addresses [\#79](https://github.com/cm45t3r/candlestick/issues/79)
+
 ## [v1.2.0](https://github.com/cm45t3r/candlestick/tree/v1.2.0) (2025-10-18)
 
 [Full Changelog](https://github.com/cm45t3r/candlestick/compare/v1.1.0...v1.2.0)

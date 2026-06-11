@@ -64,7 +64,8 @@ Provides low-level utilities for candlestick calculations:
 - **isBullish/isBearish**: Determine candle direction
 - **hasGapUp/hasGapDown**: Detect gaps between candles
 - **isEngulfed**: Check if one body engulfs another
-- **precomputeCandleProps**: Cache calculations for performance
+- **precomputeCandleProps**: Compute and attach derived properties (bodyLen, wickLen, etc.) to each candle
+- **ensurePrecomputed**: Return the input unchanged if already enriched, otherwise delegate to `precomputeCandleProps`
 - **validateOHLC**: Validate OHLC data structure and relationships
 - **findPattern**: Generic pattern search utility
 
@@ -109,7 +110,7 @@ module.exports = {
 
 Enables efficient multi-pattern detection:
 
-- Pre-computes candle properties once
+- Calls `ensurePrecomputed()` on the input — enriches raw data at most once, and skips precomputation entirely when the caller has already enriched the array
 - Runs multiple pattern detectors in a single pass
 - Returns structured results with pattern name, index, and matched candles
 - Supports custom pattern lists
@@ -136,30 +137,40 @@ Results (indices or PatternMatch objects)
 
 ### 1. Pre-computation
 
-The `precomputeCandleProps()` function calculates all common properties once:
+`precomputeCandleProps()` enriches each candle object with derived fields computed once:
 
-- Body length
-- Wick/tail lengths
-- Bullish/bearish flags
-- Body ends
+- Body length (`bodyLen`)
+- Wick / tail lengths (`wickLen`, `tailLen`)
+- Bullish / bearish flags (`isBullish`, `isBearish`)
+- Body endpoints (`bodyEnds`)
 
-This is especially important for `patternChain()` which runs multiple detectors.
+All field values are delegated to the named utility functions in `src/utils.js` — formulas live in a single place, so a change to `wickLen()` propagates automatically.
 
-### 2. Lazy Pre-computation
+### 2. `ensurePrecomputed` — Idempotent Pre-computation
 
-Individual pattern functions check if properties are already computed:
+`ensurePrecomputed(dataArray)` checks whether the first element already has `bodyLen` set. If it does, the array is returned as-is; otherwise `precomputeCandleProps` runs. This makes pre-computation safe to call from multiple layers (pattern function, patternChain, user code) without redundant work.
+
+Before this function was introduced, a `patternChain` call over 29 patterns triggered 30 separate precompute passes on the same data (one in `patternChain`, one inside each pattern function). With `ensurePrecomputed`, the total is at most 1 regardless of how many patterns run.
 
 ```javascript
-function isHammer(candlestick) {
-  let c = candlestick;
-  if (c.bodyLen === undefined) {
-    c = precomputeCandleProps([candlestick])[0];
-  }
-  // ... use precomputed properties
+// Each series function delegates to ensurePrecomputed:
+function hammer(dataArray) {
+  const candles = ensurePrecomputed(dataArray);
+  return findPattern(candles, isHammer);
 }
 ```
 
-### 3. Generic Search Utility
+### 3. Streaming Buffer Efficiency
+
+The streaming API (`src/streaming.js`) accumulates chunks using a `for...of` push loop:
+
+```javascript
+for (const candle of chunk) buffer.push(candle);
+```
+
+`Array.concat()` was used previously but allocates a new array on every `process()` call. In tick-by-tick usage this caused up to 8x more GC pressure. `push(...chunk)` is equivalent performance-wise but throws `RangeError` for chunks larger than ~100k elements (V8 argument-count limit), so the `for...of` form is used instead.
+
+### 4. Generic Search Utility
 
 The `findPattern()` function provides a reusable search algorithm that works with any pattern function, reducing code duplication.
 
