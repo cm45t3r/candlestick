@@ -1,10 +1,13 @@
-const { describe, it } = require("node:test");
+const { describe, it, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 
 // Import entire module
 const candlestick = require("../index.js");
 
 describe("Integration Tests", () => {
+  afterEach(() => {
+    candlestick.plugins.clearAllPatterns();
+  });
   it("all 18 unique patterns are available", () => {
     // Count unique pattern detection functions (not including directional variants like bullish/bearish)
     const uniquePatterns = [
