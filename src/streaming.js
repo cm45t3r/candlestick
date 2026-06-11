@@ -33,6 +33,12 @@ function createStream(options = {}) {
     patternFns = candlestick.allPatterns.filter((p) =>
       patternNames.includes(p.name),
     );
+    if (patternFns.length === 0) {
+      throw new Error(
+        `No matching patterns found for: ${patternNames.join(", ")}. ` +
+          `Check the "patterns" option.`,
+      );
+    }
   }
 
   // State

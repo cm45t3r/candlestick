@@ -268,5 +268,19 @@ describe("Streaming API", () => {
       stream.end();
       assert.ok(Array.isArray(matches));
     });
+
+    it("throws when patterns array contains only unknown names", () => {
+      assert.throws(
+        () => createStream({ patterns: ["nonExistentPattern"] }),
+        /No matching patterns found for: nonExistentPattern/,
+      );
+    });
+
+    it("throws when patterns is an empty array", () => {
+      assert.throws(
+        () => createStream({ patterns: [] }),
+        /No matching patterns found/,
+      );
+    });
   });
 });
