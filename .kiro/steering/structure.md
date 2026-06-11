@@ -16,7 +16,7 @@ Flat, module-per-concern layout. Source code is not feature-foldered — each pa
 ### Shared Utilities (`src/utils.js`)
 
 **Location**: `/src/utils.js`
-**Purpose**: Pure geometric and structural helpers (`bodyLen`, `wickLen`, `tailLen`, `bodyEnds`, `isBullish`, `isBearish`, `hasGapUp`, `hasGapDown`, `isEngulfed`, `findPattern`, `precomputeCandleProps`, `validateOHLC`, `validateOHLCArray`). No pattern logic lives here. No imports.
+**Purpose**: Pure geometric and structural helpers (`bodyLen`, `wickLen`, `tailLen`, `bodyEnds`, `isBullish`, `isBearish`, `hasGapUp`, `hasGapDown`, `isEngulfed`, `findPattern`, `precomputeCandleProps`, `ensurePrecomputed`, `validateOHLC`, `validateOHLCArray`). `ensurePrecomputed` is an idempotency guard — skips re-computation if props are already present. No pattern logic lives here. No imports.
 
 ### Aggregator and Entry Points
 
@@ -70,7 +70,7 @@ Beyond pattern modules, several purpose-specific modules live at the same `src/`
 
 ## Code Organization Principles
 
-- Each pattern module follows the same structure: import `{ findPattern, precomputeCandleProps }` from utils, define `is*` boolean function(s), define array-scanning wrapper(s) that call `precomputeCandleProps` then `findPattern`, then export all.
+- Each pattern module follows the same structure: import `{ findPattern, precomputeCandleProps }` from utils, define `is*` boolean function(s), define array-scanning wrapper(s) that call `precomputeCandleProps` then `findPattern`, then export all. When called via `patternChain`, the array is already precomputed — `ensurePrecomputed` is the guard that makes this safe.
 - `patternChain.js` owns the `allPatterns` registry — adding a new pattern requires a new module + a new entry in `allPatterns`.
 - `paramCount` on every pattern definition is the single source of truth for how many consecutive candles a pattern consumes.
 - No circular dependencies: `utils.js` has no imports; pattern modules import only `utils.js`; `patternChain.js` imports pattern modules; `candlestick.js` imports everything.

@@ -64,7 +64,7 @@ No production runtime dependencies.
 ## Key Technical Decisions
 
 - **One module per pattern**: Keeps each pattern independently auditable and tree-shakeable; avoids a monolithic file.
-- **`precomputeCandleProps` caching**: All series-level functions precompute `bodyLen`, `wickLen`, `tailLen`, `isBullish`, `isBearish`, `bodyEnds` once per call, avoiding redundant arithmetic across multi-pattern scans.
+- **`precomputeCandleProps` / `ensurePrecomputed` caching**: All series-level functions precompute `bodyLen`, `wickLen`, `tailLen`, `isBullish`, `isBearish`, `bodyEnds` once per call. `ensurePrecomputed` (an idempotency guard in `utils.js`) skips re-computation if props are already present — `patternChain` calls it once upfront and passes the enriched array to every pattern `fn`, eliminating per-pattern redundancy.
 - **`paramCount` on pattern definitions**: Drives `findPattern` loop bounds and `patternChain` match slicing without pattern-specific branching.
 - **No mutation**: All functions return new objects; caller data is never modified.
 - **Streaming via overlap buffer**: `createStream` retains a trailing overlap of `maxPatternSize - 1` candles between chunks to detect patterns that span chunk boundaries.
