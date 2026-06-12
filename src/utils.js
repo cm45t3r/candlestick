@@ -96,8 +96,7 @@ function isEngulfed(previous, current) {
  * @param {Function} callback - Pattern function
  * @return {Array<number>} Indices where the pattern is found
  */
-function findPattern(dataArray, callback) {
-  const paramCount = callback.length;
+function findPattern(dataArray, callback, paramCount = callback.length) {
   const upperBound = dataArray.length - paramCount;
   const results = [];
   for (let i = 0; i <= upperBound; i++) {

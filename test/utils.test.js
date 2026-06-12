@@ -107,6 +107,55 @@ describe("ensurePrecomputed", () => {
   });
 });
 
+describe("findPattern paramCount", () => {
+  const candles = [
+    { open: 90, high: 100, low: 80, close: 95 },
+    { open: 95, high: 105, low: 85, close: 90 },
+    { open: 90, high: 102, low: 82, close: 98 },
+    { open: 98, high: 108, low: 88, close: 93 },
+  ];
+
+  it("two-arg call: uses callback.length as before (no regression)", () => {
+    const indices = utils.findPattern(candles, utils.isBullish);
+    assert.deepStrictEqual(indices, [0, 2]);
+  });
+
+  it("explicit paramCount=1 matches two-arg form", () => {
+    const withExplicit = utils.findPattern(candles, utils.isBullish, 1);
+    const withDefault = utils.findPattern(candles, utils.isBullish);
+    assert.deepStrictEqual(withExplicit, withDefault);
+  });
+
+  it("plugin with default param: callback.length under-counts without explicit paramCount", () => {
+    // isBullishThenBearish has .length === 1 due to the default param
+    function isBullishThenBearish(prev, curr = {}) {
+      return prev.close > prev.open && curr.open > curr.close;
+    }
+    assert.equal(isBullishThenBearish.length, 1);
+
+    // Without explicit paramCount: passes only 1 candle → curr is always {} → 0 matches
+    const wrong = utils.findPattern(candles, isBullishThenBearish);
+    assert.equal(wrong.length, 0);
+
+    // With explicit paramCount=2: passes 2 candles → correct matches
+    const correct = utils.findPattern(candles, isBullishThenBearish, 2);
+    assert.ok(correct.length > 0);
+  });
+
+  it("plugin with rest params: callback.length under-counts without explicit paramCount", () => {
+    function threeCandles(...args) {
+      return args.length === 3 && args[0].close < args[2].close;
+    }
+    assert.equal(threeCandles.length, 0);
+
+    const wrong = utils.findPattern(candles, threeCandles);
+    assert.equal(wrong.length, 0);
+
+    const correct = utils.findPattern(candles, threeCandles, 3);
+    assert.ok(Array.isArray(correct));
+  });
+});
+
 describe("precomputeCandleProps strict mode", () => {
   const valid = { open: 100, high: 110, low: 90, close: 95 };
   const ocOnly = { open: 100, close: 95 }; // missing high/low → NaN wickLen/tailLen
