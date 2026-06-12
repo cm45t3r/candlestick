@@ -167,9 +167,13 @@ function createStream(options = {}) {
  */
 function processLargeDataset(data, options = {}) {
   const results = [];
+  const userOnMatch = options.onMatch;
   const stream = createStream({
     ...options,
-    onMatch: (match) => results.push(match),
+    onMatch: (match) => {
+      results.push(match);
+      if (userOnMatch) userOnMatch(match);
+    },
   });
 
   // Process in chunks

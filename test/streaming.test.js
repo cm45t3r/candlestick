@@ -254,6 +254,26 @@ describe("Streaming API", () => {
     });
   });
 
+  describe("processLargeDataset onMatch composition", () => {
+    it("caller onMatch is invoked for every match alongside internal collection", () => {
+      const data = generateCandles(5000);
+      const realtime = [];
+      const final = processLargeDataset(data, {
+        chunkSize: 500,
+        onMatch: (m) => realtime.push(m),
+      });
+      assert.ok(final.length > 0, "returned array must have matches");
+      assert.deepStrictEqual(realtime.length, final.length, "realtime count must equal returned count");
+    });
+
+    it("omitting onMatch still returns collected results", () => {
+      const data = generateCandles(5000);
+      const final = processLargeDataset(data, { chunkSize: 500 });
+      assert.ok(Array.isArray(final));
+      assert.ok(final.length > 0);
+    });
+  });
+
   describe("processLargeDataset error handling", () => {
     it("calls end() and fires onProgress complete:true even when process() throws", () => {
       // processLargeDataset overrides onMatch internally, so we trigger the throw via
