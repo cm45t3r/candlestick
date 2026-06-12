@@ -106,3 +106,39 @@ describe("ensurePrecomputed", () => {
     assert.deepStrictEqual(result, []);
   });
 });
+
+describe("precomputeCandleProps strict mode", () => {
+  const valid = { open: 100, high: 110, low: 90, close: 95 };
+  const ocOnly = { open: 100, close: 95 }; // missing high/low → NaN wickLen/tailLen
+
+  it("default (strict=false): silently stores NaN for O/C-only candles", () => {
+    const [result] = utils.precomputeCandleProps([ocOnly]);
+    assert.ok(isNaN(result.wickLen));
+    assert.ok(isNaN(result.tailLen));
+  });
+
+  it("strict=true: throws for O/C-only candles", () => {
+    assert.throws(
+      () => utils.precomputeCandleProps([ocOnly], true),
+      /Invalid candle data produces NaN geometry/,
+    );
+  });
+
+  it("strict=true: throws for candle with undefined close", () => {
+    assert.throws(
+      () => utils.precomputeCandleProps([{ open: 100, high: 110, low: 90 }], true),
+      /Invalid candle data produces NaN geometry/,
+    );
+  });
+
+  it("strict=true: passes for fully valid candle", () => {
+    assert.doesNotThrow(() => utils.precomputeCandleProps([valid], true));
+  });
+
+  it("ensurePrecomputed strict=true: throws for O/C-only candles", () => {
+    assert.throws(
+      () => utils.ensurePrecomputed([ocOnly], true),
+      /Invalid candle data produces NaN geometry/,
+    );
+  });
+});

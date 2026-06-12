@@ -432,6 +432,7 @@ export const allPatterns: PatternDefinition[];
 export function patternChain(
   candles: OHLC[],
   patterns?: PatternDefinition[],
+  options?: { strict?: boolean },
 ): PatternMatch[];
 
 // ========== Utilities Export ==========
@@ -569,6 +570,7 @@ export interface StreamOptions {
     complete?: boolean;
   }) => void;
   enrichMetadata?: boolean;
+  strict?: boolean;
 }
 
 /**

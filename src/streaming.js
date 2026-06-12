@@ -20,6 +20,7 @@ function createStream(options = {}) {
     onMatch = null,
     onProgress = null,
     enrichMetadata = false,
+    strict = false,
   } = options;
 
   if (!Number.isInteger(chunkSize) || chunkSize < 1) {
@@ -69,7 +70,7 @@ function createStream(options = {}) {
       const overlap = buffer.slice(chunkSize - maxPatternSize + 1);
 
       // Detect patterns in this chunk
-      const results = candlestick.patternChain(toProcess, patternFns);
+      const results = candlestick.patternChain(toProcess, patternFns, { strict });
 
       // Enrich with metadata if requested
       const finalResults = enrichMetadata
@@ -109,7 +110,7 @@ function createStream(options = {}) {
 
     // Process remaining buffer
     if (buffer.length > 0) {
-      const results = candlestick.patternChain(buffer, patternFns);
+      const results = candlestick.patternChain(buffer, patternFns, { strict });
       const finalResults = enrichMetadata
         ? candlestick.metadata.enrichWithMetadata(results)
         : results;

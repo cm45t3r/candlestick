@@ -313,6 +313,30 @@ describe("Streaming API", () => {
     });
   });
 
+  describe("strict mode", () => {
+    const ocOnly = Array.from({ length: 60 }, () => ({ open: 100, close: 95 }));
+
+    it("default: O/C-only candles processed without throw", () => {
+      const stream = createStream({ chunkSize: 50 });
+      assert.doesNotThrow(() => stream.process(ocOnly));
+    });
+
+    it("strict=true: throws on first chunk with O/C-only candles", () => {
+      const stream = createStream({ chunkSize: 50, strict: true });
+      assert.throws(
+        () => stream.process(ocOnly),
+        /Invalid candle data produces NaN geometry/,
+      );
+    });
+
+    it("processLargeDataset strict=true: throws for O/C-only candles", () => {
+      assert.throws(
+        () => processLargeDataset(ocOnly, { chunkSize: 50, strict: true }),
+        /Invalid candle data produces NaN geometry/,
+      );
+    });
+  });
+
   describe("createStream edge cases", () => {
     it("accepts patterns as a single string instead of array", () => {
       const matches = [];

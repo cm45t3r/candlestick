@@ -118,22 +118,32 @@ function findPattern(dataArray, callback) {
  * @param {Array<Object>} dataArray
  * @return {Array<Object>} Array of candles with cached properties
  */
-function precomputeCandleProps(dataArray) {
-  return dataArray.map((candle) => ({
-    ...candle,
-    bodyLen: bodyLen(candle),
-    wickLen: wickLen(candle),
-    tailLen: tailLen(candle),
-    isBullish: isBullish(candle),
-    isBearish: isBearish(candle),
-    bodyEnds: bodyEnds(candle),
-  }));
+function precomputeCandleProps(dataArray, strict = false) {
+  return dataArray.map((candle) => {
+    const bl = bodyLen(candle);
+    const wl = wickLen(candle);
+    const tl = tailLen(candle);
+    if (strict && (!Number.isFinite(bl) || !Number.isFinite(wl) || !Number.isFinite(tl))) {
+      throw new Error(
+        `Invalid candle data produces NaN geometry: ${JSON.stringify(candle)}`,
+      );
+    }
+    return {
+      ...candle,
+      bodyLen: bl,
+      wickLen: wl,
+      tailLen: tl,
+      isBullish: isBullish(candle),
+      isBearish: isBearish(candle),
+      bodyEnds: bodyEnds(candle),
+    };
+  });
 }
 
-function ensurePrecomputed(dataArray) {
+function ensurePrecomputed(dataArray, strict = false) {
   return dataArray.length > 0 && typeof dataArray[0].bodyLen === "number"
     ? dataArray
-    : precomputeCandleProps(dataArray);
+    : precomputeCandleProps(dataArray, strict);
 }
 
 /**

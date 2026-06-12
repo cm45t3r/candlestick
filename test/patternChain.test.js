@@ -185,3 +185,29 @@ describe("patternChain", () => {
     }
   });
 });
+
+describe("patternChain strict mode", () => {
+  const valid = [
+    { open: 100, high: 110, low: 90, close: 95 },
+    { open: 95, high: 105, low: 85, close: 100 },
+  ];
+  const ocOnly = [
+    { open: 100, close: 95 },
+    { open: 95, close: 100 },
+  ];
+
+  it("default: silent NaN for O/C-only candles (no throw)", () => {
+    assert.doesNotThrow(() => patternChain(ocOnly));
+  });
+
+  it("strict=true: throws for O/C-only candles", () => {
+    assert.throws(
+      () => patternChain(ocOnly, undefined, { strict: true }),
+      /Invalid candle data produces NaN geometry/,
+    );
+  });
+
+  it("strict=true: passes for fully valid candles", () => {
+    assert.doesNotThrow(() => patternChain(valid, undefined, { strict: true }));
+  });
+});

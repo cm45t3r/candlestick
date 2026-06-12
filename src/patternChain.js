@@ -79,8 +79,8 @@ const { ensurePrecomputed } = require("./utils.js");
  * @param {Array<{name: string, fn: function}>} patterns - Array of pattern objects
  * @returns {Array<{ index: number, pattern: string, match: Object|Array<Object> }>} Array of matches
  */
-function patternChain(candles, patterns = allPatterns) {
-  const precomputed = ensurePrecomputed(candles);
+function patternChain(candles, patterns = allPatterns, { strict = false } = {}) {
+  const precomputed = ensurePrecomputed(candles, strict);
   const results = [];
   for (const pattern of patterns) {
     const { name, fn, paramCount = 1 } = pattern;
