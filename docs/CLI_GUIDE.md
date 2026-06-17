@@ -129,7 +129,7 @@ index,pattern,type,direction,confidence,strength
 ### Detect Specific Patterns
 
 ```bash
-candlestick -i data.json --patterns hammer,doji,engulfing
+candlestick -i data.json --patterns hammer,doji,bullishEngulfing
 ```
 
 ### High Confidence Patterns Only

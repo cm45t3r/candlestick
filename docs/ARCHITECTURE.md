@@ -202,7 +202,7 @@ When adding a new pattern:
 - **Unit tests**: Each module has comprehensive unit tests
 - **Edge cases**: Invalid data, boundary conditions, equal OHLC values
 - **Validation**: Separate tests for data validation functions
-- **Coverage**: Target 100% code coverage
+- **Coverage**: Target 99%+ line coverage and 100% function coverage
 - **CI/CD**: Tests run on multiple Node versions and OS platforms
 
 ## API Design Philosophy

@@ -15,7 +15,7 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
 - Use descriptive names and add JSDoc comments to all exported functions.
 - Follow the code style enforced by ESLint and Prettier.
 - Ensure TypeScript definitions are updated for new functions (types/index.d.ts).
-- Write tests for all new features (target 100% coverage).
+- Write tests for all new features (target 99%+ line coverage and 100% function coverage).
 
 ## Running Tests
 
