@@ -32,7 +32,7 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
   npm run coverage
   ```
 - Add or update tests for any new features or bug fixes.
-- 100% test coverage is expected for all modules.
+- Target 99%+ line coverage and 100% function coverage for all modules.
 - Include integration tests for complex features.
 
 ## Linting & Formatting

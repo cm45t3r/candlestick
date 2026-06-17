@@ -126,9 +126,13 @@ User Input (OHLC array)
     ↓
 [Optional] validateOHLCArray()
     ↓
-precomputeCandleProps()
+[Optional] precomputeCandleProps()   ← only needed when calling individual
+                                        series functions on the same raw array
+                                        multiple times; patternChain and all
+                                        series functions handle this internally
     ↓
 Pattern Detection Functions
+(ensurePrecomputed runs at most once per call chain)
     ↓
 Results (indices or PatternMatch objects)
 ```
@@ -148,7 +152,7 @@ All field values are delegated to the named utility functions in `src/utils.js` 
 
 ### 2. `ensurePrecomputed` — Idempotent Pre-computation
 
-`ensurePrecomputed(dataArray)` checks whether the first element already has `bodyLen` set. If it does, the array is returned as-is; otherwise `precomputeCandleProps` runs. This makes pre-computation safe to call from multiple layers (pattern function, patternChain, user code) without redundant work.
+`ensurePrecomputed(dataArray)` checks whether `typeof dataArray[0].bodyLen === "number"`. If it is, the array is returned as-is; otherwise `precomputeCandleProps` runs. The type check (rather than bare truthiness) correctly handles zero-bodied candles such as doji, where `bodyLen` is `0` and would otherwise trigger a spurious recomputation. This makes pre-computation safe to call from multiple layers (pattern function, patternChain, user code) without redundant work.
 
 Before this function was introduced, a `patternChain` call over 29 patterns triggered 30 separate precompute passes on the same data (one in `patternChain`, one inside each pattern function). With `ensurePrecomputed`, the total is at most 1 regardless of how many patterns run.
 

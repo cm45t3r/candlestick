@@ -50,6 +50,7 @@ This directory contains runnable examples for each pattern module and utility in
 ### Utilities
 
 - `utils.js` — Utility functions: bodyLen, wickLen, tailLen, isBullish, isBearish, hasGapUp, hasGapDown, findPattern
+- `real-data.js` — Real market data with date/volume fields, precomputeCandleProps, gap detection, and pattern frequency breakdown
 
 ## Notes
 
