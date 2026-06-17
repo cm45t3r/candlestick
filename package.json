@@ -59,7 +59,9 @@
       "require": "./index.js",
       "types": "./types/index.d.ts"
     },
-    "./cli": "./cli/index.js"
+    "./cli": {
+      "node": "./cli/index.js"
+    }
   },
   "main": "index.js",
   "module": "src/index.mjs",

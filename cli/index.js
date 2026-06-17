@@ -7,7 +7,7 @@ const candlestick = require("../index.js");
 
 const HELP_TEXT = `
 ╔══════════════════════════════════════════════════════════════╗
-║          Candlestick Pattern Detection CLI v1.2.0            ║
+║          Candlestick Pattern Detection CLI v2.0.0            ║
 ╚══════════════════════════════════════════════════════════════╝
 
 Usage: candlestick [options]
