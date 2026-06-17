@@ -5,35 +5,25 @@
 [![npm downloads](https://img.shields.io/npm/dm/candlestick.svg)](https://www.npmjs.com/package/candlestick)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/candlestick)](https://bundlephobia.com/package/candlestick)
 [![Coverage Status](https://coveralls.io/repos/github/cm45t3r/candlestick/badge.svg?branch=main)](https://coveralls.io/github/cm45t3r/candlestick?branch=main)
-[![ESLint](https://img.shields.io/badge/code%20style-eslint-brightgreen.svg)](https://eslint.org/)
-[![code style: prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg?style=flat)](https://prettier.io/)
-[![Socket Badge](https://badge.socket.dev/npm/package/candlestick/2.0.1)](https://badge.socket.dev/npm/package/candlestick/2.0.1)
+[![Socket Badge](https://socket.dev/api/badge/npm/package/candlestick)](https://socket.dev/npm/package/candlestick)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/cm45t3r/candlestick/pulls)
-[![Contributors](https://img.shields.io/github/contributors/cm45t3r/candlestick.svg)](https://github.com/cm45t3r/candlestick/graphs/contributors)
-[![Last Commit](https://img.shields.io/github/last-commit/cm45t3r/candlestick)](https://github.com/cm45t3r/candlestick/commits/main)
 
 A modern, modular JavaScript library for candlestick pattern detection. Detects classic reversal and continuation patterns in OHLC data, with a clean API and no native dependencies.
 
-**✨ Highlights:**
+- 18 candlestick patterns, 29 variants across single, two, and three-candle formations
+- ESM & CommonJS dual export with full TypeScript definitions
+- Streaming API for massive datasets (~70% memory reduction)
+- Plugin system for custom patterns, data validation, pattern metadata
+- 347 tests, 99.75% line coverage, 438K+ candles/sec throughput
+- Zero runtime dependencies
 
-- 🎯 18 candlestick patterns, 29 variants across single, two, and three-candle formations
-- 📦 ESM & CommonJS support (dual export)
-- 🔷 Full TypeScript definitions with IntelliSense
-- ✅ 347 tests — 99.75% line coverage, 100% function coverage
-- 🚀 Streaming API for massive datasets (~70% memory reduction)
-- 🔬 Property-based testing with fast-check (1000+ generated scenarios)
-- 🔌 Plugin system for custom patterns
-- ✅ Data validation (`validateOHLC`, `validateOHLCArray`)
-- 📊 Pattern metadata (confidence, strength, type, direction)
-- 💻 CLI tool for CSV/JSON analysis
+> **Requires Node.js >= 20**
 
 ---
 
 ## Table of Contents
 
-- [Why Candlestick?](#why-candlestick)
-- [Features](#features)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
 - [Pattern Detection Functions](#pattern-detection-functions)
@@ -41,43 +31,14 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - [Pattern Descriptions](#pattern-descriptions)
 - [Examples](#examples)
 - [Full Example Files](#full-example-files)
-- [Linting & Formatting](#linting--formatting)
-- [Running Tests](#running-tests)
+- [Performance](#performance)
 - [Contributing](#contributing)
-- [Changelog](#changelog)
+- [Upgrading from v1.x](#upgrading-from-v1x)
 - [FAQ](#faq)
+- [Changelog](#changelog)
 - [Roadmap](#roadmap)
 - [Code of Conduct](#code-of-conduct)
 - [License](#license)
-
----
-
-## Why Candlestick?
-
-- **No native dependencies**: 100% JavaScript, works everywhere Node.js runs.
-- **Modular**: Each pattern is its own module, easy to extend or customize.
-- **Consistent API**: All pattern functions use a standard interface.
-- **Pattern Chaining**: Scan for multiple patterns in a single pass.
-- **Comprehensive Test Suite**: Each pattern and utility is unit tested.
-- **Modern Tooling**: Uses ESLint (flat config) and Prettier for code quality and formatting.
-- **Actively Maintained**: See [ROADMAP.md](./docs/ROADMAP.md) and [CHANGELOG.md](./CHANGELOG.md).
-
----
-
-## Features
-
-- **18 Candlestick Patterns** (29 variants): Comprehensive pattern detection library
-- **Streaming API**: Process massive datasets with 70% memory reduction
-- **Property-Based Testing**: Validated with 1000+ generated test cases
-- **Dual Module Support**: CommonJS and ESM exports
-- **TypeScript**: Complete type definitions with IntelliSense
-- **Data Validation**: Robust OHLC validation system
-- **Plugin System**: Register custom patterns
-- **Pattern Chaining**: Multi-pattern detection in single pass
-- **Zero Dependencies**: Pure JavaScript, works everywhere
-- **Excellent Test Coverage**: 347 tests with 99.75% coverage (97.63% branches, 100% functions)
-- **High Performance**: 59K+ candles/sec throughput
-- **Well Documented**: Architecture guides, examples, and API docs
 
 ---
 
@@ -495,8 +456,8 @@ See the [`examples/`](./examples/) directory for runnable, copy-pasteable usage 
 **Multi-Pattern Detection:**
 
 - [`examples/patternChain.js`](./examples/patternChain.js) — Multi-pattern detection with patternChain
-- [`examples/newPatterns.js`](./examples/newPatterns.js) — v1.1.0 patterns: Morning/Evening Star, Three Soldiers/Crows (3-candle), Piercing Line, Dark Cloud Cover (2-candle)
-- [`examples/newPatternsV2.js`](./examples/newPatternsV2.js) — v1.2.0 patterns (Marubozu, Spinning Top, Tweezers)
+- [`examples/newPatterns.js`](./examples/newPatterns.js) — Morning/Evening Star, Three Soldiers/Crows, Piercing Line, Dark Cloud Cover
+- [`examples/newPatternsV2.js`](./examples/newPatternsV2.js) — Marubozu, Spinning Top, Tweezers
 - [`examples/streaming.js`](./examples/streaming.js) — Streaming API for large datasets
 - [`examples/esm-example.mjs`](./examples/esm-example.mjs) — ESM module syntax example
 - [`examples/metadata.js`](./examples/metadata.js) — Pattern metadata, filtering, and sorting
@@ -510,19 +471,16 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 
 ---
 
-## Linting & Formatting
+## Performance
 
-- **ESLint**: Modern flat config (`eslint.config.js`)
-- **Prettier**: For code formatting
-- Run `npm run lint` and `npm run format`
+| Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |
+|---|---|---|---|
+| 1,000 | 6.9 | 146K | 2.0 |
+| 10,000 | 28.3 | 353K | 16.1 |
+| 100,000 | 267.8 | 373K | 98.6 |
+| 1,000,000 | 2,281.6 | 438K | 699.7 |
 
----
-
-## Running Tests
-
-```bash
-npm test
-```
+Run `npm run bench` for full benchmark results on your hardware.
 
 ---
 
@@ -531,33 +489,20 @@ npm test
 - Please open [issues](https://github.com/cm45t3r/candlestick/issues) or [pull requests](https://github.com/cm45t3r/candlestick/pulls) for bugs, features, or questions.
 - Add tests for new patterns or utilities.
 - Follow the code style enforced by ESLint and Prettier.
+- Run `npm run lint` and `npm run format` before submitting.
 - See [CONTRIBUTING.md](./CONTRIBUTING.md) for full guidelines.
 
 ---
 
-## Changelog
+## Upgrading from v1.x
 
-See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
+v2.0.0 is a breaking release. Required changes:
 
-**Latest (v2.0.1):**
+1. **Node.js >= 20 required.** Node 18 reached EOL on 2025-04-30 and is no longer supported. Update your runtime and CI matrix.
 
-- **BREAKING:** Drop Node.js 18 support, require Node.js >= 20
-- Upgrade `@eslint/js` to v10, `c8` to v11
-- Error chain preservation (`{ cause }`) in `validateOHLCArray`
+2. **Error cause chain in `validateOHLCArray`.** Re-thrown errors now include `{ cause: originalError }`. If you inspect error objects (e.g., `error instanceof` checks or `error.message` parsing), be aware that the original error is now available via `error.cause`.
 
-**Previous (v1.2.0):**
-
-- 3 new candlestick patterns (Marubozu, Spinning Top, Tweezers)
-- Streaming API for large datasets (70% memory reduction)
-- Property-based testing with fast-check
-- 347 tests with 99.75% coverage
-
-**Previous (v1.1.0):**
-
-- 6 new candlestick patterns (3-candle patterns, Piercing Line, Dark Cloud Cover)
-- ESM support (dual CommonJS/ESM)
-- TypeScript definitions
-- Plugin system, Data validation, Pattern metadata system, CLI tool
+No API changes — all pattern functions, exports, and types remain the same.
 
 ---
 
@@ -565,21 +510,37 @@ See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
 **Q: Why is my pattern not detected?**
 
-- Ensure your candle objects have all required fields (`open`, `high`, `low`, `close`).
-- Check that the pattern’s technical thresholds are met (see Pattern Descriptions above).
-- The library does not check for trend context (e.g., uptrend/downtrend) — it only looks at candle shapes.
+Ensure your candle objects have all required fields (`open`, `high`, `low`, `close`). Check that the pattern's technical thresholds are met (see [Pattern Descriptions](#pattern-descriptions)). The library does not check for trend context (e.g., uptrend/downtrend) — it only looks at candle shapes.
+
+**Q: Does this work in the browser?**
+
+The core library is pure JavaScript with no Node.js-specific APIs, so it works in any bundler (webpack, Vite, esbuild, etc.). The `candlestick/cli` subpath is Node-only and is excluded from browser builds automatically via the `"node"` export condition.
 
 **Q: Does this library mutate my data?**
 
-- No. All computations are done on copies; your input data is never changed.
+No. All computations are done on copies; your input data is never changed.
 
 **Q: Can I use this with TypeScript?**
 
-- Yes. The library includes complete TypeScript definitions in `types/index.d.ts`. Full type safety and IntelliSense support available.
+Yes. The library includes complete TypeScript definitions in `types/index.d.ts`. Full type safety and IntelliSense support available.
+
+**Q: How do I add a custom pattern?**
+
+Use the plugin system — call `plugins.registerPattern()` with your detection function, then pass it to `patternChain`. See the [Plugin System](#plugin-system) example or [docs/PLUGIN_API.md](./docs/PLUGIN_API.md).
+
+**Q: What's the performance with 1M candles?**
+
+Pattern chain across all 29 variants processes 1M candles in ~2.3 seconds (438K candles/sec). Single-pattern detection (e.g., `hammer`) reaches 12.4M candles/sec. See [Performance](#performance) for the full table.
 
 **Q: Are there visual examples of patterns?**
 
-- Not yet, but this is planned (see [ROADMAP.md](./docs/ROADMAP.md)). For now, see the Pattern Descriptions section above.
+Not yet, but this is planned (see [ROADMAP.md](./docs/ROADMAP.md)). For now, see the [Pattern Descriptions](#pattern-descriptions) section.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for full release history.
 
 ---
 
