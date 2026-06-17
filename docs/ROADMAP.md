@@ -27,6 +27,11 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
+### v2.0.1 (2026-06-17)
+
+- fix(package): scope `./cli` export to `"node"` condition for bundler compatibility
+- chore(ci): bump `actions/checkout` from v4 to v5
+
 ### v2.0.0 (2026-06-17)
 
 - **BREAKING:** Drop Node.js 18 support, require Node.js >= 20 (Node 18 EOL 2025-04-30)

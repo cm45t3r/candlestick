@@ -7,7 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/cm45t3r/candlestick/badge.svg?branch=main)](https://coveralls.io/github/cm45t3r/candlestick?branch=main)
 [![ESLint](https://img.shields.io/badge/code%20style-eslint-brightgreen.svg)](https://eslint.org/)
 [![code style: prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg?style=flat)](https://prettier.io/)
-[![Socket Badge](https://badge.socket.dev/npm/package/candlestick/2.0.0)](https://badge.socket.dev/npm/package/candlestick/2.0.0)
+[![Socket Badge](https://badge.socket.dev/npm/package/candlestick/2.0.1)](https://badge.socket.dev/npm/package/candlestick/2.0.1)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/cm45t3r/candlestick/pulls)
 [![Contributors](https://img.shields.io/github/contributors/cm45t3r/candlestick.svg)](https://github.com/cm45t3r/candlestick/graphs/contributors)
@@ -539,7 +539,7 @@ npm test
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
-**Latest (v2.0.0):**
+**Latest (v2.0.1):**
 
 - **BREAKING:** Drop Node.js 18 support, require Node.js >= 20
 - Upgrade `@eslint/js` to v10, `c8` to v11

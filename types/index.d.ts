@@ -1,4 +1,4 @@
-// Type definitions for candlestick v2.0.0
+// Type definitions for candlestick v2.0.1
 // Project: https://github.com/cm45t3r/candlestick
 // Definitions by: cm45t3r
 

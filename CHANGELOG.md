@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.0.1](https://github.com/cm45t3r/candlestick/tree/v2.0.1) (2026-06-17)
+
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.0.0...v2.0.1)
+
+**Bug fixes:**
+
+- fix(package): scope `./cli` export to `"node"` condition so bundlers (webpack/Bundlephobia) skip the Node-only CLI subpath instead of failing on `fs`/`path` imports.
+
+**Maintenance:**
+
+- chore(ci): bump `actions/checkout` from v4 to v5 to eliminate Node.js 20 deprecation warnings on GitHub Actions runners.
+
 ## [v2.0.0](https://github.com/cm45t3r/candlestick/tree/v2.0.0) (2026-06-17)
 
 [Full Changelog](https://github.com/cm45t3r/candlestick/compare/v1.2.0...v2.0.0)
