@@ -71,9 +71,13 @@ declare function isEngulfed(previous: OHLC, current: OHLC): boolean;
 declare function findPattern(
   dataArray: OHLC[],
   callback: (...args: OHLC[]) => boolean,
+  /** Explicit candle count per pattern. Defaults to `callback.length`; pass explicitly when the callback uses default or rest parameters. */
+  paramCount?: number,
 ): number[];
-declare function precomputeCandleProps(dataArray: OHLC[]): OHLCExtended[];
+declare function precomputeCandleProps(dataArray: OHLC[], strict?: boolean): OHLCExtended[];
+/** @param throwError When true (default), throws on invalid data; when false, returns false instead. */
 declare function validateOHLC(candle: any, throwError?: boolean): boolean;
+/** @param throwError When true (default), throws on invalid data; when false, returns false instead. */
 declare function validateOHLCArray(
   dataArray: any[],
   throwError?: boolean,
