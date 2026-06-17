@@ -32,6 +32,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - [Examples](#examples)
 - [Full Example Files](#full-example-files)
 - [Performance](#performance)
+- [Development](#development)
 - [Contributing](#contributing)
 - [Upgrading from v1.x](#upgrading-from-v1x)
 - [FAQ](#faq)
@@ -279,25 +280,7 @@ patternChain(dataArray, allPatterns, { strict: true });
 - **Three White Soldiers**: Three consecutive bullish candles, each opening within the previous body and closing higher. Each body ≥ 60% of its candle's range; upper shadows ≤ 30% of body. Signals strong bullish continuation/reversal.
 - **Three Black Crows**: Three consecutive bearish candles, each opening within the previous body and closing lower. Each body ≥ 60% of its candle's range; lower shadows ≤ 30% of body. Signals strong bearish continuation/reversal.
 
-> **Note:** The library does not mutate your input data. Pattern functions return arrays of indices; `precomputeCandleProps` returns new enriched candle objects. If you call individual pattern series functions (e.g., `hammer()`, `doji()`) multiple times on the same raw array, precompute once for better performance (see below). When using `patternChain`, precomputation is handled internally and no manual call is needed.
-
-### Performance: precomputeCandleProps
-
-When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to compute `bodyLen`, `wickLen`, `tailLen`, `isBullish`, `isBearish`, and `bodyEnds` once instead of repeatedly:
-
-```js
-const { hammer, doji, utils } = require("candlestick");
-
-// Without precomputation: each function enriches the raw array independently.
-// With precomputation: props are computed once and reused across all calls.
-const precomputed = utils.precomputeCandleProps(data);
-
-const hammers = hammer(precomputed);
-const dojis = doji(precomputed);
-// Extra fields (date, volume) are preserved in the enriched objects.
-```
-
-This is useful when calling individual series functions on the same dataset multiple times. `patternChain` already handles precomputation internally via `ensurePrecomputed`, so no manual call is needed there.
+> **Note:** The library does not mutate your input data. Pattern functions return arrays of indices; `precomputeCandleProps` returns new enriched candle objects. When calling multiple pattern functions on the same raw array, precompute once for better performance (see [Performance](#performance)). `patternChain` handles this internally.
 
 ---
 
@@ -480,7 +463,32 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 | 100,000 | 267.8 | 373K | 98.6 |
 | 1,000,000 | 2,281.6 | 438K | 699.7 |
 
+When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to avoid redundant work:
+
+```js
+const { hammer, doji, utils } = require("candlestick");
+
+const precomputed = utils.precomputeCandleProps(data);
+const hammers = hammer(precomputed);
+const dojis = doji(precomputed);
+```
+
+`patternChain` handles this internally — no manual call needed there.
+
 Run `npm run bench` for full benchmark results on your hardware.
+
+---
+
+## Development
+
+```bash
+npm test              # run 347 tests
+npm run test:watch    # watch mode
+npm run coverage      # coverage report (c8)
+npm run lint          # eslint
+npm run format        # prettier
+npm run bench         # benchmark suite
+```
 
 ---
 
