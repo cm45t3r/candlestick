@@ -468,7 +468,7 @@ Run `npm run bench` for full benchmark results on your hardware. The numbers abo
 ## Development
 
 ```bash
-npm test              # run 347 tests
+npm test              # run tests
 npm run test:watch    # watch mode
 npm run coverage      # coverage report (c8)
 npm run lint          # eslint
@@ -530,7 +530,7 @@ Use the plugin system — call `plugins.registerPattern()` with your detection f
 
 **Q: What's the performance with 1M candles?**
 
-Pattern chain across all 29 variants processes 1M candles in ~2.3 seconds (438K candles/sec). Single-pattern detection (e.g., `hammer`) reaches 12.4M candles/sec. See [Performance](#performance) for the full table.
+See the [Performance](#performance) table for current numbers. Run `npm run bench` to measure on your own hardware.
 
 **Q: Are there visual examples of patterns?**
 
