@@ -66,7 +66,8 @@ Provides low-level utilities for candlestick calculations:
 - **isEngulfed**: Check if one body engulfs another
 - **precomputeCandleProps**: Compute and attach derived properties (bodyLen, wickLen, etc.) to each candle
 - **ensurePrecomputed**: Return the input unchanged if already enriched, otherwise delegate to `precomputeCandleProps`
-- **validateOHLC**: Validate OHLC data structure and relationships
+- **validateOHLC**: Validate a single OHLC candle's structure and relationships
+- **validateOHLCArray**: Validate an array of OHLC candles (calls validateOHLC on each element)
 - **findPattern**: Generic pattern search utility
 
 ### 2. Pattern Modules

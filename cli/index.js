@@ -21,7 +21,7 @@ Options:
   -d, --direction <dir>    Filter by direction: bullish, bearish, neutral
   --validate               Validate OHLC data before processing
   --metadata               Include pattern metadata in output
-  --help                   Show this help message
+  --help, -h               Show this help message
 
 Examples:
   candlestick -i data.json
@@ -33,10 +33,17 @@ Input Format:
   JSON: Array of {open, high, low, close} objects
   CSV:  Headers: open,high,low,close (first line)
 
-Supported Patterns:
-  1-candle: hammer, invertedHammer, doji, marubozu, spinningTop
-  2-candle: engulfing, harami, kicker, hangingMan, shootingStar,
-            piercingLine, darkCloudCover, tweezersTop, tweezersBottom
+Supported Patterns (use exact names with --patterns):
+  1-candle: hammer, bullishHammer, bearishHammer,
+            invertedHammer, bullishInvertedHammer, bearishInvertedHammer,
+            doji, marubozu, bullishMarubozu, bearishMarubozu,
+            spinningTop, bullishSpinningTop, bearishSpinningTop
+  2-candle: bullishEngulfing, bearishEngulfing,
+            bullishHarami, bearishHarami,
+            bullishKicker, bearishKicker,
+            hangingMan, shootingStar,
+            piercingLine, darkCloudCover,
+            tweezersTop, tweezersBottom
   3-candle: morningStar, eveningStar, threeWhiteSoldiers, threeBlackCrows
 `;
 
