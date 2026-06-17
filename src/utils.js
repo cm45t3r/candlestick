@@ -227,7 +227,7 @@ function validateOHLCArray(dataArray, throwError = true) {
       }
     } catch (error) {
       if (throwError) {
-        throw new Error(`Invalid candle at index ${i}: ${error.message}`);
+        throw new Error(`Invalid candle at index ${i}: ${error.message}`, { cause: error });
       }
       return false;
     }
