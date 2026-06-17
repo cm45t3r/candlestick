@@ -302,7 +302,7 @@ patternChain(dataArray, allPatterns, { strict: true });
 
 - **Engulfing**: Second candle's body fully engulfs the previous (body range covers previous body). Bullish or bearish.
 - **Harami**: Second candle's body is inside the previous (body range within previous body). Bullish or bearish.
-- **Kicker**: Strong reversal with a gap and opposite color. Bullish or bearish.
+- **Kicker**: Opposite-color candles with a body gap between them (second body does not overlap first body). The second candle must not be a Hammer or Inverted Hammer shape. Bullish or bearish.
 - **Hanging Man**: Bullish candle followed by a bearish hammer with a gap up. Bearish reversal.
 - **Shooting Star**: Bullish candle followed by a bearish inverted hammer with a gap up. Bearish reversal.
 - **Piercing Line**: Bullish reversal. Bearish candle (body ≥ 50% of range) followed by bullish candle (body ≥ 50% of range) that opens below first's low, closes above the first body's midpoint but below the first body's top (i.e., does not fully engulf).
@@ -312,10 +312,10 @@ patternChain(dataArray, allPatterns, { strict: true });
 
 ### Three Candle Patterns
 
-- **Morning Star**: Bullish reversal. Long bearish candle, small-bodied star that gaps down, long bullish candle closing well into first candle's body.
-- **Evening Star**: Bearish reversal. Long bullish candle, small-bodied star that gaps up, long bearish candle closing well into first candle's body.
-- **Three White Soldiers**: Three consecutive bullish candles, each opening within previous body and closing higher. Limited upper shadows. Signals strong bullish continuation/reversal.
-- **Three Black Crows**: Three consecutive bearish candles, each opening within previous body and closing lower. Limited lower shadows. Signals strong bearish continuation/reversal.
+- **Morning Star**: Bullish reversal. Long bearish candle (body ≥ 60% of range), small-bodied star (body ≤ 30% of range) whose body gaps down from the first candle's body, long bullish candle (body ≥ 60% of range) closing above the midpoint of the first candle's body.
+- **Evening Star**: Bearish reversal. Long bullish candle (body ≥ 60% of range), small-bodied star (body ≤ 30% of range) whose body gaps up from the first candle's body, long bearish candle (body ≥ 60% of range) closing below the midpoint of the first candle's body.
+- **Three White Soldiers**: Three consecutive bullish candles, each opening within the previous body and closing higher. Each body ≥ 60% of its candle's range; upper shadows ≤ 30% of body. Signals strong bullish continuation/reversal.
+- **Three Black Crows**: Three consecutive bearish candles, each opening within the previous body and closing lower. Each body ≥ 60% of its candle's range; lower shadows ≤ 30% of body. Signals strong bearish continuation/reversal.
 
 > **Note:** The library does not mutate your input data. Pattern functions return arrays of indices; `precomputeCandleProps` returns new enriched candle objects. If you call individual pattern series functions (e.g., `hammer()`, `doji()`) multiple times on the same raw array, precompute once for better performance (see below). When using `patternChain`, precomputation is handled internally and no manual call is needed.
 
