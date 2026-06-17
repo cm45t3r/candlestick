@@ -1,6 +1,20 @@
 # Changelog
 
-## [Unreleased]
+## [v2.0.0](https://github.com/cm45t3r/candlestick/tree/v2.0.0) (2026-06-17)
+
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v1.2.0...v2.0.0)
+
+**BREAKING CHANGES:**
+
+- Node.js 18 is no longer supported. The minimum required version is now Node.js 20 (`engines.node >= 20`). Node 18 reached EOL on 2025-04-30.
+- The `validateOHLCArray` re-thrown error now includes `{ cause }` with the original error, which may affect code that inspects the error object.
+
+**Maintenance:**
+
+- chore(deps): upgrade `@eslint/js` from v9 to v10 (requires Node 20+)
+- chore(deps): upgrade `c8` from v10 to v11 (requires Node 20+)
+- chore(deps): bump `eslint` to 10.5.0, `prettier` to 3.8.4, `js-yaml` to 4.2.0
+- chore(ci): remove Node.js 18.x from CI matrix, now testing on 20.x and 22.x
 
 **Bug fixes:**
 

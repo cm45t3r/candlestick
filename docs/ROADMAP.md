@@ -50,7 +50,7 @@ This roadmap outlines planned features and future directions for the Candlestick
 - Pattern chaining: multi-pattern detection in a single pass
 - Doji pattern detection
 - Pre-computation performance optimization (`precomputeCandleProps`)
-- CI/CD across Node.js 18, 20, 22 on Ubuntu, Windows, and macOS
+- CI/CD across Node.js 20, 22 on Ubuntu, Windows, and macOS
 
 ---
 
