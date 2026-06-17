@@ -64,8 +64,8 @@ for (let i = 0; i < data.length; i += chunkSize) {
 
 const summary = stream.end();
 
-console.log(`   Found ${matches.length} patterns`);
-console.log(`   Patterns detected: ${summary.patternsDetected}`);
+console.log(`   Found ${matches.length} pattern occurrences`);
+console.log(`   Pattern types monitored: ${summary.patternsDetected}`);
 console.log(`   Total processed: ${summary.totalProcessed}\n`);
 
 // Show sample matches

@@ -526,7 +526,8 @@ export const metadata: {
   enrichWithMetadata: (results: PatternMatch[]) => PatternMatch[];
 
   /**
-   * Filter pattern results by minimum confidence
+   * Filter pattern results by minimum confidence.
+   * @param minConfidence Minimum confidence threshold (0–1). Defaults to 0.5.
    */
   filterByConfidence: (
     results: PatternMatch[],
@@ -578,6 +579,7 @@ export interface StreamOptions {
  */
 export interface StreamProcessor {
   process(chunk: OHLC[]): void;
+  /** `patternsDetected` is the number of pattern *detectors* that were active, not the number of matches found. */
   end(): { totalProcessed: number; patternsDetected: number };
   reset(): void;
 }
