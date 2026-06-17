@@ -8,7 +8,7 @@ Pure JavaScript library with no runtime dependencies. Source logic lives in `src
 
 - **Language**: JavaScript (ES2020+), with full TypeScript type definitions
 - **Module formats**: CommonJS (`.js`) and ESM (`.mjs`) — dual export via `package.json` `exports` field
-- **Runtime**: Node.js >= 18
+- **Runtime**: Node.js >= 20
 
 ## Key Libraries
 
@@ -44,7 +44,7 @@ No production runtime dependencies.
 
 ### Required Tools
 
-- Node.js >= 18
+- Node.js >= 20
 
 ### Common Commands
 

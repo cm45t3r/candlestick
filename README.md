@@ -538,7 +538,13 @@ npm test
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 
-**Latest (v1.2.0):**
+**Latest (v2.0.0):**
+
+- **BREAKING:** Drop Node.js 18 support, require Node.js >= 20
+- Upgrade `@eslint/js` to v10, `c8` to v11
+- Error chain preservation (`{ cause }`) in `validateOHLCArray`
+
+**Previous (v1.2.0):**
 
 - 3 new candlestick patterns (Marubozu, Spinning Top, Tweezers)
 - Streaming API for large datasets (70% memory reduction)

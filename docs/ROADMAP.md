@@ -27,6 +27,13 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
+### v2.0.0 (2026-06-17)
+
+- **BREAKING:** Drop Node.js 18 support, require Node.js >= 20 (Node 18 EOL 2025-04-30)
+- Upgrade `@eslint/js` to v10, `c8` to v11
+- CI matrix updated to Node.js 20.x and 22.x
+- Error chain preservation (`{ cause }`) in `validateOHLCArray`
+
 ### v1.2.0 (2025-10-18)
 
 - 3 new patterns: Marubozu (1-candle), Spinning Top (1-candle), Tweezers Top/Bottom (2-candle)
