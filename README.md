@@ -62,9 +62,11 @@ console.log(isHammer(candle)); // true
 
 // Find patterns in series
 const candles = [
-  /* array of OHLC objects */
+  { open: 14, high: 15, low: 8, close: 14.5 },
+  { open: 13, high: 18, low: 13, close: 13.2 },
+  { open: 12, high: 12.5, low: 7, close: 12.1 },
 ];
-console.log(hammer(candles)); // [indices where pattern found]
+console.log(hammer(candles)); // [ 0, 2 ]
 
 // Detect all patterns at once
 const results = patternChain(candles, allPatterns);
@@ -77,7 +79,9 @@ console.log(results); // [{ index, pattern, match }]
 import { isHammer, hammer, patternChain, allPatterns } from "candlestick";
 
 const candles = [
-  /* array of OHLC objects */
+  { open: 14, high: 15, low: 8, close: 14.5 },
+  { open: 13, high: 18, low: 13, close: 13.2 },
+  { open: 12, high: 12.5, low: 7, close: 12.1 },
 ];
 const results = patternChain(candles, allPatterns);
 console.log(results);
@@ -160,7 +164,7 @@ console.log(results[0].match[0].volume); // 61000
 
 ## Pattern Detection Functions
 
-### Boolean (Single/Pair) Detection
+### Boolean (Single/Pair) Detection — returns `boolean`
 
 **Single candle:**
 
@@ -184,7 +188,7 @@ console.log(results[0].match[0].volume); // 61000
 - `isMorningStar(c1, c2, c3)` / `isEveningStar(c1, c2, c3)`
 - `isThreeWhiteSoldiers(c1, c2, c3)` / `isThreeBlackCrows(c1, c2, c3)`
 
-### Array (Series) Detection
+### Array (Series) Detection — returns `number[]` (indices)
 
 **Single candle:**
 
@@ -207,8 +211,6 @@ console.log(results[0].match[0].volume); // 61000
 
 - `morningStar(dataArray)` / `eveningStar(dataArray)`
 - `threeWhiteSoldiers(dataArray)` / `threeBlackCrows(dataArray)`
-
-All array functions return an array of indices where the pattern occurs.
 
 ---
 
@@ -378,9 +380,8 @@ const { plugins, patternChain } = require('candlestick');
 plugins.registerPattern({
   name: 'myCustomPattern',
   fn: (dataArray) => {
-    // Your detection logic
     return dataArray
-      .map((c, i) => /* condition */ ? i : -1)
+      .map((c, i) => (c.close > c.open && c.close === c.high) ? i : -1)
       .filter(idx => idx !== -1);
   },
   paramCount: 1,
