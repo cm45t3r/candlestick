@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+**Bug fixes:**
+
+- fix(utils): pass explicit `paramCount` to `findPattern` so patterns with default/rest parameters are detected correctly instead of silently scanning zero candles. Fixes [\#87](https://github.com/cm45t3r/candlestick/issues/87)
+- fix(streaming): compose caller-supplied `onMatch` with internal collector in `processLargeDataset` so both receive every match instead of the caller's callback being dropped. Fixes [\#86](https://github.com/cm45t3r/candlestick/issues/86)
+- fix(utils): propagate `strict` flag through `precomputeCandleProps` to detect NaN geometry (non-finite `bodyLen`/`wickLen`/`tailLen`) at the precomputation boundary. Fixes [\#85](https://github.com/cm45t3r/candlestick/issues/85)
+- fix(utils): strengthen `ensurePrecomputed` guard — check `Number.isFinite(bodyLen)` instead of bare truthiness so a cached `bodyLen: 0` (e.g., doji) no longer triggers redundant recomputation. Fixes [\#84](https://github.com/cm45t3r/candlestick/issues/84)
+- fix(streaming): wrap `processLargeDataset` chunk loop in `try/finally` so `stream.end()` is always called and the final buffer is always flushed even when a chunk throws. Fixes [\#83](https://github.com/cm45t3r/candlestick/issues/83)
+- fix(streaming): throw on non-integer or non-positive `chunkSize` to prevent an infinite processing loop. Fixes [\#82](https://github.com/cm45t3r/candlestick/issues/82)
+- fix(streaming): move buffer/offset/totalProcessed state updates before `onMatch` callbacks so a throwing callback does not leave the stream in a corrupt state. Fixes [\#81](https://github.com/cm45t3r/candlestick/issues/81)
+
 **Performance improvements:**
 
 - perf(patternChain): eliminate up to 29x redundant `precomputeCandleProps` calls. Added `ensurePrecomputed()` to `src/utils.js`; all 29 series functions and `patternChain` now use it instead of unconditionally re-precomputing. Result: ~2x speedup on raw input, ~2.6x on pre-enriched input at 10k candles. Fixes [\#80](https://github.com/cm45t3r/candlestick/issues/80)

@@ -184,7 +184,7 @@ When adding a new pattern:
    - `isNewPattern(prev, curr)` for two-candle patterns
    - `isNewPattern(c1, c2, c3)` for three-candle patterns
 3. **Implement array functions**:
-   - Use `precomputeCandleProps()` for efficiency
+   - Use `ensurePrecomputed()` for efficiency (idempotent — safe to call even if the caller already enriched the array)
    - Use `findPattern()` utility for consistency
 4. **Add tests** in `test/newPattern.test.js`
 5. **Export functions** from the module

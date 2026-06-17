@@ -43,7 +43,7 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
   ```
 - Fix lint errors automatically with:
   ```bash
-  npm run lint -- --fix
+  npm run lint:fix
   ```
 - Code is formatted with Prettier. Please run your editor’s formatter or use:
   ```bash

@@ -317,24 +317,25 @@ patternChain(dataArray, allPatterns, { strict: true });
 - **Three White Soldiers**: Three consecutive bullish candles, each opening within previous body and closing higher. Limited upper shadows. Signals strong bullish continuation/reversal.
 - **Three Black Crows**: Three consecutive bearish candles, each opening within previous body and closing lower. Limited lower shadows. Signals strong bearish continuation/reversal.
 
-> **Note:** The library does not mutate your input data. All pattern functions return new objects with precomputed properties (e.g., `bodyLen`, `wickLen`, etc.) as needed. If you plan to run many pattern detectors on the same data, you can precompute properties once using `precomputeCandleProps` from the utilities for better performance.
+> **Note:** The library does not mutate your input data. Pattern functions return arrays of indices; `precomputeCandleProps` returns new enriched candle objects. If you call individual pattern series functions (e.g., `hammer()`, `doji()`) multiple times on the same raw array, precompute once for better performance (see below). When using `patternChain`, precomputation is handled internally and no manual call is needed.
 
 ### Performance: precomputeCandleProps
 
 When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to compute `bodyLen`, `wickLen`, `tailLen`, `isBullish`, `isBearish`, and `bodyEnds` once instead of repeatedly:
 
 ```js
-const { patternChain, allPatterns, utils } = require("candlestick");
+const { hammer, doji, utils } = require("candlestick");
 
-// Without precomputation: each pattern recalculates candle props internally.
-// With precomputation: props are computed once and reused across all patterns.
+// Without precomputation: each function enriches the raw array independently.
+// With precomputation: props are computed once and reused across all calls.
 const precomputed = utils.precomputeCandleProps(data);
 
-// Pass to any pattern function or patternChain — extra fields (date, volume) are preserved.
-const results = patternChain(precomputed, allPatterns);
+const hammers = hammer(precomputed);
+const dojis = doji(precomputed);
+// Extra fields (date, volume) are preserved in the enriched objects.
 ```
 
-This is most beneficial when running `allPatterns` (29 patterns) on large datasets.
+This is useful when calling individual series functions on the same dataset multiple times. `patternChain` already handles precomputation internally via `ensurePrecomputed`, so no manual call is needed there.
 
 ---
 
