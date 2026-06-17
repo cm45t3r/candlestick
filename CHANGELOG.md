@@ -4,6 +4,7 @@
 
 **Bug fixes:**
 
+- fix(package): add `"./cli"` to the `exports` map in `package.json` so that `require('candlestick/cli')` resolves correctly instead of throwing `ERR_PACKAGE_PATH_NOT_EXPORTED`. The subpath was handled at runtime by `bin/candlestick` but was never declared in the conditional exports field.
 - fix(utils): pass explicit `paramCount` to `findPattern` so patterns with default/rest parameters are detected correctly instead of silently scanning zero candles. Fixes [\#87](https://github.com/cm45t3r/candlestick/issues/87)
 - fix(streaming): compose caller-supplied `onMatch` with internal collector in `processLargeDataset` so both receive every match instead of the caller's callback being dropped. Fixes [\#86](https://github.com/cm45t3r/candlestick/issues/86)
 - fix(utils): propagate `strict` flag through `precomputeCandleProps` to detect NaN geometry (non-finite `bodyLen`/`wickLen`/`tailLen`) at the precomputation boundary. Fixes [\#85](https://github.com/cm45t3r/candlestick/issues/85)
