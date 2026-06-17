@@ -235,12 +235,12 @@ The CLI tool uses the same high-performance engine as the library:
 - **Memory:** Efficient for large datasets (Streaming API available)
 - **Patterns:** All 29 pattern variants
 
-## TypeScript Users
+## Programmatic Use
 
-The CLI can be used programmatically:
+The CLI functions can be used programmatically from Node.js:
 
-```typescript
-import { readInput, processData } from "candlestick/cli";
+```js
+const { readInput, processData } = require("candlestick/cli");
 
 const data = readInput("data.json");
 const results = processData(data, { confidence: 0.8 });

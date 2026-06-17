@@ -92,7 +92,7 @@ function isBearishPattern(candlestick) {
 
 // Array search
 function pattern(dataArray) {
-  const candles = precomputeCandleProps(dataArray);
+  const candles = ensurePrecomputed(dataArray);
   return findPattern(candles, isPattern);
 }
 

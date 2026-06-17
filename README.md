@@ -19,7 +19,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - 🎯 18 candlestick patterns, 29 variants across single, two, and three-candle formations
 - 📦 ESM & CommonJS support (dual export)
 - 🔷 Full TypeScript definitions with IntelliSense
-- ✅ 306 tests — 99.75% line coverage, 100% function coverage
+- ✅ 347 tests — 99.75% line coverage, 100% function coverage
 - 🚀 Streaming API for massive datasets (~70% memory reduction)
 - 🔬 Property-based testing with fast-check (1000+ generated scenarios)
 - 🔌 Plugin system for custom patterns
@@ -74,7 +74,7 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - **Plugin System**: Register custom patterns
 - **Pattern Chaining**: Multi-pattern detection in single pass
 - **Zero Dependencies**: Pure JavaScript, works everywhere
-- **Excellent Test Coverage**: 306 tests with 99.75% coverage (97.63% branches, 100% functions)
+- **Excellent Test Coverage**: 347 tests with 99.75% coverage (97.63% branches, 100% functions)
 - **High Performance**: 59K+ candles/sec throughput
 - **Well Documented**: Architecture guides, examples, and API docs
 
@@ -214,7 +214,7 @@ console.log(results[0].match[0].volume); // 61000
 - `isBullishKicker(prev, curr)` / `isBearishKicker(prev, curr)`
 - `isHangingMan(prev, curr)` / `isShootingStar(prev, curr)`
 - `isPiercingLine(prev, curr)` / `isDarkCloudCover(prev, curr)`
-- `isTweezersTop(prev, curr)` / `isTweezersBottom(prev, curr)`
+- `isTweezers(prev, curr)` / `isTweezersTop(prev, curr)` / `isTweezersBottom(prev, curr)`
 
 **Three candles:**
 
@@ -238,7 +238,7 @@ console.log(results[0].match[0].volume); // 61000
 - `bullishKicker(dataArray)` / `bearishKicker(dataArray)`
 - `hangingMan(dataArray)` / `shootingStar(dataArray)`
 - `piercingLine(dataArray)` / `darkCloudCover(dataArray)`
-- `tweezersTop(dataArray)` / `tweezersBottom(dataArray)`
+- `tweezers(dataArray)` / `tweezersTop(dataArray)` / `tweezersBottom(dataArray)`
 
 **Three candles:**
 
@@ -273,6 +273,15 @@ const matches = patternChain(dataArray, [
   { name: "doji", fn: doji },
   { name: "bullishEngulfing", fn: bullishEngulfing, paramCount: 2 },
 ]);
+```
+
+### Strict Mode
+
+Pass `{ strict: true }` to throw on invalid OHLC data instead of silently skipping:
+
+```js
+patternChain(dataArray, allPatterns, { strict: true });
+// throws if any candle has high < low, NaN fields, etc.
 ```
 
 > **Multi-candle patterns:** Two-candle patterns (Engulfing, Harami, Kicker, Hanging Man, Shooting Star, Piercing Line, Dark Cloud Cover, Tweezers Top/Bottom) return a `match` array with 2 candles. Three-candle patterns (Morning Star, Evening Star, Three White Soldiers, Three Black Crows) return 3. Single-candle patterns return 1. This is driven by the `paramCount` property on each pattern definition.
@@ -533,7 +542,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for release history and major changes.
 - 3 new candlestick patterns (Marubozu, Spinning Top, Tweezers)
 - Streaming API for large datasets (70% memory reduction)
 - Property-based testing with fast-check
-- 306 tests with 99.75% coverage
+- 347 tests with 99.75% coverage
 
 **Previous (v1.1.0):**
 

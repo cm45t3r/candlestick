@@ -58,7 +58,8 @@
       "import": "./src/index.mjs",
       "require": "./index.js",
       "types": "./types/index.d.ts"
-    }
+    },
+    "./cli": "./cli/index.js"
   },
   "main": "index.js",
   "module": "src/index.mjs",
