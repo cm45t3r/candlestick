@@ -9,13 +9,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/cm45t3r/candlestick/pulls)
 
-A modern, modular JavaScript library for candlestick pattern detection. Detects classic reversal and continuation patterns in OHLC data, with a clean API and no native dependencies.
+A modern, modular JavaScript library for [candlestick pattern](https://en.wikipedia.org/wiki/Candlestick_chart) detection. Detects classic reversal and continuation patterns in OHLC (Open, High, Low, Close) price data, with a clean API and no native dependencies.
 
 - 18 candlestick patterns, 29 variants across single, two, and three-candle formations
 - ESM & CommonJS dual export with full TypeScript definitions
 - Streaming API for massive datasets (~70% memory reduction)
 - Plugin system for custom patterns, data validation, pattern metadata
-- 347 tests, 99.75% line coverage, 438K+ candles/sec throughput
+- Comprehensive test suite with high coverage (run `npm test` and `npm run coverage`)
 - Zero runtime dependencies
 
 > **Requires Node.js >= 20**
@@ -28,11 +28,11 @@ A modern, modular JavaScript library for candlestick pattern detection. Detects 
 - [Usage](#usage)
 - [Pattern Detection Functions](#pattern-detection-functions)
 - [High-Level Pattern Chaining](#high-level-pattern-chaining)
-- [Pattern Descriptions](#pattern-descriptions)
 - [Examples](#examples)
 - [Full Example Files](#full-example-files)
 - [Performance](#performance)
 - [Development](#development)
+- [Architecture](#architecture)
 - [Contributing](#contributing)
 - [Upgrading from v1.x](#upgrading-from-v1x)
 - [FAQ](#faq)
@@ -255,32 +255,15 @@ patternChain(dataArray, allPatterns, { strict: true });
 
 ## Pattern Descriptions
 
-### Single Candle Patterns
+The library detects 18 patterns across 29 variants:
 
-- **Hammer**: Small body near the top (body < 1/3 of range), long lower shadow (tail ≥ 2× body), small upper shadow. Signals possible bullish reversal.
-- **Inverted Hammer**: Small body near the bottom, long upper shadow (wick ≥ 2× body), small lower shadow. Bullish reversal signal.
-- **Doji**: Very small body (body < 10% of range), open ≈ close. Indicates indecision. Candle must have range (high > low).
-- **Marubozu**: Long body (≥ 70% of range) with minimal shadows (< 10% of body). Strong directional move. Bullish Marubozu shows strong buying, Bearish shows strong selling.
-- **Spinning Top**: Small body (< 30% of range) with long upper and lower shadows (each > 20% of range). Indicates market indecision or potential reversal.
+| Category | Patterns |
+|---|---|
+| **Single candle** | Hammer, Inverted Hammer, Doji, Marubozu, Spinning Top |
+| **Two candle** | Engulfing, Harami, Kicker, Hanging Man, Shooting Star, Piercing Line, Dark Cloud Cover, Tweezers Top/Bottom |
+| **Three candle** | Morning Star, Evening Star, Three White Soldiers, Three Black Crows |
 
-### Two Candle Patterns
-
-- **Engulfing**: Second candle's body fully engulfs the previous (body range covers previous body). Bullish or bearish.
-- **Harami**: Second candle's body is inside the previous (body range within previous body). Bullish or bearish.
-- **Kicker**: Opposite-color candles with a body gap between them (second body does not overlap first body). The second candle must not be a Hammer or Inverted Hammer shape. Bullish or bearish.
-- **Hanging Man**: Bullish candle followed by a bearish hammer with a gap up. Bearish reversal.
-- **Shooting Star**: Bullish candle followed by a bearish inverted hammer with a gap up. Bearish reversal.
-- **Piercing Line**: Bullish reversal. Bearish candle (body ≥ 50% of range) followed by bullish candle (body ≥ 50% of range) that opens below first's low, closes above the first body's midpoint but below the first body's top (i.e., does not fully engulf).
-- **Dark Cloud Cover**: Bearish reversal. Bullish candle (body ≥ 50% of range) followed by bearish candle (body ≥ 50% of range) that opens above first's high, closes below the first body's midpoint but above the first body's bottom (i.e., does not fully engulf).
-- **Tweezers Top**: Bearish reversal. Bullish candle followed by bearish candle with matching highs (within 1% of the candles' average range). Both candles must have significant bodies (≥ 40% of their range). Indicates resistance level.
-- **Tweezers Bottom**: Bullish reversal. Bearish candle followed by bullish candle with matching lows (within 1% of the candles' average range). Both candles must have significant bodies (≥ 40% of their range). Indicates support level.
-
-### Three Candle Patterns
-
-- **Morning Star**: Bullish reversal. Long bearish candle (body ≥ 60% of range), small-bodied star (body ≤ 30% of range) whose body gaps down from the first candle's body, long bullish candle (body ≥ 60% of range) closing above the midpoint of the first candle's body.
-- **Evening Star**: Bearish reversal. Long bullish candle (body ≥ 60% of range), small-bodied star (body ≤ 30% of range) whose body gaps up from the first candle's body, long bearish candle (body ≥ 60% of range) closing below the midpoint of the first candle's body.
-- **Three White Soldiers**: Three consecutive bullish candles, each opening within the previous body and closing higher. Each body ≥ 60% of its candle's range; upper shadows ≤ 30% of body. Signals strong bullish continuation/reversal.
-- **Three Black Crows**: Three consecutive bearish candles, each opening within the previous body and closing lower. Each body ≥ 60% of its candle's range; lower shadows ≤ 30% of body. Signals strong bearish continuation/reversal.
+Each pattern includes bullish/bearish variants where applicable. For detailed descriptions with detection thresholds, see [docs/PATTERNS.md](./docs/PATTERNS.md).
 
 > **Note:** The library does not mutate your input data. Pattern functions return arrays of indices; `precomputeCandleProps` returns new enriched candle objects. When calling multiple pattern functions on the same raw array, precompute once for better performance (see [Performance](#performance)). `patternChain` handles this internally.
 
@@ -457,12 +440,14 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 
 ## Performance
 
+<!-- BENCH:START -->
 | Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |
 |---|---|---|---|
-| 1,000 | 6.9 | 146K | 2.0 |
-| 10,000 | 28.3 | 353K | 16.1 |
-| 100,000 | 267.8 | 373K | 98.6 |
-| 1,000,000 | 2,281.6 | 438K | 699.7 |
+| 1,000 | 5.2 | 194K | 1.9 |
+| 10,000 | 23.2 | 431K | 17.2 |
+| 100,000 | 253.8 | 394K | 114.4 |
+| 1,000,000 | 2016.2 | 496K | 969.7 |
+<!-- BENCH:END -->
 
 When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to avoid redundant work:
 
@@ -476,7 +461,7 @@ const dojis = doji(precomputed);
 
 `patternChain` handles this internally — no manual call needed there.
 
-Run `npm run bench` for full benchmark results on your hardware.
+Run `npm run bench` for full benchmark results on your hardware. The numbers above were measured on the maintainer's machine and may vary.
 
 ---
 
@@ -490,6 +475,12 @@ npm run lint          # eslint
 npm run format        # prettier
 npm run bench         # benchmark suite
 ```
+
+---
+
+## Architecture
+
+See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for an overview of the library's design and module structure.
 
 ---
 

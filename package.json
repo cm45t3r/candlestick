@@ -80,6 +80,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "bench": "node benchmark.js",
+    "bench:readme": "node scripts/update-bench.js",
     "prepublishOnly": "npm run lint && npm test"
   },
   "engines": {

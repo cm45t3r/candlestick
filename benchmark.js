@@ -144,6 +144,36 @@ for (const r of results) {
   );
 }
 
+// JSON output for automation (--json flag)
+if (process.argv.includes("--json")) {
+  const jsonPath = process.argv[process.argv.indexOf("--json") + 1] || "bench-results.json";
+  const fs = require("fs");
+
+  // github-action-benchmark customSmallerIsBetter format
+  const benchEntries = results.flatMap((r) => {
+    const label = r.size.toLocaleString();
+    return [
+      { name: `Pattern Chain ${label}`, unit: "ms", value: parseFloat(r.chainPrecomputeTime.toFixed(1)) },
+      { name: `Hammer ${label}`, unit: "ms", value: parseFloat(r.hammerPrecomputeTime.toFixed(2)) },
+      { name: `Memory ${label}`, unit: "MB", value: r.memDelta },
+    ];
+  });
+
+  // Wrapper with both formats: CI action reads .entries, update script reads .table
+  const output = {
+    entries: benchEntries,
+    table: results.map((r) => ({
+      size: r.size,
+      chainMs: parseFloat(r.chainPrecomputeTime.toFixed(1)),
+      throughput: Math.round((r.size / r.chainPrecomputeTime) * 1000),
+      memoryMb: r.memDelta,
+    })),
+  };
+
+  fs.writeFileSync(jsonPath, JSON.stringify(output, null, 2));
+  console.log(`\nResults written to ${jsonPath}`);
+}
+
 console.log("\nBenchmark completed successfully! ✓");
 
 // Streaming benchmark

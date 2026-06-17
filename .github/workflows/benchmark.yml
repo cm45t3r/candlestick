@@ -1,0 +1,49 @@
+name: Benchmark
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "benchmark.js"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "benchmark.js"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Run benchmark
+        run: |
+          node benchmark.js --json bench-results-full.json
+          node -e "const d=require('./bench-results-full.json'); require('fs').writeFileSync('bench-results.json', JSON.stringify(d.entries, null, 2))"
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: "customSmallerIsBetter"
+          output-file-path: bench-results.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          alert-threshold: "130%"
+          comment-on-alert: true
+          fail-on-alert: false
+          alert-comment-cc-users: "@cm45t3r"
+          benchmark-data-dir-path: dev/bench
