@@ -305,10 +305,10 @@ patternChain(dataArray, allPatterns, { strict: true });
 - **Kicker**: Strong reversal with a gap and opposite color. Bullish or bearish.
 - **Hanging Man**: Bullish candle followed by a bearish hammer with a gap up. Bearish reversal.
 - **Shooting Star**: Bullish candle followed by a bearish inverted hammer with a gap up. Bearish reversal.
-- **Piercing Line**: Bullish reversal. Bearish candle followed by bullish candle that opens below first's low and closes above its midpoint.
-- **Dark Cloud Cover**: Bearish reversal. Bullish candle followed by bearish candle that opens above first's high and closes below its midpoint.
-- **Tweezers Top**: Bearish reversal. Bullish candle followed by bearish candle with matching highs (within 1% tolerance). Indicates resistance level.
-- **Tweezers Bottom**: Bullish reversal. Bearish candle followed by bullish candle with matching lows (within 1% tolerance). Indicates support level.
+- **Piercing Line**: Bullish reversal. Bearish candle (body ≥ 50% of range) followed by bullish candle (body ≥ 50% of range) that opens below first's low, closes above the first body's midpoint but below the first body's top (i.e., does not fully engulf).
+- **Dark Cloud Cover**: Bearish reversal. Bullish candle (body ≥ 50% of range) followed by bearish candle (body ≥ 50% of range) that opens above first's high, closes below the first body's midpoint but above the first body's bottom (i.e., does not fully engulf).
+- **Tweezers Top**: Bearish reversal. Bullish candle followed by bearish candle with matching highs (within 1% of the candles' average range). Both candles must have significant bodies (≥ 40% of their range). Indicates resistance level.
+- **Tweezers Bottom**: Bullish reversal. Bearish candle followed by bullish candle with matching lows (within 1% of the candles' average range). Both candles must have significant bodies (≥ 40% of their range). Indicates support level.
 
 ### Three Candle Patterns
 
