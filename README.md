@@ -168,7 +168,10 @@ console.log(results[0].match[0].volume); // 61000
 
 ## Pattern Detection Functions
 
-### Boolean (Single/Pair) Detection — returns `boolean`
+Every pattern has two API styles: a **boolean function** for checking individual candles, and an **array function** that scans a series and returns matching indices.
+
+<details>
+<summary><strong>Boolean (Single/Pair) Detection — returns <code>boolean</code></strong></summary>
 
 **Single candle:**
 
@@ -192,7 +195,10 @@ console.log(results[0].match[0].volume); // 61000
 - `isMorningStar(c1, c2, c3)` / `isEveningStar(c1, c2, c3)`
 - `isThreeWhiteSoldiers(c1, c2, c3)` / `isThreeBlackCrows(c1, c2, c3)`
 
-### Array (Series) Detection — returns `number[]` (indices)
+</details>
+
+<details>
+<summary><strong>Array (Series) Detection — returns <code>number[]</code> (indices)</strong></summary>
 
 **Single candle:**
 
@@ -215,6 +221,8 @@ console.log(results[0].match[0].volume); // 61000
 
 - `morningStar(dataArray)` / `eveningStar(dataArray)`
 - `threeWhiteSoldiers(dataArray)` / `threeBlackCrows(dataArray)`
+
+</details>
 
 ---
 
@@ -495,6 +503,16 @@ See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for an overview of the librar
 - Follow the code style enforced by ESLint and Prettier.
 - Run `npm run lint` and `npm run format` before submitting.
 - See [CONTRIBUTING.md](./CONTRIBUTING.md) for full guidelines.
+
+### Adding a New Pattern
+
+1. Create `src/myPattern.js` with a boolean detector (`isMyPattern`) and an array scanner (`myPattern`)
+2. Export both from `src/candlestick.js` and `src/index.mjs`
+3. Add TypeScript definitions in `types/index.d.ts`
+4. Register the pattern in `allPatterns` inside `src/patternChain.js` (set `paramCount` to the number of candles)
+5. Write tests in `test/myPattern.test.js` covering valid matches, non-matches, and edge cases
+6. Add an example file in `examples/myPattern.js`
+7. Run `npm test && npm run lint` to verify
 
 ---
 
