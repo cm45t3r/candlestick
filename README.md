@@ -15,12 +15,12 @@
 
 A modern, modular JavaScript library for [candlestick pattern](https://en.wikipedia.org/wiki/Candlestick_chart) detection. Detects classic reversal and continuation patterns in OHLC (Open, High, Low, Close) price data, with a clean API and no native dependencies.
 
-- 18 candlestick patterns, 29 variants across single, two, and three-candle formations
-- ESM & CommonJS dual export with full TypeScript definitions
-- Streaming API for massive datasets (~70% memory reduction)
-- Plugin system for custom patterns, data validation, pattern metadata
-- Comprehensive test suite with high coverage (run `npm test` and `npm run coverage`)
-- Zero runtime dependencies
+- 📊 18 candlestick patterns, 29 variants across single, two, and three-candle formations
+- 📦 ESM & CommonJS dual export with full TypeScript definitions
+- 🌊 Streaming API for massive datasets (~70% memory reduction)
+- 🔌 Plugin system for custom patterns, data validation, pattern metadata
+- ✅ Comprehensive test suite with high coverage (run `npm test` and `npm run coverage`)
+- 🪶 Zero runtime dependencies
 
 > **Requires Node.js >= 20**
 
@@ -447,10 +447,10 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 <!-- BENCH:START -->
 | Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |
 |---|---|---|---|
-| 1,000 | 5.2 | 194K | 1.9 |
-| 10,000 | 23.2 | 431K | 17.2 |
-| 100,000 | 253.8 | 394K | 114.4 |
-| 1,000,000 | 2016.2 | 496K | 969.7 |
+| 1,000 | 7.0 | 142K | 1.7 |
+| 10,000 | 29.9 | 334K | 16.6 |
+| 100,000 | 294.7 | 339K | 114.8 |
+| 1,000,000 | 2288.8 | 437K | 667.5 |
 <!-- BENCH:END -->
 
 When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to avoid redundant work:
