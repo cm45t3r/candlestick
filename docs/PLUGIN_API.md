@@ -403,7 +403,7 @@ The plugin registry (`customPatterns`) is a module-level `Map`. Because Node.js 
 When writing tests that register custom patterns, always call `clearAllPatterns()` unconditionally after each test — use `afterEach` rather than a manual call at the end of the test body so the cleanup runs even if the test throws:
 
 ```javascript
-const { plugins } = require('candlestick');
+const { plugins } = require("candlestick");
 
 afterEach(() => {
   plugins.clearAllPatterns();
@@ -417,21 +417,21 @@ Forgetting the cleanup will leave the registry dirty for all subsequent tests, w
 TypeScript definitions for the plugin system are included in `types/index.d.ts`.
 
 ```typescript
-import { OHLC, plugins } from 'candlestick';
+import { OHLC, plugins } from "candlestick";
 
 interface MyMetadata {
-  type: 'reversal' | 'continuation';
+  type: "reversal" | "continuation";
   confidence: number;
 }
 
 plugins.registerPattern({
-  name: 'myPattern',
+  name: "myPattern",
   fn: (dataArray: OHLC[]): number[] => {
     // Your detection logic here
     return [];
   },
   paramCount: 1,
-  metadata: { type: 'reversal', confidence: 0.8 } as MyMetadata
+  metadata: { type: "reversal", confidence: 0.8 } as MyMetadata,
 });
 ```
 

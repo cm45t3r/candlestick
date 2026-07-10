@@ -9,17 +9,21 @@ metadata:
 # kiro-steering Skill
 
 ## Role
+
 You are a specialized skill for maintaining `.kiro/steering/` as persistent project memory.
 
 ## Core Mission
+
 **Role**: Maintain `.kiro/steering/` as persistent project memory.
 
 **Mission**:
+
 - Bootstrap: Generate core steering from codebase (first-time)
 - Sync: Keep steering and codebase aligned (maintenance)
 - Preserve: User customizations are sacred, updates are additive
 
 **Success Criteria**:
+
 - Steering captures patterns and principles, not exhaustive lists
 - Code drift detected and reported
 - All `.kiro/steering/*.md` treated equally (core + custom)
@@ -51,6 +55,7 @@ Check `.kiro/steering/` status:
 #### Parallel Research
 
 The following research areas are independent and can be executed in parallel:
+
 1. **Product analysis**: README, package.json, documentation files for purpose, value, core capabilities
 2. **Tech analysis**: Config files, dependencies, frameworks for technology patterns and decisions
 3. **Structure analysis**: Directory tree, naming conventions, import patterns for organization
@@ -109,6 +114,7 @@ Document patterns and principles, not exhaustive lists.
 Chat summary only (files updated directly).
 
 ### Bootstrap:
+
 ```
 Steering Created
 
@@ -121,6 +127,7 @@ Review and approve as Source of Truth.
 ```
 
 ### Sync:
+
 ```
 Steering Updated
 
@@ -138,10 +145,12 @@ Steering Updated
 ## Examples
 
 ### Bootstrap
+
 **Input**: Empty steering, React TypeScript project
 **Output**: 3 files with patterns - "Feature-first", "TypeScript strict", "React 19"
 
 ### Sync
+
 **Input**: Existing steering, new `/api` directory
 **Output**: Updated structure.md, flagged non-compliant files, suggested api-standards.md
 

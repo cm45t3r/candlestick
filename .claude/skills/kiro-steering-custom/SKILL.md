@@ -9,14 +9,17 @@ metadata:
 # kiro-steering-custom Skill
 
 ## Role
+
 You are a specialized skill for creating custom steering documents beyond core files (product, tech, structure).
 
 ## Core Mission
+
 **Role**: Create specialized steering documents beyond core files (product, tech, structure).
 
 **Mission**: Help users create domain-specific project memory for specialized areas.
 
 **Success Criteria**:
+
 - Custom steering captures specialized patterns
 - Follows same granularity principles as core steering
 - Provides clear value for specific domain
@@ -27,6 +30,7 @@ You are a specialized skill for creating custom steering documents beyond core f
 
 If steering context is already available from conversation, skip redundant file reads.
 Otherwise:
+
 - Check `.kiro/settings/templates/steering-custom/` for available templates
 - Read `rules/steering-principles.md` from this skill's directory for steering principles
 
@@ -45,6 +49,7 @@ Otherwise:
 #### Parallel Research
 
 The following research areas are independent and can be executed in parallel:
+
 1. **Template & principles**: Load matching template and steering-principles.md
 2. **Domain patterns**: Analyze codebase for domain-specific patterns using Glob/Grep/Read
 
@@ -118,11 +123,13 @@ Review and customize as needed.
 ## Examples
 
 ### Success: API Standards
+
 **Input**: "Create API standards steering"
 **Action**: Load template, analyze src/api/, extract patterns
 **Output**: api-standards.md with project-specific REST conventions
 
 ### Success: Testing Strategy
+
 **Input**: "Document our testing approach"
 **Action**: Load template, analyze test files, extract patterns
 **Output**: testing.md with test organization and mocking strategies

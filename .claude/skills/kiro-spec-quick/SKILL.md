@@ -13,6 +13,7 @@ argument-hint: <project-description> [--auto]
 **If `--auto` flag is present in `$ARGUMENTS`, you are in AUTOMATIC MODE.**
 
 In Automatic Mode:
+
 - Execute ALL 4 phases in a continuous loop without stopping
 - Display progress after each phase (e.g., "Phase 1/4 complete: spec initialized")
 - IGNORE any "Next Step" messages from Phase 2-4 (they are for standalone usage)
@@ -22,6 +23,7 @@ In Automatic Mode:
 ---
 
 ## Core Task
+
 Execute 4 spec phases sequentially. In automatic mode, execute all phases without stopping. In interactive mode, prompt user for approval between phases.
 
 Before claiming quick generation is complete, run one lightweight sanity review over the generated requirements, design, and tasks. If the host supports fresh subagents, use one. Otherwise run the sanity review inline.
@@ -31,11 +33,13 @@ Before claiming quick generation is complete, run one lightweight sanity review 
 ### Step 1: Parse Arguments and Initialize
 
 Parse `$ARGUMENTS`:
+
 - If contains `--auto`: **Automatic Mode** (execute all 4 phases)
 - Otherwise: **Interactive Mode** (prompt at each phase)
 - Extract description (remove `--auto` flag if present)
 
 Example:
+
 ```
 "User profile with avatar upload --auto" → mode=automatic, description="User profile with avatar upload"
 "User profile feature" → mode=interactive, description="User profile feature"
@@ -73,12 +77,14 @@ Execute these 4 phases in order:
 5. **Initialize Files from Templates**:
 
    a. Read templates:
+
    ```
    - .kiro/settings/templates/specs/init.json
    - .kiro/settings/templates/specs/requirements-init.md
    ```
 
    b. Replace placeholders:
+
    ```
    {{FEATURE_NAME}} → feature-name
    {{TIMESTAMP}} → current ISO 8601 timestamp (use `date -u +"%Y-%m-%dT%H:%M:%SZ"`)
@@ -87,6 +93,7 @@ Execute these 4 phases in order:
    ```
 
    c. Write files using Write tool:
+
    ```
    - .kiro/specs/{feature-name}/spec.json
    - .kiro/specs/{feature-name}/requirements.md
@@ -97,6 +104,7 @@ Execute these 4 phases in order:
 **Automatic Mode**: IMMEDIATELY continue to Phase 2.
 
 **Interactive Mode**: Prompt "Continue to requirements generation? (yes/no)"
+
 - If "no": Stop, show current state
 - If "yes": Continue to Phase 2
 
@@ -113,6 +121,7 @@ Wait for completion. IGNORE any "Next Step" message (it is for standalone usage)
 **Automatic Mode**: IMMEDIATELY continue to Phase 3.
 
 **Interactive Mode**: Prompt "Continue to design generation? (yes/no)"
+
 - If "no": Stop, show current state
 - If "yes": Continue to Phase 3
 
@@ -129,6 +138,7 @@ Wait for completion. IGNORE any "Next Step" message.
 **Automatic Mode**: IMMEDIATELY continue to Phase 4.
 
 **Interactive Mode**: Prompt "Continue to tasks generation? (yes/no)"
+
 - If "no": Stop, show current state
 - If "yes": Continue to Phase 4
 
@@ -166,6 +176,7 @@ Output final completion summary (see Output Description section) and exit.
 ## Important Constraints
 
 ### Error Handling
+
 - Any phase failure stops the workflow
 - Display error and current state
 - Suggest manual recovery command
@@ -177,6 +188,7 @@ Output final completion summary (see Output Description section) and exit.
 ### Mode Banners
 
 **Interactive Mode**:
+
 ```
 Quick Spec Generation (Interactive Mode)
 
@@ -185,6 +197,7 @@ Note: Skips gap analysis and design validation.
 ```
 
 **Automatic Mode**:
+
 ```
 Quick Spec Generation (Automatic Mode)
 
@@ -196,6 +209,7 @@ Final sanity review still runs.
 ### Intermediate Output
 
 After each phase, show brief progress:
+
 ```
 Spec initialized at .kiro/specs/{feature}/
 Requirements generated → Continuing to design...
@@ -230,26 +244,31 @@ Next Steps:
 ### Error Scenarios
 
 **Template Missing**:
+
 - Check `.kiro/settings/templates/specs/` exists
 - Report specific missing file
 - Exit with error
 
 **Directory Creation Failed**:
+
 - Check permissions
 - Report error with path
 - Exit with error
 
 **Phase Execution Failed** (Phase 2-4):
+
 - Stop workflow
 - Show current state and completed phases
 - Suggest: "Continue manually from `/kiro-spec-{next-phase} {feature}`"
 
 **Sanity Review Failed**:
+
 - Stop workflow
 - Report the exact contradiction, missing prerequisite, or task-plan issue
 - Suggest targeted follow-up with `/kiro-spec-design {feature}`, `/kiro-spec-tasks {feature}`, or manual edits depending on the finding
 
 **User Cancellation** (Interactive Mode):
+
 - Stop gracefully
 - Show completed phases
 - Suggest manual continuation

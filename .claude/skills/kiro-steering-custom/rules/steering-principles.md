@@ -7,9 +7,11 @@ Steering files are **project memory**, not exhaustive specifications.
 ## Content Granularity
 
 ### Golden Rule
+
 > "If new code follows existing patterns, steering shouldn't need updating."
 
 ### ✅ Document
+
 - Organizational patterns (feature-first, layered)
 - Naming conventions (PascalCase rules)
 - Import strategies (absolute vs relative)
@@ -17,6 +19,7 @@ Steering files are **project memory**, not exhaustive specifications.
 - Technology standards (key frameworks)
 
 ### ❌ Avoid
+
 - Complete file listings
 - Every component description
 - All dependencies
@@ -27,17 +30,21 @@ Steering files are **project memory**, not exhaustive specifications.
 ### Example Comparison
 
 **Bad** (Specification-like):
+
 ```markdown
 - /components/Button.tsx - Primary button with variants
 - /components/Input.tsx - Text input with validation
 - /components/Modal.tsx - Modal dialog
-... (50+ files)
+  ... (50+ files)
 ```
 
 **Good** (Project Memory):
+
 ```markdown
 ## UI Components (`/components/ui/`)
+
 Reusable, design-system aligned primitives
+
 - Named by function (Button, Input, Modal)
 - Export component + TypeScript interface
 - No business logic
@@ -48,6 +55,7 @@ Reusable, design-system aligned primitives
 ## Security
 
 Never include:
+
 - API keys, passwords, credentials
 - Database URLs, internal IPs
 - Secrets or sensitive data

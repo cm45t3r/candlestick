@@ -9,6 +9,7 @@ metadata:
 # kiro-spec-requirements Skill
 
 ## Core Mission
+
 - **Success Criteria**:
   - Create complete requirements document aligned with steering context
   - Follow the project's EARS patterns and constraints for all acceptance criteria
@@ -22,6 +23,7 @@ metadata:
 
 If steering/spec context is already available from conversation, skip redundant file reads.
 Otherwise, load all necessary context:
+
 - Read `.kiro/specs/{feature}/spec.json` for language and metadata
 - Read `.kiro/specs/{feature}/brief.md` if it exists (discovery context: problem, approach, scope decisions, boundary candidates)
 - Read `.kiro/specs/{feature}/requirements.md` for project description
@@ -30,6 +32,7 @@ Otherwise, load all necessary context:
 - Relevant local agent skills or playbooks only when they clearly match the feature's host environment or use case and contain domain terminology or workflow rules that shape user-observable requirements
 
 ### Step 2: Read Guidelines
+
 - Read `rules/ears-format.md` from this skill's directory for EARS syntax rules
 - Read `rules/requirements-review-gate.md` from this skill's directory for pre-write review criteria
 - Read `.kiro/settings/templates/specs/requirements.md` for document structure
@@ -39,6 +42,7 @@ Otherwise, load all necessary context:
 The following research areas are independent. Decide the optimal decomposition based on project complexity -- split, merge, add, or skip subagents as needed.
 
 **Delegate to subagent via Agent tool** (keeps exploration out of main context):
+
 - **Codebase hints** (brownfield projects): Dispatch a subagent to explore existing implementations that inform requirement scope. Example prompt: "Explore this codebase for existing features related to [feature area]. Summarize: (1) what already exists, (2) relevant interfaces/APIs, (3) patterns that new requirements should align with. Return a summary under 150 lines."
 - **Domain research** (when external knowledge is needed): Dispatch a subagent for WebSearch/WebFetch to research domain-specific requirements, standards, or best practices. Return a concise findings summary.
 - **Additional steering and playbooks**: If many steering files or local agent playbooks exist, dispatch a subagent to scan them and return only the sections relevant to this feature.
@@ -48,6 +52,7 @@ For greenfield projects with minimal codebase, skip subagent dispatch and load c
 After all research completes, synthesize findings in main context before generating requirements.
 
 ### Step 3: Generate Requirements Draft
+
 - Create initial requirements draft based on project description
 - Group related functionality into logical requirement areas
 - Apply EARS format to all acceptance criteria
@@ -61,6 +66,7 @@ After all research completes, synthesize findings in main context before generat
 - Keep this as a draft until the review gate passes; do not write `requirements.md` yet
 
 ### Step 4: Review Requirements Draft
+
 - Run the `Requirements Review Gate` from `rules/requirements-review-gate.md`
 - Review coverage, EARS compliance, ambiguity, adjacent expectations, and scope boundaries before finalizing
 - If issues are local to the draft, repair the requirements and review again
@@ -68,6 +74,7 @@ After all research completes, synthesize findings in main context before generat
 - If the draft exposes a real scope ambiguity or contradiction, stop and ask the user to clarify instead of writing guessed requirements
 
 ### Step 5: Finalize and Update Metadata
+
 - Write `.kiro/specs/{feature}/requirements.md` only after the requirements review gate passes
 - Set `phase: "requirements-generated"`
 - Set `approvals.requirements.generated: true`
@@ -76,9 +83,11 @@ After all research completes, synthesize findings in main context before generat
 ## Important Constraints
 
 ### Requirements Scope: WHAT, not HOW
+
 Requirements describe user-observable behavior, not implementation. Use this to decide what belongs here vs. in design:
 
 **Ask the user about (requirements scope):**
+
 - Functional scope — what is included and what is excluded
 - User-observable behavior — "when X happens, what should the user see/experience?"
 - Business rules and edge cases — limits, error conditions, special cases
@@ -86,6 +95,7 @@ Requirements describe user-observable behavior, not implementation. Use this to 
 - Adjacent expectations only when they change user-visible behavior or operator expectations — what this feature relies on, and what it explicitly does not own
 
 **Do not ask about (design scope — defer to design phase):**
+
 - Technology stack choices (database, framework, language)
 - Architecture patterns (microservices, monolith, event-driven)
 - API design, data models, internal component structure
@@ -95,11 +105,13 @@ Requirements describe user-observable behavior, not implementation. Use this to 
 **Litmus test**: If an EARS acceptance criterion can be written without mentioning any technology, it belongs in requirements. If it requires a technology choice, it belongs in design.
 
 ### Other Constraints
+
 - Each requirement must be testable and unambiguous. If the project description leaves room for multiple interpretations on scope, behavior, or boundary conditions, ask the user to clarify before generating that requirement. Ask as many questions as needed; do not generate requirements that contain your own assumptions.
 - Choose appropriate subject for EARS statements (system/service name for software)
 - Requirement headings in requirements.md MUST include a leading numeric ID only (for example: "Requirement 1", "1.", "2 Feature ..."); do not use alphabetic IDs like "Requirement A".
 
 ## Output Description
+
 Provide output in the language specified in spec.json with:
 
 1. **Generated Requirements Summary**: Brief overview of major requirement areas (3-5 bullets)
@@ -108,6 +120,7 @@ Provide output in the language specified in spec.json with:
 4. **Next Steps**: Guide user on how to proceed (approve and continue, or modify)
 
 **Format Requirements**:
+
 - Use Markdown headings for clarity
 - Include file paths in code blocks
 - Keep summary concise (under 300 words)
@@ -115,6 +128,7 @@ Provide output in the language specified in spec.json with:
 ## Safety & Fallback
 
 ### Error Scenarios
+
 - **Missing Project Description**: If requirements.md lacks project description, ask user for feature details
 - **Template Missing**: If template files don't exist, use inline fallback structure with warning
 - **Language Undefined**: Default to English (`en`) if spec.json doesn't specify language
@@ -125,6 +139,7 @@ Provide output in the language specified in spec.json with:
 ### Next Phase: Design Generation
 
 **If Requirements Approved**:
+
 - **Optional Gap Analysis** (for existing codebases):
   - Run `/kiro-validate-gap {feature}` to analyze implementation gap
   - Recommended for brownfield projects; skip for greenfield
@@ -132,4 +147,5 @@ Provide output in the language specified in spec.json with:
 - Or `/kiro-spec-design {feature} -y` to auto-approve requirements and proceed directly
 
 **If Modifications Needed**:
+
 - Provide feedback and re-run `/kiro-spec-requirements {feature}`

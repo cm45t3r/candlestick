@@ -10,6 +10,7 @@ metadata:
 # kiro-spec-design Skill
 
 ## Core Mission
+
 - **Success Criteria**:
   - All requirements mapped to technical components with clear interfaces
   - The design makes responsibility boundaries explicit enough to guide task generation and review
@@ -23,6 +24,7 @@ metadata:
 
 If steering/spec context is already available from conversation, skip redundant file reads.
 Otherwise, load all necessary context:
+
 - `.kiro/specs/{feature}/spec.json`, `requirements.md`, `design.md` (if exists)
 - `.kiro/specs/{feature}/research.md` (if exists, contains gap analysis from `/kiro-validate-gap`)
 - Core steering context: `product.md`, `tech.md`, `structure.md`
@@ -32,6 +34,7 @@ Otherwise, load all necessary context:
 - `.kiro/settings/templates/specs/research.md` for discovery log structure
 
 **Validate requirements approval**:
+
 - If auto-approve flag is true: Auto-approve requirements in spec.json
 - Otherwise: Verify approval status (stop if unapproved, see Safety & Fallback)
 
@@ -68,6 +71,7 @@ Otherwise, load all necessary context:
 The following research areas are independent and can be dispatched as **subagents** via the Agent tool. The agent should decide the optimal decomposition based on feature complexity — split, merge, add, or skip subagents as needed. Each subagent returns a **findings summary** (not raw data) to keep the main context clean for synthesis.
 
 **Typical research areas** (adjust as appropriate):
+
 - **Codebase analysis**: Existing architecture patterns, integration points, code conventions (using Grep/Glob)
 - **External research**: Dependencies, APIs, latest best practices (using WebSearch/WebFetch)
 - **Context loading** (usually main context): Steering files, design principles, discovery rules, templates
@@ -134,12 +138,13 @@ After all findings return, synthesize in main context before proceeding.
    - Update `updated_at` timestamp
 
 ## Critical Constraints
- - **Type Safety**:
-   - Enforce strong typing aligned with the project's technology stack.
-   - For statically typed languages, define explicit types/interfaces and avoid unsafe casts.
-   - For TypeScript, never use `any`; prefer precise types and generics.
-   - For dynamically typed languages, provide type hints/annotations where available (e.g., Python type hints) and validate inputs at boundaries.
-   - Document public interfaces and contracts clearly to ensure cross-component type safety.
+
+- **Type Safety**:
+  - Enforce strong typing aligned with the project's technology stack.
+  - For statically typed languages, define explicit types/interfaces and avoid unsafe casts.
+  - For TypeScript, never use `any`; prefer precise types and generics.
+  - For dynamically typed languages, provide type hints/annotations where available (e.g., Python type hints) and validate inputs at boundaries.
+  - Document public interfaces and contracts clearly to ensure cross-component type safety.
 - **Requirements Traceability IDs**: Use numeric requirement IDs only (e.g. "1.1", "1.2", "3.1", "3.3") exactly as defined in requirements.md. Do not invent new IDs or use alphabetic labels.
 
 ## Output Description
@@ -164,28 +169,34 @@ Provide brief summary in the language specified in spec.json:
 ### Error Scenarios
 
 **Requirements Not Approved**:
+
 - **Stop Execution**: Cannot proceed without approved requirements
 - **User Message**: "Requirements not yet approved. Approval required before design generation."
 - **Suggested Action**: "Run `/kiro-spec-design {feature} -y` to auto-approve requirements and proceed"
 
 **Missing Requirements**:
+
 - **Stop Execution**: Requirements document must exist
 - **User Message**: "No requirements.md found at `.kiro/specs/{feature}/requirements.md`"
 - **Suggested Action**: "Run `/kiro-spec-requirements {feature}` to generate requirements first"
 
 **Template Missing**:
+
 - **User Message**: "Template file missing at `.kiro/settings/templates/specs/design.md`"
 - **Suggested Action**: "Check repository setup or restore template file"
 - **Fallback**: Use inline basic structure with warning
 
 **Steering Context Missing**:
+
 - **Warning**: "Steering directory empty or missing - design may not align with project standards"
 - **Proceed**: Continue with generation but note limitation in output
 
 **Invalid Requirement IDs**:
-  - **Stop Execution**: If requirements.md is missing numeric IDs or uses non-numeric headings (for example, "Requirement A"), stop and instruct the user to fix requirements.md before continuing.
+
+- **Stop Execution**: If requirements.md is missing numeric IDs or uses non-numeric headings (for example, "Requirement A"), stop and instruct the user to fix requirements.md before continuing.
 
 **Spec Gap Found During Design Review**:
+
 - **Stop Execution**: Do not write a patched-over `design.md`
 - **User Message**: "Design review found a real spec gap or ambiguity that must be resolved before design can be finalized."
 - **Suggested Action**: Clarify or fix `requirements.md`, then re-run `/kiro-spec-design {feature}`
@@ -193,10 +204,12 @@ Provide brief summary in the language specified in spec.json:
 ### Next Phase: Task Generation
 
 **If Design Approved**:
+
 - **Optional**: Run `/kiro-validate-design {feature}` for interactive quality review
 - Run `/kiro-spec-tasks {feature}` to generate implementation tasks
 - Or `/kiro-spec-tasks {feature} -y` to auto-approve and proceed directly
 
 **If Modifications Needed**:
+
 - Provide feedback and re-run `/kiro-spec-design {feature}`
 - Existing design used as reference (merge mode)

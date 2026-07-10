@@ -25,6 +25,7 @@ Do not use this skill for early planning or speculative status updates.
 ## Inputs
 
 Provide:
+
 - The exact claim to verify
 - Claim type:
   - `TASK`
@@ -43,11 +44,13 @@ Provide:
 ## Outputs
 
 Return one of:
+
 - `VERIFIED`
 - `NOT_VERIFIED`
 - `MANUAL_VERIFY_REQUIRED`
 
 Also return:
+
 - Claim reviewed
 - Evidence used
 - Scope/evidence mismatch, if any
@@ -67,24 +70,32 @@ Use the language specified in `spec.json`.
 ## Claim-Specific Rules
 
 ### TASK
+
 Require:
+
 - task-local verification evidence
 - no unresolved blocking findings from review
 - evidence aligned with the task boundary
 
 ### FIX
+
 Require:
+
 - evidence that the original symptom is resolved
 - no broader regressions in the relevant verification scope
 
 ### TEST_OR_BUILD
+
 Require:
+
 - actual command output
 - exit code
 - no inference from unrelated checks
 
 ### FEATURE_GO
+
 Require:
+
 - full test suite result
 - runtime smoke boot result showing the built artifact reaches its first usable state
 - requirements coverage assessment
@@ -97,11 +108,13 @@ A passing test suite alone is not enough for `FEATURE_GO`.
 ## Stop / Escalate
 
 Return `MANUAL_VERIFY_REQUIRED` when:
+
 - No canonical validation command is known
 - The required environment is unavailable
 - A mandatory manual verification step cannot be executed
 
 Return `NOT_VERIFIED` when:
+
 - The command failed
 - Evidence is stale
 - Evidence is partial
@@ -110,18 +123,19 @@ Return `NOT_VERIFIED` when:
 
 ## Common Rationalizations
 
-| Rationalization | Reality |
-|---|---|
-| “The subagent said it succeeded” | Reported success is not verification evidence. |
-| “Tests passed earlier” | Fresh evidence only. |
-| “Build should be fine because lint passed” | Lint does not prove build success. |
-| “Tests passed and build succeeded, so it must run” | Type erasure, module loading, native ABI, and boot-time config issues can still fail at runtime. |
-| “The feature is done because all tasks are checked off” | `FEATURE_GO` also requires coverage, integration, and design alignment. |
+| Rationalization                                         | Reality                                                                                          |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| “The subagent said it succeeded”                        | Reported success is not verification evidence.                                                   |
+| “Tests passed earlier”                                  | Fresh evidence only.                                                                             |
+| “Build should be fine because lint passed”              | Lint does not prove build success.                                                               |
+| “Tests passed and build succeeded, so it must run”      | Type erasure, module loading, native ABI, and boot-time config issues can still fail at runtime. |
+| “The feature is done because all tasks are checked off” | `FEATURE_GO` also requires coverage, integration, and design alignment.                          |
 
 ## Output Format
 
 ```md
 ## Verification Result
+
 - STATUS: VERIFIED | NOT_VERIFIED | MANUAL_VERIFY_REQUIRED
 - CLAIM_TYPE: TASK | FIX | TEST_OR_BUILD | FEATURE_GO
 - CLAIM: <exact claim>

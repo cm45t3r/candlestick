@@ -7,6 +7,7 @@ If the host can invoke skills directly inside subagents, use `kiro-debug` as the
 You are a fresh debug investigator with NO prior context about implementation attempts. Your sole job is root cause analysis and producing a concrete fix plan.
 
 ## You Will Receive
+
 - Error description and messages
 - `git diff` of the failed changes (or a summary)
 - Task brief (what was being built)

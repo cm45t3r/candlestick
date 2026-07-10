@@ -269,11 +269,11 @@ patternChain(dataArray, allPatterns, { strict: true });
 
 The library detects 18 patterns across 29 variants:
 
-| Category | Patterns |
-|---|---|
-| **Single candle** | Hammer, Inverted Hammer, Doji, Marubozu, Spinning Top |
-| **Two candle** | Engulfing, Harami, Kicker, Hanging Man, Shooting Star, Piercing Line, Dark Cloud Cover, Tweezers Top/Bottom |
-| **Three candle** | Morning Star, Evening Star, Three White Soldiers, Three Black Crows |
+| Category          | Patterns                                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Single candle** | Hammer, Inverted Hammer, Doji, Marubozu, Spinning Top                                                       |
+| **Two candle**    | Engulfing, Harami, Kicker, Hanging Man, Shooting Star, Piercing Line, Dark Cloud Cover, Tweezers Top/Bottom |
+| **Three candle**  | Morning Star, Evening Star, Three White Soldiers, Three Black Crows                                         |
 
 Each pattern includes bullish/bearish variants where applicable. For detailed descriptions with detection thresholds, see [docs/PATTERNS.md](./docs/PATTERNS.md).
 
@@ -369,22 +369,22 @@ validateOHLCArray(candles); // throws on invalid data
 ### Plugin System
 
 ```js
-const { plugins, patternChain } = require('candlestick');
+const { plugins, patternChain } = require("candlestick");
 
 // Register custom pattern
 plugins.registerPattern({
-  name: 'myCustomPattern',
+  name: "myCustomPattern",
   fn: (dataArray) => {
     return dataArray
-      .map((c, i) => (c.close > c.open && c.close === c.high) ? i : -1)
-      .filter(idx => idx !== -1);
+      .map((c, i) => (c.close > c.open && c.close === c.high ? i : -1))
+      .filter((idx) => idx !== -1);
   },
   paramCount: 1,
-  metadata: { type: 'reversal', confidence: 0.85 }
+  metadata: { type: "reversal", confidence: 0.85 },
 });
 
 // Use with patternChain
-const customPattern = plugins.getPattern('myCustomPattern');
+const customPattern = plugins.getPattern("myCustomPattern");
 const results = patternChain(data, [customPattern]);
 ```
 
@@ -453,12 +453,14 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 ## Performance
 
 <!-- BENCH:START -->
+
 | Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |
-|---|---|---|---|
-| 1,000 | 7.0 | 142K | 1.7 |
-| 10,000 | 29.9 | 334K | 16.6 |
-| 100,000 | 294.7 | 339K | 114.8 |
-| 1,000,000 | 2288.8 | 437K | 667.5 |
+| ------------ | ------------------ | ------------------------ | ----------- |
+| 1,000        | 7.0                | 142K                     | 1.7         |
+| 10,000       | 29.9               | 334K                     | 16.6        |
+| 100,000      | 294.7              | 339K                     | 114.8       |
+| 1,000,000    | 2288.8             | 437K                     | 667.5       |
+
 <!-- BENCH:END -->
 
 When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to avoid redundant work:

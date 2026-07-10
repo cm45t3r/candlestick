@@ -175,7 +175,8 @@ describe("precomputeCandleProps strict mode", () => {
 
   it("strict=true: throws for candle with undefined close", () => {
     assert.throws(
-      () => utils.precomputeCandleProps([{ open: 100, high: 110, low: 90 }], true),
+      () =>
+        utils.precomputeCandleProps([{ open: 100, high: 110, low: 90 }], true),
       /Invalid candle data produces NaN geometry/,
     );
   });

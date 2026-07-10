@@ -19,7 +19,10 @@ if (existingJson) {
   updateReadme(data.table || data);
 } else {
   console.log("Running benchmark suite...\n");
-  execSync(`node benchmark.js --json ${tmpJson}`, { cwd: root, stdio: "inherit" });
+  execSync(`node benchmark.js --json ${tmpJson}`, {
+    cwd: root,
+    stdio: "inherit",
+  });
   const data = JSON.parse(fs.readFileSync(tmpJson, "utf8"));
   fs.unlinkSync(tmpJson);
   updateReadme(data.table || data);
@@ -49,7 +52,8 @@ function updateReadme(results) {
     process.exit(1);
   }
 
-  const header = "| Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |";
+  const header =
+    "| Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |";
   const separator = "|---|---|---|---|";
   const rows = results
     .filter((r) => r.size >= 1000)
@@ -61,7 +65,10 @@ function updateReadme(results) {
   const table = [header, separator, ...rows].join("\n");
   const newContent = `${startMarker}\n${table}\n${endMarker}`;
 
-  const updated = readme.slice(0, startIdx) + newContent + readme.slice(endIdx + endMarker.length);
+  const updated =
+    readme.slice(0, startIdx) +
+    newContent +
+    readme.slice(endIdx + endMarker.length);
   fs.writeFileSync(readmePath, updated);
 
   console.log("\nREADME.md performance table updated:");

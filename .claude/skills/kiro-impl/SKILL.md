@@ -9,11 +9,14 @@ argument-hint: <feature-name> [task-numbers]
 # kiro-impl Skill
 
 ## Role
+
 You operate in two modes:
+
 - **Autonomous mode** (no task numbers): Dispatch a fresh subagent per task, with independent review after each
 - **Manual mode** (task numbers provided): Execute selected tasks directly in the main context
 
 ## Core Mission
+
 - **Success Criteria**:
   - All tests written before implementation code
   - Code passes all tests with no regressions
@@ -27,6 +30,7 @@ You operate in two modes:
 
 If steering/spec context is already available from conversation, skip redundant file reads.
 Otherwise, load all necessary context:
+
 - `.kiro/specs/{feature}/spec.json`, `requirements.md`, `design.md`, `tasks.md`
 - Core steering context: `product.md`, `tech.md`, `structure.md`
 - Additional steering files only when directly relevant to the selected task's boundary, runtime prerequisites, integrations, domain rules, security/performance constraints, or team conventions that affect implementation or validation
@@ -35,6 +39,7 @@ Otherwise, load all necessary context:
 #### Parallel Research
 
 The following research areas are independent and can be executed in parallel:
+
 1. **Spec context loading**: spec.json, requirements.md, design.md, tasks.md
 2. **Steering, playbooks, & patterns**: Core steering, task-relevant extra steering, matching local agent skills/playbooks, and existing code patterns
 
@@ -43,9 +48,11 @@ After all parallel research completes, synthesize implementation brief before st
 #### Preflight
 
 **Validate approvals**:
+
 - Verify tasks are approved in spec.json (stop if not, see Safety & Fallback)
 
 **Discover validation commands**:
+
 - Inspect repository-local sources of truth in this order: project scripts/manifests (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, app manifests), task runners (`Makefile`, `justfile`), CI/workflow files, existing e2e/integration configs, then `README*`
 - Derive a canonical validation set for this repo: `TEST_COMMANDS`, `BUILD_COMMANDS`, and `SMOKE_COMMANDS`
 - Prefer commands already used by repo automation over ad hoc shell pipelines
@@ -53,16 +60,19 @@ After all parallel research completes, synthesize implementation brief before st
 - Keep the full command set in the parent context, and pass only the task-relevant subset to implementer and reviewer subagents
 
 **Establish repo baseline**:
+
 - Run `git status --porcelain` and note any pre-existing uncommitted changes
 
 ### Step 2: Select Tasks & Determine Mode
 
 **Parse arguments**:
+
 - Extract feature name from first argument
 - If task numbers provided (e.g., "1.1" or "1,2,3"): **manual mode**
 - If no task numbers: **autonomous mode** (all pending tasks)
 
 **Build task queue**:
+
 - Read tasks.md, identify actionable sub-tasks (X.Y numbering like 1.1, 2.3)
 - Major tasks (1., 2.) are grouping headers, not execution units
 - Skip tasks with `_Blocked:_` annotation
@@ -81,6 +91,7 @@ After all parallel research completes, synthesize implementation brief before st
 For each task (one at a time):
 
 **a) Dispatch implementer**:
+
 - Read `templates/implementer-prompt.md` from this skill's directory
 - Construct a prompt by combining the template with task-specific context:
   - Task description and boundary scope
@@ -93,6 +104,7 @@ For each task (one at a time):
 - Dispatch via **Agent tool** as a fresh subagent
 
 **b) Handle implementer status**:
+
 - Parse implementer status only from the exact `## Status Report` block and `- STATUS:` field.
 - If `STATUS` is missing, ambiguous, or replaced with prose, re-dispatch the implementer once requesting the exact structured status block only. Do NOT proceed to review without a parseable `READY_FOR_REVIEW | BLOCKED | NEEDS_CONTEXT` value.
 - **READY_FOR_REVIEW** → proceed to review
@@ -100,6 +112,7 @@ For each task (one at a time):
 - **NEEDS_CONTEXT** → re-dispatch once with the requested additional context; if still unresolved → dispatch debug subagent
 
 **c) Dispatch reviewer**:
+
 - Read `templates/reviewer-prompt.md` from this skill's directory
 - Construct a review prompt with:
   - The task description and relevant spec section numbers
@@ -111,6 +124,7 @@ For each task (one at a time):
 - Dispatch via **Agent tool** as a fresh subagent
 
 **d) Handle reviewer verdict**:
+
 - Parse reviewer verdict only from the exact `## Review Verdict` block and `- VERDICT:` field.
 - If `VERDICT` is missing, ambiguous, or replaced with prose, re-dispatch the reviewer once requesting the exact structured verdict only. Do NOT mark the task complete, commit, or continue to the next task without a parseable `APPROVED | REJECTED` value.
 - **APPROVED** → before marking the task `[x]` or making any success claim, apply `kiro-verify-completion` using fresh evidence from the current code state; then mark task `[x]` in tasks.md and perform selective git commit
@@ -118,12 +132,14 @@ For each task (one at a time):
 - **REJECTED (round 3)** → dispatch debug subagent (see section below)
 
 **e) Commit** (parent-only, selective staging):
+
 - Stage only the files actually changed for this task, plus tasks.md
 - **NEVER** use `git add -A` or `git add .`
 - Use `git add <file1> <file2> ...` with explicit file paths
 - Commit message format: `feat(<feature-name>): <task description>`
 
 **f) Record learnings**:
+
 - If this task revealed cross-cutting insights, append a one-line note to the `## Implementation Notes` section at the bottom of tasks.md
 
 **g) Debug subagent** (triggered by BLOCKED, NEEDS_CONTEXT unresolved, or REJECTED after 2 remediation rounds):
@@ -142,6 +158,7 @@ The debug subagent runs in a **fresh context** — it receives only the error in
 - Dispatch via **Agent tool** as a fresh subagent
 
 **Handle debug report**:
+
 - Parse `NEXT_ACTION` from the debug report's exact structured field.
 - If `NEXT_ACTION: STOP_FOR_HUMAN` → append `_Blocked: <ROOT_CAUSE>_` to tasks.md, stop the feature run, and report that human review is required before continuing
 - If `NEXT_ACTION: BLOCK_TASK` → append `_Blocked: <ROOT_CAUSE>_` to tasks.md, skip to next task
@@ -161,12 +178,14 @@ For each selected task:
 
 **1. Build Task Brief**:
 Before writing any code, read the relevant sections of requirements.md and design.md for this task and clarify:
+
 - What observable behaviors must be true when done (acceptance criteria)
 - What files/functions/tests must exist (completion definition)
 - What technical decisions to follow from design.md (design constraints)
 - How to confirm the task works (verification method)
 
 **2. Execute TDD cycle** (Kent Beck's RED → GREEN → REFACTOR):
+
 - **RED**: Write test for the next small piece of functionality based on the acceptance criteria. Test should fail.
 - **GREEN**: Implement simplest solution to make test pass, following the design constraints.
 - **REFACTOR**: Improve code structure, remove duplication. All tests must still pass.
@@ -177,6 +196,7 @@ Before writing any code, read the relevant sections of requirements.md and desig
 ### Step 4: Final Validation
 
 **Autonomous mode**:
+
 - After all tasks complete, run `/kiro-validate-impl {feature}` as a GO/NO-GO gate
 - If validation returns GO → before reporting feature success, apply `kiro-verify-completion` to the feature-level claim using the validation result and fresh supporting evidence
 - If validation returns NO-GO:
@@ -185,6 +205,7 @@ Before writing any code, read the relevant sections of requirements.md and desig
 - If validation returns MANUAL_VERIFY_REQUIRED → stop and report the missing verification step
 
 **Manual mode**:
+
 - Suggest running `/kiro-validate-impl {feature}` but do not auto-execute
 
 ## Feature Flag Protocol
@@ -199,6 +220,7 @@ For tasks that add or change behavior, enforce RED → GREEN with a feature flag
 **Skip this protocol for**: refactoring, configuration, documentation, or tasks with no behavioral change.
 
 ## Critical Constraints
+
 - **Strict Handoff Parsing**: Never infer implementer `STATUS` or reviewer `VERDICT` from surrounding prose; only the exact structured fields count
 - **No Destructive Reset**: Never use `git checkout .`, `git reset --hard`, or similar destructive rollback inside the implementation loop
 - **Selective Staging**: NEVER use `git add -A` or `git add .`; always stage explicit file paths
@@ -209,11 +231,13 @@ For tasks that add or change behavior, enforce RED → GREEN with a feature flag
 ## Output Description
 
 **Autonomous mode**: For each task, report:
+
 1. Task ID, implementer status, reviewer verdict
 2. Files changed, commit hash
 3. After all tasks: final validation result (GO/NO-GO)
 
 **Manual mode**:
+
 1. Tasks executed: task numbers and test results
 2. Status: completed tasks marked in tasks.md, remaining tasks count
 
@@ -224,23 +248,29 @@ For tasks that add or change behavior, enforce RED → GREEN with a feature flag
 ### Error Scenarios
 
 **Tasks Not Approved or Missing Spec Files**:
+
 - **Stop Execution**: All spec files must exist and tasks must be approved
 - **Suggested Action**: "Complete previous phases: `/kiro-spec-requirements`, `/kiro-spec-design`, `/kiro-spec-tasks`"
 
 **Test Failures**:
+
 - **Stop Implementation**: Fix failing tests before continuing
 - **Action**: Debug and fix, then re-run
 
 **All Tasks Blocked**:
+
 - Stop and report all blocked tasks with reasons
 - Human review needed to resolve blockers
 
 **Spec Conflicts with Reality**:
+
 - If a requirement or design conflicts with reality (API doesn't exist, platform limitation), block the task with `_Blocked: <reason>_` -- do not silently work around it
 
 **Upstream Ownership Detected**:
+
 - If review, debug, or validation shows that the root cause belongs to an upstream, foundation, shared-platform, or dependency spec, do not patch around it inside the downstream feature
 - Route the fix back to the owning upstream spec, keep the downstream task blocked until that contract is repaired, and re-run validation/smoke for dependent specs after the upstream fix lands
 
 **Task Plan Invalidated During Implementation**:
+
 - If debug returns `NEXT_ACTION: STOP_FOR_HUMAN` because of task ordering, boundary, or decomposition problems, stop and return for human review of `tasks.md` or the approved plan instead of forcing a code workaround

@@ -10,9 +10,11 @@ metadata:
 # kiro-validate-gap Skill
 
 ## Role
+
 You are a specialized skill for analyzing the implementation gap between requirements and existing codebase to inform implementation strategy.
 
 ## Core Mission
+
 - **Mission**: Analyze the gap between requirements and existing codebase to inform implementation strategy
 - **Success Criteria**:
   - Comprehensive understanding of existing codebase patterns and components
@@ -26,6 +28,7 @@ You are a specialized skill for analyzing the implementation gap between require
 
 If steering/spec context is already available from conversation, skip redundant file reads.
 Otherwise, load all necessary context:
+
 - Read `.kiro/specs/{feature}/spec.json` for language and metadata
 - Read `.kiro/specs/{feature}/requirements.md` for requirements
 - Core steering context: `product.md`, `tech.md`, `structure.md`
@@ -33,6 +36,7 @@ Otherwise, load all necessary context:
 - Relevant local agent skills or playbooks only when they clearly match the feature's host environment or use case and provide analysis-relevant context
 
 ### Step 2: Read Analysis Guidelines
+
 - Read `rules/gap-analysis.md` from this skill's directory for comprehensive analysis framework
 
 ### Step 3: Execute Gap Analysis
@@ -40,6 +44,7 @@ Otherwise, load all necessary context:
 #### Parallel Research
 
 The following research areas are independent and can be executed in parallel:
+
 1. **Codebase analysis**: Existing implementations, architecture patterns, integration points, extension possibilities (using Grep/Glob/Read)
 2. **External dependency research**: Dependency compatibility, version constraints, known integration challenges (using WebSearch/WebFetch when needed)
 3. **Context loading**: Requirements, core steering, task-relevant extra steering, relevant local agent skills/playbooks, and gap-analysis rules
@@ -51,6 +56,7 @@ After all parallel research completes, synthesize findings for gap analysis.
 - Use language specified in spec.json for output
 
 ### Step 4: Generate Analysis Document
+
 - Create comprehensive gap analysis following the output guidelines in gap-analysis.md
 - Present multiple viable options with trade-offs
 - Flag areas requiring further research
@@ -64,6 +70,7 @@ After all parallel research completes, synthesize findings for gap analysis.
 - Verify the file was written by reading it back
 
 ## Important Constraints
+
 - **Information over Decisions**: Provide analysis and options, not final implementation choices
 - **Multiple Options**: Present viable alternatives when applicable
 - **Thorough Investigation**: Use tools to deeply understand existing codebase
@@ -71,12 +78,14 @@ After all parallel research completes, synthesize findings for gap analysis.
 - **Context Discipline**: Start with core steering and expand only with analysis-relevant steering or use-case-aligned local agent skills/playbooks
 
 ## Tool Guidance
+
 - **Read first**: Load spec, core steering, relevant local playbooks/agent skills, and rules before analysis
 - **Grep extensively**: Search codebase for patterns, conventions, and integration points
 - **WebSearch/WebFetch**: Research external dependencies and best practices when needed
 - **Write last**: Generate analysis only after complete investigation
 
 ## Output Description
+
 Provide output in the language specified in spec.json with:
 
 1. **Analysis Summary**: Brief overview (3-5 bullets) of scope, challenges, and recommendations
@@ -84,6 +93,7 @@ Provide output in the language specified in spec.json with:
 3. **Next Steps**: Guide user on proceeding to design phase
 
 **Format Requirements**:
+
 - Use Markdown headings for clarity
 - Keep summary concise (under 300 words)
 - Detailed analysis follows gap-analysis.md output guidelines
@@ -91,6 +101,7 @@ Provide output in the language specified in spec.json with:
 ## Safety & Fallback
 
 ### Error Scenarios
+
 - **Missing Requirements**: If requirements.md doesn't exist, stop with message: "Run `/kiro-spec-requirements {feature}` first to generate requirements"
 - **Requirements Not Approved**: If requirements not approved, warn user but proceed (gap analysis can inform requirement revisions)
 - **Empty Steering Directory**: Warn user that project context is missing and may affect analysis quality
@@ -100,6 +111,7 @@ Provide output in the language specified in spec.json with:
 ### Next Phase: Design Generation
 
 **If Gap Analysis Complete**:
+
 - Review gap analysis insights
 - Run `/kiro-spec-design {feature}` to create technical design document
 - Or `/kiro-spec-design {feature} -y` to auto-approve requirements and proceed directly

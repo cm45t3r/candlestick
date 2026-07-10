@@ -17,20 +17,25 @@
 ## Development Standards
 
 ### Type Safety
+
 [e.g., TypeScript strict mode, no `any`]
 
 ### Code Quality
+
 [e.g., ESLint, Prettier rules]
 
 ### Testing
+
 [e.g., Jest, coverage requirements]
 
 ## Development Environment
 
 ### Required Tools
+
 [Key tools and version requirements]
 
 ### Common Commands
+
 ```bash
 # Dev: [command]
 # Build: [command]
@@ -42,4 +47,5 @@
 [Important architectural choices and rationale]
 
 ---
+
 _Document standards and patterns, not every dependency_

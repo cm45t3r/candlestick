@@ -7,6 +7,7 @@ allowed-tools: Read, Glob, Grep, Agent
 # kiro-spec-batch Skill
 
 ## Core Mission
+
 - **Success Criteria**:
   - All features have complete spec files (spec.json, requirements.md, design.md, tasks.md)
   - Dependency ordering respected (upstream specs complete before downstream)
@@ -28,7 +29,7 @@ allowed-tools: Read, Glob, Grep, Agent
 3. If present, also read for context:
    - `## Existing Spec Updates`
    - `## Direct Implementation Candidates`
-   Do not include these in dependency-wave execution; they are awareness-only inputs for sequencing and consistency review.
+     Do not include these in dependency-wave execution; they are awareness-only inputs for sequencing and consistency review.
 4. For each pending feature in `## Specs (dependency order)`, verify `.kiro/specs/<feature>/brief.md` exists
 5. If any brief.md is missing, stop and report: "Missing brief.md for: [list]. Run `/kiro-discovery` to generate briefs first."
 
@@ -41,6 +42,7 @@ Group pending features into waves based on dependencies:
 - **Wave N**: Features whose dependencies are all in earlier waves or already completed
 
 Display the execution plan:
+
 ```
 Spec Batch Plan:
   Wave 1 (parallel): app-foundation
@@ -73,6 +75,7 @@ Create a complete specification for feature "{feature-name}".
 ```
 
 **After all subagents in the wave complete**:
+
 1. Verify each feature has: spec.json, requirements.md, design.md, tasks.md
 2. If any feature failed, report the error and continue with features that succeeded
 3. Display wave completion: "Wave N complete: [features]. Files verified."
@@ -121,6 +124,7 @@ Output format:
 ```
 
 **After the review subagent returns**:
+
 - **Critical/important issues found**: Dispatch fix subagents for each affected spec to apply the suggested fixes. If the issue is really a decomposition problem (for example boundary overlap or one spec carrying multiple independent seams), stop and return to roadmap/discovery instead of papering over it locally. Re-run cross-spec review after fixes (max 3 remediation rounds).
 - **Minor issues only**: Report them for user awareness, proceed to Step 5.
 - **No issues**: Proceed to Step 5.
@@ -133,6 +137,7 @@ Output format:
 4. If roadmap.md includes `Existing Spec Updates` or `Direct Implementation Candidates`, leave them untouched and mention them as remaining follow-up items unless already explicitly completed elsewhere
 
 Display final summary:
+
 ```
 Spec Batch Complete:
   ✓ app-foundation: X requirements, Y design components, Z tasks
@@ -148,6 +153,7 @@ Next: Review generated specs, then start implementation with /kiro-impl <feature
 ```
 
 ## Critical Constraints
+
 - **Controller stays lightweight**: Only read roadmap.md and brief.md existence checks in main context. All spec generation happens in subagents.
 - **Wave ordering is strict**: Never start a wave until all features in previous waves are complete.
 - **Parallel within waves**: All features in the same wave MUST be dispatched in parallel via Agent tool, not sequentially.
@@ -158,14 +164,17 @@ Next: Review generated specs, then start implementation with /kiro-impl <feature
 ## Safety & Fallback
 
 **Subagent failure**:
+
 - Log the error, skip the failed feature
 - Continue with remaining features in the wave
 - Report failed features in the summary
 - Suggest: "Run `/kiro-spec-quick <feature> --auto` manually for failed features."
 
 **Circular dependencies**:
+
 - If dependency graph has cycles, report the cycle and stop
 - Suggest: "Fix dependency ordering in roadmap.md"
 
 **Roadmap not found**:
+
 - Stop and report: "No roadmap.md found. Run `/kiro-discovery` first."

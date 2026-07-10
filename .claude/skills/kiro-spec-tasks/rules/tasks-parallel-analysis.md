@@ -1,6 +1,7 @@
 # Parallel Task Analysis Rules
 
 ## Purpose
+
 Provide a consistent way to identify implementation tasks that can be safely executed in parallel while generating `tasks.md`.
 
 ## Relationship to Task Ordering
@@ -8,6 +9,7 @@ Provide a consistent way to identify implementation tasks that can be safely exe
 `(P)` means: this task has no dependency on its immediately preceding peers and can run concurrently with them. The Task Ordering Principle (see tasks-generation.md) ensures Foundation-phase tasks run first, making Core-phase tasks the primary `(P)` candidates.
 
 ## When to Consider Tasks Parallel
+
 Only mark a task as parallel-capable when **all** of the following are true:
 
 1. **No data dependency** on pending tasks.
@@ -17,6 +19,7 @@ Only mark a task as parallel-capable when **all** of the following are true:
 5. **Non-overlapping boundaries**: `_Boundary:_` annotations confirm tasks operate on separate components.
 
 ## Marking Convention
+
 - Append `(P)` immediately after the numeric identifier for each qualifying task.
   - Example: `- [ ] 2.1 (P) Build background worker for emails`
 - Apply `(P)` to both major tasks and sub-tasks when appropriate.
@@ -24,12 +27,14 @@ Only mark a task as parallel-capable when **all** of the following are true:
 - Keep `(P)` **outside** of checkbox brackets to avoid confusion with completion state.
 
 ## Grouping & Ordering Guidelines
+
 - Group parallel tasks under the same parent whenever the work belongs to the same theme.
 - List obvious prerequisites or caveats in the detail bullets (e.g., "Requires schema migration from 1.2").
 - When two tasks look similar but are not parallel-safe, call out the blocking dependency explicitly.
 - Skip marking container-only major tasks (those without their own actionable detail bullets) with `(P)`—evaluate parallel execution at the sub-task level instead.
 
 ## Quality Checklist
+
 Before marking a task with `(P)`, ensure you have:
 
 - Verified that running this task concurrently will not create merge or deployment conflicts.

@@ -122,7 +122,10 @@ function precomputeCandleProps(dataArray, strict = false) {
     const bl = bodyLen(candle);
     const wl = wickLen(candle);
     const tl = tailLen(candle);
-    if (strict && (!Number.isFinite(bl) || !Number.isFinite(wl) || !Number.isFinite(tl))) {
+    if (
+      strict &&
+      (!Number.isFinite(bl) || !Number.isFinite(wl) || !Number.isFinite(tl))
+    ) {
       throw new Error(
         `Invalid candle data produces NaN geometry: ${JSON.stringify(candle)}`,
       );
@@ -227,7 +230,9 @@ function validateOHLCArray(dataArray, throwError = true) {
       }
     } catch (error) {
       if (throwError) {
-        throw new Error(`Invalid candle at index ${i}: ${error.message}`, { cause: error });
+        throw new Error(`Invalid candle at index ${i}: ${error.message}`, {
+          cause: error,
+        });
       }
       return false;
     }

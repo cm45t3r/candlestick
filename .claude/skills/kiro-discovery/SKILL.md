@@ -9,6 +9,7 @@ argument-hint: <idea-or-request>
 # kiro-discovery Skill
 
 ## Core Mission
+
 - **Success Criteria**:
   - Correct action path or work decomposition identified based on existing project state
   - User's intent clarified through questions, not assumptions
@@ -32,24 +33,29 @@ This step should consume minimal context. If `specs/` is empty and no steering e
 Based on the user's request and the metadata from Step 1, determine which path applies:
 
 **Path A: Existing spec covers this**
+
 - The request is an extension, enhancement, or fix within an existing spec's domain
 - Every meaningful part of the request fits that same spec boundary
 - Any remaining small follow-up work can be handled directly without creating a new spec
 - Skip remaining steps
 
 **Path B: No spec needed**
+
 - The request is a bug fix, config change, simple refactor, or trivial addition
 - No meaningful part of the request needs a new or updated spec boundary
 - The request does not need to update an existing spec either
 - Skip remaining steps
 
 **Path C: New single-scope feature**
+
 - The request is new, doesn't overlap with existing specs, and fits in one spec
 
 **Path D: Multi-scope decomposition needed**
+
 - The request spans multiple domains or would produce 20+ tasks in a single spec
 
 **Path E: Mixed decomposition**
+
 - The request contains a mix of: existing spec extensions, one or more new spec candidates, and optional direct-implementation work
 - Use this path only when at least one genuinely new spec boundary is needed
 
@@ -61,10 +67,12 @@ For Path A/B, recommend the next action and stop.
 **Only for Path C, D, and E.** Now load the context needed for discovery.
 
 **In main context** (essential for dialogue with user):
+
 - **Steering documents**: Read product.md and tech.md (if they exist) for project goals, constraints, and tech stack
 - **Relevant specs**: If the request is adjacent to an existing spec, read that spec's requirements.md to understand boundaries and avoid overlap
 
 **Delegate to subagent via Agent tool** (keeps exploration out of main context):
+
 - **Codebase exploration**: Dispatch a subagent to explore the codebase and return a structured summary. Example prompt: "Explore this project's codebase. Summarize: (1) tech stack and frameworks, (2) directory structure and key modules, (3) patterns and conventions used, (4) areas relevant to [user's request]. Return a summary under 200 lines."
 - The subagent uses Read/Glob/Grep to explore, then returns findings. Only the summary enters the main context.
 - For Path D/E, also ask the subagent to identify natural domain boundaries, existing module separation, and which areas look like existing-spec extensions vs new boundaries.
@@ -92,6 +100,7 @@ The goal is NOT to assign final owners yet. The goal is to discover the cleanest
 Propose **2-3 concrete approaches** with trade-offs:
 
 For each approach:
+
 - **Approach name**: One-line summary
 - **How it works**: 2-3 sentences on the technical approach
 - **Pros**: What makes this approach good
@@ -167,6 +176,7 @@ Use the Write tool to create `.kiro/specs/<feature-name>/brief.md` with this str
 **For Path D (multi-spec decomposition)**:
 
 Use the Write tool to create:
+
 - `.kiro/steering/roadmap.md`
 - `.kiro/specs/<feature>/brief.md` for every feature listed under `## Specs (dependency order)`
 
@@ -221,6 +231,7 @@ Use the same roadmap structure as Path D, plus these additional sections:
 ```
 
 Path E rules:
+
 - Keep `## Specs (dependency order)` reserved for **new specs only** so `/kiro-spec-batch` can still parse it unchanged
 - Record existing-spec extensions under `## Existing Spec Updates`
 - Record true no-spec work under `## Direct Implementation Candidates`
@@ -250,11 +261,13 @@ Suggest the next command and stop. Do NOT automatically run downstream spec gene
 If the decomposition contains only existing-spec updates plus direct implementation candidates, do NOT use Path E. Prefer Path A when one existing spec is the clear home, or recommend the existing-spec update plus direct implementation work without creating roadmap entries.
 
 ## Critical Constraints
+
 - **Files on disk are the source of continuity**: For Path C/D/E, create brief.md and roadmap.md as needed before suggesting the next command. Do NOT leave discovery results only in conversation text.
 
 ## Safety & Fallback
 
 **Roadmap Already Exists (re-entry)**:
+
 - Read roadmap.md to restore project context before asking questions
 - Determine next spec based on completed specs' status
 - Write brief.md for the next spec only (just-in-time)

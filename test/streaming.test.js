@@ -263,7 +263,11 @@ describe("Streaming API", () => {
         onMatch: (m) => realtime.push(m),
       });
       assert.ok(final.length > 0, "returned array must have matches");
-      assert.deepStrictEqual(realtime.length, final.length, "realtime count must equal returned count");
+      assert.deepStrictEqual(
+        realtime.length,
+        final.length,
+        "realtime count must equal returned count",
+      );
     });
 
     it("omitting onMatch still returns collected results", () => {
@@ -301,7 +305,10 @@ describe("Streaming API", () => {
         /progress callback failure/,
       );
 
-      assert.ok(completeFired, "onProgress({ complete: true }) must fire even after a throw");
+      assert.ok(
+        completeFired,
+        "onProgress({ complete: true }) must fire even after a throw",
+      );
     });
 
     it("flushes buffered candles via end() before re-throwing", () => {
@@ -329,7 +336,10 @@ describe("Streaming API", () => {
         /trigger/,
       );
 
-      assert.ok(finalProcessed > 0, "end() must have flushed the buffer before re-throwing");
+      assert.ok(
+        finalProcessed > 0,
+        "end() must have flushed the buffer before re-throwing",
+      );
     });
   });
 

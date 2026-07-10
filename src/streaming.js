@@ -70,7 +70,9 @@ function createStream(options = {}) {
       const overlap = buffer.slice(chunkSize - maxPatternSize + 1);
 
       // Detect patterns in this chunk
-      const results = candlestick.patternChain(toProcess, patternFns, { strict });
+      const results = candlestick.patternChain(toProcess, patternFns, {
+        strict,
+      });
 
       // Enrich with metadata if requested
       const finalResults = enrichMetadata

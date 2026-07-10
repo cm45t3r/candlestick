@@ -10,6 +10,7 @@ metadata:
 # kiro-spec-tasks Skill
 
 ## Core Mission
+
 - **Success Criteria**:
   - All requirements mapped to specific tasks
   - Tasks properly sized (1-3 hours each)
@@ -23,6 +24,7 @@ metadata:
 
 If steering/spec context is already available from conversation, skip redundant file reads.
 Otherwise, load all necessary context:
+
 - `.kiro/specs/{feature}/spec.json`, `requirements.md`, `design.md`
 - `.kiro/specs/{feature}/tasks.md` (if exists, for merge mode)
 - Core steering context: `product.md`, `tech.md`, `structure.md`
@@ -32,6 +34,7 @@ Otherwise, load all necessary context:
   - `sequential = (sequential flag is true)`
 
 **Validate approvals**:
+
 - If auto-approve flag (`-y`) is true: Auto-approve requirements and design in spec.json. Tasks approval is also handled automatically in Step 4.
 - Otherwise: Verify both approved (stop if not, see Safety & Fallback)
 
@@ -44,12 +47,14 @@ Otherwise, load all necessary context:
 #### Parallel Research
 
 The following research areas are independent and can be executed in parallel:
+
 1. **Context loading**: Spec documents (requirements.md, design.md), steering files
 2. **Rules loading**: tasks-generation.md, tasks-parallel-analysis.md, tasks template
 
 After all parallel research completes, synthesize findings before generating tasks.
 
 **Generate task list following all rules**:
+
 - Use language specified in spec.json
 - Map all requirements to tasks and list numeric requirement IDs only (comma-separated) without descriptive suffixes, parentheses, translations, or free-form labels
 - Ensure all design components included
@@ -101,6 +106,7 @@ Before writing `tasks.md`, run one lightweight independent sanity review of the 
 ### Step 4: Finalize
 
 **Write tasks.md**:
+
 - Create/update `.kiro/specs/{feature}/tasks.md`
 - Update spec.json metadata:
   - Set `phase: "tasks-generated"`
@@ -110,6 +116,7 @@ Before writing `tasks.md`, run one lightweight independent sanity review of the 
   - Update `updated_at` timestamp
 
 **Approval**:
+
 - If auto-approve flag (`-y`) is true:
   - Set `approvals.tasks.approved: true` in spec.json
   - Display task summary (task count, major groups, parallel markers)
@@ -125,6 +132,7 @@ Before writing `tasks.md`, run one lightweight independent sanity review of the 
     - Respond with guidance on what to adjust and re-run
 
 ## Critical Constraints
+
 - **Task Integration**: Every task must connect to the system (no orphaned work)
 - **Boundary annotations**: Required for `(P)` tasks, recommended for all (`_Boundary: ComponentName_`)
 - **Explicit dependencies**: Cross-boundary non-obvious dependencies declared with `_Depends: X.X_`
@@ -157,25 +165,30 @@ Provide brief summary in the language specified in spec.json:
 ### Error Scenarios
 
 **Requirements or Design Not Approved**:
+
 - **Stop Execution**: Cannot proceed without approved requirements and design
 - **User Message**: "Requirements and design must be approved before task generation"
 - **Suggested Action**: "Run `/kiro-spec-tasks {feature} -y` to auto-approve all (requirements, design, and tasks) and proceed"
 
 **Missing Requirements or Design**:
+
 - **Stop Execution**: Both documents must exist
 - **User Message**: "Missing requirements.md or design.md at `.kiro/specs/{feature}/`"
 - **Suggested Action**: "Complete requirements and design phases first"
 
 **Incomplete Requirements Coverage**:
+
 - **Warning**: "Not all requirements mapped to tasks. Review coverage."
 - **User Action Required**: Confirm intentional gaps or regenerate tasks
 
 **Spec Gap Found During Task Review**:
+
 - **Stop Execution**: Do not write a patched-over `tasks.md`
 - **User Message**: "Requirements/design do not provide enough clear coverage to generate an executable task plan"
 - **Suggested Action**: "Refine requirements.md or design.md, then re-run `/kiro-spec-tasks {feature}`"
 
 **Template/Rules Missing**:
+
 - **User Message**: "Template or rules files missing in `.kiro/settings/`"
 - **Fallback**: Use inline basic structure with warning
 - **Suggested Action**: "Check repository setup or restore template files"
@@ -185,5 +198,6 @@ Provide brief summary in the language specified in spec.json:
 ### Next Phase: Implementation
 
 Tasks are approved in Step 4 via user confirmation. Once approved:
+
 - Autonomous implementation: `/kiro-impl {feature}`
 - Specific tasks only: `/kiro-impl {feature} 1.1,1.2`

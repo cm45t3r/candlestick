@@ -8,6 +8,7 @@ argument-hint: <feature-name>
 # kiro-spec-status Skill
 
 ## Core Mission
+
 - **Success Criteria**:
   - Show current phase and completion status
   - Identify next actions and blockers
@@ -17,6 +18,7 @@ argument-hint: <feature-name>
 ## Execution Steps
 
 ### Step 1: Load Spec Context
+
 - Read `.kiro/specs/$ARGUMENTS/spec.json` for metadata and phase status
 - Read `.kiro/specs/$ARGUMENTS/brief.md` if it exists
 - Read existing files: `requirements.md`, `design.md`, `tasks.md` (if they exist)
@@ -26,6 +28,7 @@ argument-hint: <feature-name>
 ### Step 2: Analyze Status
 
 **Parse each phase**:
+
 - **Requirements**: Count requirements and acceptance criteria
 - **Design**: Check for architecture, components, diagrams, and whether boundary sections are present
 - **Tasks**: Count completed vs total tasks (parse `- [x]` vs `- [ ]`)
@@ -41,6 +44,7 @@ argument-hint: <feature-name>
 ### Step 3: Generate Report
 
 Create report in the language specified in spec.json covering:
+
 1. **Current Phase & Progress**: Where the spec is in the workflow
 2. **Completion Status**: Percentage complete for each phase
 3. **Task Breakdown**: If tasks exist, show completed/remaining counts
@@ -56,15 +60,18 @@ Create report in the language specified in spec.json covering:
 ### Error Scenarios
 
 **Spec Not Found**:
+
 - **Message**: "No spec found for `$ARGUMENTS`. Check available specs in `.kiro/specs/`"
 - **Action**: List available spec directories
 
 **Incomplete Spec**:
+
 - **Warning**: Identify which files are missing
 - **Suggested Action**: Point to next phase command
 
 ### List All Specs
 
 To see all available specs:
+
 - Run with no argument or use wildcard
 - Shows all specs in `.kiro/specs/` with their status
