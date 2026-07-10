@@ -16,7 +16,7 @@ For a general introduction to candlestick patterns, see [Candlestick chart — W
 
 - **Engulfing**: Second candle's body fully engulfs the previous (body range covers previous body). Bullish or bearish.
 - **Harami**: Second candle's body is inside the previous (body range within previous body). Bullish or bearish.
-- **Kicker**: Opposite-color candles with a body gap between them (second body does not overlap first body). The second candle must not be a Hammer or Inverted Hammer shape. Bullish or bearish.
+- **Kicker**: Opposite-color candles with a body gap between them (second body does not overlap first body). The second candle must not be a Hammer or Inverted Hammer shape. Bullish or bearish. By default, any nonzero gap counts; pass a `minGapVol` option to `bullishKicker`/`bearishKicker` (or `isBullishKicker`/`isBearishKicker`) to require the gap to clear a configurable, volatility-relative threshold — see [README: Gap Significance Threshold (Kicker)](../README.md#gap-significance-threshold-kicker) for the full option reference.
 - **Hanging Man**: Bullish candle followed by a bearish hammer with a gap up. Bearish reversal.
 - **Shooting Star**: Bullish candle followed by a bearish inverted hammer with a gap up. Bearish reversal.
 - **Piercing Line**: Bullish reversal. Bearish candle (body ≥ 50% of range) followed by bullish candle (body ≥ 50% of range) that opens below first's low, closes above the first body's midpoint but below the first body's top (i.e., does not fully engulf).

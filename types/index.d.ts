@@ -209,24 +209,81 @@ export function bearishHarami(dataArray: OHLC[]): number[];
 // ========== Kicker Patterns ==========
 
 /**
+ * Built-in volatility measures for `GapThresholdOptions.volMethod`.
+ * `"fixed-pct"` needs no history/lookback; the other three require `volPeriod`
+ * prior candles to produce a value (`NaN` otherwise). See `src/volatility.js`.
+ */
+export type VolatilityMethod = "atr" | "stddev" | "percentile" | "fixed-pct";
+
+/**
+ * Options controlling the optional gap-significance threshold for Kicker
+ * detection. Fully opt-in: omitting this object (or `minGapVol: 0`, the
+ * default) preserves the pre-existing "any nonzero gap counts" behavior.
+ * See README.md#gap-significance-threshold-kicker for usage examples.
+ */
+export interface GapThresholdOptions {
+  /**
+   * Minimum gap size required for a kicker to count, expressed as a multiple
+   * of the resolved volatility unit — or, when `volMethod` is `"fixed-pct"`,
+   * read directly as a fraction of the previous close (e.g. `0.005` = 0.5%,
+   * not a multiplier). Defaults to `0` (off).
+   */
+  minGapVol?: number;
+  /** Built-in volatility measure used when `externalVolatility`/`volatilityFn` aren't given. Defaults to `"atr"`. */
+  volMethod?: VolatilityMethod;
+  /** Lookback window (in candles) for `"atr"`/`"stddev"`/`"percentile"`. Ignored for `"fixed-pct"`. Defaults to `14`. */
+  volPeriod?: number;
+  /** Target quantile (0-1) used only by `volMethod: "percentile"`. Defaults to `0.9`. */
+  volPercentile?: number;
+  /**
+   * Precomputed volatility series (one value per candle, same order as the
+   * input array), expressed as a fraction of price. Takes precedence over `volMethod`.
+   */
+  externalVolatility?: number[];
+  /** Callback invoked per candle index to resolve volatility lazily. Takes precedence over both `externalVolatility` and `volMethod`. */
+  volatilityFn?: (candles: OHLC[], index: number) => number;
+  /**
+   * Only meaningful when calling `isBullishKicker`/`isBearishKicker` directly
+   * on a single candle pair (which have no series context to resolve
+   * `volMethod` from): the already-resolved volatility value to compare the
+   * gap against.
+   */
+  volatility?: number;
+}
+
+/**
  * Returns true if pattern is a Bullish Kicker
  */
-export function isBullishKicker(previous: OHLC, current: OHLC): boolean;
+export function isBullishKicker(
+  previous: OHLC,
+  current: OHLC,
+  options?: GapThresholdOptions,
+): boolean;
 
 /**
  * Returns true if pattern is a Bearish Kicker
  */
-export function isBearishKicker(previous: OHLC, current: OHLC): boolean;
+export function isBearishKicker(
+  previous: OHLC,
+  current: OHLC,
+  options?: GapThresholdOptions,
+): boolean;
 
 /**
  * Finds all Bullish Kicker patterns in a series
  */
-export function bullishKicker(dataArray: OHLC[]): number[];
+export function bullishKicker(
+  dataArray: OHLC[],
+  options?: GapThresholdOptions,
+): number[];
 
 /**
  * Finds all Bearish Kicker patterns in a series
  */
-export function bearishKicker(dataArray: OHLC[]): number[];
+export function bearishKicker(
+  dataArray: OHLC[],
+  options?: GapThresholdOptions,
+): number[];
 
 // ========== Reversal Patterns ==========
 
