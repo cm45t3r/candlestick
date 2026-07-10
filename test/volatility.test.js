@@ -48,6 +48,18 @@ describe("volatility", () => {
     assert.deepStrictEqual(withDefault, explicit);
   });
 
+  it("percentileSeries: quantile=1 (max) and quantile=0 (min) hit the exact-index branch, no interpolation", () => {
+    // position = quantile * (window.length - 1) is an integer for both 0 and 1,
+    // exercising the `lower === upper` short-circuit instead of linear interpolation.
+    const max = percentileSeries(candles, 2, 1);
+    assert.ok(Math.abs(max[2] - 0.1) < 1e-12);
+    assert.ok(Math.abs(max[3] - 0.09090909090909091) < 1e-12);
+
+    const min = percentileSeries(candles, 2, 0);
+    assert.equal(min[2], 0);
+    assert.equal(min[3], 0);
+  });
+
   it("all series have the same length as the input", () => {
     assert.equal(atrSeries(candles, 2).length, candles.length);
     assert.equal(stddevSeries(candles, 2).length, candles.length);
