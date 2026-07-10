@@ -27,6 +27,14 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
+### v2.0.2 (2026-07-10)
+
+- chore(deps): bump `prettier` from 3.8.4 to 3.9.4
+- chore(deps): bump `eslint` from 10.5.0 to 10.6.0
+- chore(actions): bump `actions/checkout` from v5 to v7
+- style: apply Prettier formatting across the whole repository
+- ci: fix `Benchmark` workflow gh-pages branch bootstrap (git identity, branch switch-back, manual dispatch)
+
 ### v2.0.1 (2026-06-17)
 
 - fix(package): scope `./cli` export to `"node"` condition for bundler compatibility
