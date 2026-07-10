@@ -187,6 +187,135 @@ describe("kicker", () => {
           }),
         );
       });
+
+      it('volMethod: "atr" resolves a real volatility series through the array-level path (bullishKicker)', () => {
+        // 4 low-volatility history candles, then a bearish->bullish kicker
+        // with a 30% gap. atrSeries(period=2) at the kicker's "previous"
+        // index (4) is exactly 0.3, so minGapVol=1 sits right at the
+        // boundary (0.3 >= 1 * 0.3) and minGapVol=2 clears it.
+        const history = [
+          { open: 10, high: 11, low: 9, close: 10 },
+          { open: 10, high: 12, low: 9, close: 11 },
+          { open: 11, high: 12, low: 10, close: 11 },
+          { open: 11, high: 13, low: 10, close: 12 },
+        ];
+        const withKicker = [
+          ...history,
+          { open: 12, high: 13, low: 10, close: 10 }, // bearish
+          { open: 15, high: 16, low: 9, close: 20 }, // bullish, 30% gap up
+        ];
+
+        assert.deepStrictEqual(kicker.bullishKicker(withKicker), [4]);
+        assert.deepStrictEqual(
+          kicker.bullishKicker(withKicker, {
+            minGapVol: 1,
+            volMethod: "atr",
+            volPeriod: 2,
+          }),
+          [4],
+        );
+        assert.deepStrictEqual(
+          kicker.bullishKicker(withKicker, {
+            minGapVol: 2,
+            volMethod: "atr",
+            volPeriod: 2,
+          }),
+          [],
+        );
+      });
+
+      it('volMethod: "percentile" resolves a real volatility series through the array-level path (bullishKicker)', () => {
+        const history = [
+          { open: 10, high: 11, low: 9, close: 10 },
+          { open: 10, high: 12, low: 9, close: 11 },
+          { open: 11, high: 12, low: 10, close: 11 },
+          { open: 11, high: 13, low: 10, close: 12 },
+        ];
+        const withKicker = [
+          ...history,
+          { open: 12, high: 13, low: 10, close: 10 },
+          { open: 15, high: 16, low: 9, close: 20 },
+        ];
+
+        assert.deepStrictEqual(
+          kicker.bullishKicker(withKicker, {
+            minGapVol: 1,
+            volMethod: "percentile",
+            volPeriod: 2,
+          }),
+          [4],
+        );
+      });
+
+      it('volMethod: "atr" resolves a real volatility series through the array-level path (bearishKicker)', () => {
+        // Same history, followed by a bullish->bearish kicker with a
+        // ~20.8% gap down. atrSeries(period=2) at index 4 is 0.3333, so
+        // minGapVol=0.5 clears it (0.2083 >= 0.5 * 0.3333) and minGapVol=1 doesn't.
+        const history = [
+          { open: 10, high: 11, low: 9, close: 10 },
+          { open: 10, high: 12, low: 9, close: 11 },
+          { open: 11, high: 12, low: 10, close: 11 },
+          { open: 11, high: 13, low: 10, close: 12 },
+        ];
+        const withKicker = [
+          ...history,
+          { open: 20, high: 25, low: 19, close: 24 }, // bullish
+          { open: 15, high: 16, low: 10, close: 11 }, // bearish, ~20.8% gap down
+        ];
+
+        assert.deepStrictEqual(kicker.bearishKicker(withKicker), [4]);
+        assert.deepStrictEqual(
+          kicker.bearishKicker(withKicker, {
+            minGapVol: 0.5,
+            volMethod: "atr",
+            volPeriod: 2,
+          }),
+          [4],
+        );
+        assert.deepStrictEqual(
+          kicker.bearishKicker(withKicker, {
+            minGapVol: 1,
+            volMethod: "atr",
+            volPeriod: 2,
+          }),
+          [],
+        );
+      });
+
+      it("bearishKicker: fixed-pct filters out a small gap but keeps a large one", () => {
+        // Two independent bearish-kicker candidates:
+        // - index 0->1: gap of (100 - 99.7) / 100 = 0.3% (small, "noise")
+        // - index 2->3: gap of (101 - 98) / 101 ≈ 2.97% (large, "real")
+        const bearishCandles = [
+          { open: 100, high: 101, low: 99, close: 101 }, // 0: bullish
+          { open: 99.7, high: 100, low: 98, close: 97 }, // 1: bearish, small gap down (~0.3%)
+          { open: 101, high: 102, low: 100, close: 102 }, // 2: bullish
+          { open: 98, high: 98.5, low: 90, close: 91 }, // 3: bearish, large gap down (~2.97%)
+        ];
+
+        assert.deepStrictEqual(kicker.bearishKicker(bearishCandles), [0, 2]);
+        assert.deepStrictEqual(
+          kicker.bearishKicker(bearishCandles, {
+            minGapVol: 0.005,
+            volMethod: "fixed-pct",
+          }),
+          [2],
+        );
+        assert.deepStrictEqual(
+          kicker.bearishKicker(bearishCandles, {
+            minGapVol: 0.001,
+            volMethod: "fixed-pct",
+          }),
+          [0, 2],
+        );
+        assert.deepStrictEqual(
+          kicker.bearishKicker(bearishCandles, {
+            minGapVol: 0.04,
+            volMethod: "fixed-pct",
+          }),
+          [],
+        );
+      });
     });
   });
 });
