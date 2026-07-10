@@ -11,6 +11,7 @@ on:
     paths:
       - "src/**"
       - "benchmark.js"
+  workflow_dispatch:
 
 permissions:
   contents: write
