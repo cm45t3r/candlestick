@@ -296,6 +296,41 @@ console.log(isBullishKicker(prev, curr)); // false
 console.log(isBearishKicker(prev, curr)); // true
 ```
 
+### Gap Significance Threshold (Kicker)
+
+By default, `bullishKicker`/`bearishKicker` (and the boolean `isBullishKicker`/`isBearishKicker`) treat **any** nonzero gap between the two candle bodies as a valid kicker — including gaps that are economically meaningless noise for a given instrument (e.g. a $0.30 gap on a $210 stock). Pass a `minGapVol` option to require the gap to clear a configurable, volatility-relative threshold instead. This is fully opt-in and backward compatible: omitting it (or `minGapVol: 0`) preserves the original behavior exactly.
+
+```js
+const { bullishKicker } = require("candlestick");
+
+// Only count gaps that are at least 0.5x the instrument's own recent ATR
+// (Average True Range, expressed as a percentage of price):
+bullishKicker(dataArray, { minGapVol: 0.5, volMethod: "atr", volPeriod: 14 });
+
+// Other built-in volatility measures: "stddev" (std. dev. of daily returns)
+// and "percentile" (historical percentile of this instrument's own past
+// gap sizes). See src/volatility.js for the exact definitions.
+bullishKicker(dataArray, {
+  minGapVol: 0.5,
+  volMethod: "stddev",
+  volPeriod: 20,
+});
+
+// Simple, no-history-required alternative: a flat percentage of the previous
+// close, independent of recent volatility. Here `minGapVol` is read directly
+// as a fraction (0.005 = 0.5%), not a multiplier:
+bullishKicker(dataArray, { minGapVol: 0.005, volMethod: "fixed-pct" });
+
+// Advanced: supply your own precomputed volatility series (e.g. from a GARCH
+// model fit externally) or a per-candle callback — both take precedence over
+// volMethod. See the `GapThresholdOptions` JSDoc in `src/kicker.js`.
+bullishKicker(dataArray, { minGapVol: 1, externalVolatility: myVolSeries });
+bullishKicker(dataArray, {
+  minGapVol: 1,
+  volatilityFn: (candles, index) => myModel.volatilityAt(index),
+});
+```
+
 ### Finding Patterns in Series
 
 ```js
