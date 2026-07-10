@@ -33,7 +33,7 @@ jobs:
             git switch --orphan gh-pages
             git commit --allow-empty -m "Initialize gh-pages for benchmark data"
             git push origin gh-pages
-            git switch -
+            git switch "$GITHUB_REF_NAME"
           fi
 
       - name: Use Node.js 22.x
