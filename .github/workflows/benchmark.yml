@@ -27,6 +27,8 @@ jobs:
       - name: Create gh-pages branch if missing
         run: |
           if ! git ls-remote --exit-code origin gh-pages > /dev/null 2>&1; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
             git switch --orphan gh-pages
             git commit --allow-empty -m "Initialize gh-pages for benchmark data"
             git push origin gh-pages
