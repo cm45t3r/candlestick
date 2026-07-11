@@ -107,6 +107,20 @@ describe("applyTrendContext", () => {
     assert.equal(results[0].trendContext, "downtrend");
   });
 
+  it('labels a flat (no-change) series as "sideways"', () => {
+    const flatCandles = precomputeCandleProps([
+      { open: 100, high: 101, low: 99, close: 100 },
+      { open: 100, high: 101, low: 99, close: 100 },
+      { open: 100, high: 101, low: 99, close: 100 },
+    ]);
+    const results = applyTrendContext(
+      flatCandles,
+      [{ index: 2, pattern: "hammer", match: flatCandles.slice(2, 3) }],
+      { trendMethod: "pct-change", trendPeriod: 1 },
+    );
+    assert.equal(results[0].trendContext, "sideways");
+  });
+
   it("resolveConflicts (default false) keeps both sides of a same-candle, opposite-direction conflict", () => {
     const results = applyTrendContext(candles, baseResults(), {
       trendMethod: "sma-slope",
@@ -183,5 +197,18 @@ describe("filterConflicts", () => {
     };
     const results = [weakHammer, strongHangingMan];
     assert.deepStrictEqual(filterConflicts(results), [strongHangingMan]);
+  });
+
+  it("keeps both matches when the second pattern has no known metadata", () => {
+    const results = [
+      { index: 3, pattern: "hammer", match: [{}], contextFit: 0.9 },
+      {
+        index: 3,
+        pattern: "totallyUnknownPattern",
+        match: [{}],
+        contextFit: 0.1,
+      },
+    ];
+    assert.deepStrictEqual(filterConflicts(results), results);
   });
 });
