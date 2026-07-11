@@ -72,17 +72,25 @@ const allPatterns = [
 ];
 
 const { ensurePrecomputed } = require("./utils.js");
+const { applyTrendContext } = require("./trendContext.js");
+
+/**
+ * @typedef {import("./trendContext.js").TrendContextOptions} TrendContextOptions
+ */
 
 /**
  * Scans a candlestick series for a sequence of patterns.
  * @param {Array<Object>} candles - Array of candlesticks
  * @param {Array<{name: string, fn: function}>} patterns - Array of pattern objects
- * @returns {Array<{ index: number, pattern: string, match: Object|Array<Object> }>} Array of matches
+ * @param {Object} [options]
+ * @param {boolean} [options.strict=false] - Throw on invalid OHLC data instead of silently skipping.
+ * @param {TrendContextOptions} [options.trendContext] - Opt-in trend-context confidence adjustment (#95). Omit entirely to preserve pre-existing output shape exactly.
+ * @returns {Array<{ index: number, pattern: string, match: Object|Array<Object>, trendContext?: "uptrend"|"downtrend"|"sideways", contextFit?: number }>} Array of matches
  */
 function patternChain(
   candles,
   patterns = allPatterns,
-  { strict = false } = {},
+  { strict = false, trendContext } = {},
 ) {
   const precomputed = ensurePrecomputed(candles, strict);
   const results = [];
@@ -96,6 +104,11 @@ function patternChain(
   }
   // Sort by index for chronological order
   results.sort((a, b) => a.index - b.index);
+
+  if (trendContext) {
+    return applyTrendContext(precomputed, results, trendContext);
+  }
+
   return results;
 }
 

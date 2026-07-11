@@ -6,7 +6,7 @@ For a general introduction to candlestick patterns, see [Candlestick chart — W
 
 ## Single Candle Patterns
 
-- **Hammer**: Small body near the top (body < 1/3 of range), long lower shadow (tail ≥ 2× body), small upper shadow. Signals possible bullish reversal.
+- **Hammer**: Small body near the top (body < 1/3 of range), long lower shadow (tail ≥ 2× body), small upper shadow. Signals possible bullish reversal. Note: this is pure geometry — it does not check for a preceding downtrend, so the identical shape after an _uptrend_ is really a **Hanging Man** (bearish), not a hammer. Pass a `trendContext` option to `patternChain` to score/resolve this — see [README: Trend-Context Confidence Adjustment](../README.md#trend-context-confidence-adjustment).
 - **Inverted Hammer**: Small body near the bottom, long upper shadow (wick ≥ 2× body), small lower shadow. Bullish reversal signal.
 - **Doji**: Very small body (body < 10% of range), open ≈ close. Indicates indecision. Candle must have range (high > low).
 - **Marubozu**: Long body (≥ 70% of range) with minimal shadows (< 10% of body). Strong directional move. Bullish Marubozu shows strong buying, Bearish shows strong selling.

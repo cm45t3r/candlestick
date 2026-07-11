@@ -33,9 +33,49 @@ export interface OHLCExtended extends OHLC {
 export interface PatternMetadata {
   type: "reversal" | "continuation" | "neutral";
   direction: "bullish" | "bearish" | "neutral";
+  /**
+   * @deprecated Fixed, context-blind reliability score — does not check
+   * whether the preceding trend matches what the pattern expects (see
+   * https://github.com/cm45t3r/candlestick/issues/95). Prefer
+   * `effectiveConfidence` (present when `patternChain` was called with a
+   * `trendContext` option). Kept for backward compatibility; not scheduled
+   * for removal before a major version.
+   */
   confidence: number;
   strength: "weak" | "moderate" | "strong";
   description: string;
+  /** How well the measured preceding trend matches this pattern's expected direction (0-1). Only present when `patternChain` was called with a `trendContext` option. See `TrendContextOptions`. */
+  contextFit?: number;
+  /** `confidence * contextFit`. The trend-aware alternative to the deprecated static `confidence`. Only present alongside `contextFit`. */
+  effectiveConfidence?: number;
+}
+
+/**
+ * Built-in trend measures for `TrendContextOptions.trendMethod`. All three
+ * require `trendPeriod` (or one extra candle beyond it) prior candles to
+ * produce a value (`NaN`/no context otherwise). See `src/trend.js`.
+ */
+export type TrendMethod = "sma-slope" | "ema-slope" | "pct-change";
+
+/**
+ * Options enabling the optional trend-context confidence adjustment for
+ * `patternChain` (#95). Fully opt-in: omitting this object preserves the
+ * pre-existing `patternChain` result shape exactly (no `trendContext`/
+ * `contextFit` fields, no filtering).
+ */
+export interface TrendContextOptions {
+  /** Built-in trend measure used when `externalTrend`/`trendFn` aren't given. Defaults to `"sma-slope"`. */
+  trendMethod?: TrendMethod;
+  /** Lookback window (in candles) for the built-in methods. Defaults to `10`. */
+  trendPeriod?: number;
+  /** Precomputed trend series (one signed value per candle, same order as the input array). Takes precedence over `trendMethod`. */
+  externalTrend?: number[];
+  /** Callback invoked per candle index to resolve trend lazily. Takes precedence over both `externalTrend` and `trendMethod`. */
+  trendFn?: (candles: OHLC[], index: number) => number;
+  /** Sensitivity of `contextFit` to the measured trend's magnitude. Defaults to `5`. See `src/contextFit.js`. */
+  contextSensitivity?: number;
+  /** When two matches with opposite `direction` metadata share at least one candle, drop whichever has the lower `contextFit` (ties keep both). Defaults to `false`: surface every match and let the caller filter/rank using `contextFit`. */
+  resolveConflicts?: boolean;
 }
 
 /**
@@ -46,6 +86,10 @@ export interface PatternMatch {
   pattern: string;
   match: OHLC[] | OHLCExtended[];
   metadata?: PatternMetadata;
+  /** Coarse label for the trend measured just before this match begins. Only present when `patternChain` was called with a `trendContext` option; `undefined` when there isn't enough preceding history to measure it. */
+  trendContext?: "uptrend" | "downtrend" | "sideways";
+  /** How well the measured preceding trend matches this pattern's expected direction (0-1). Only present alongside `trendContext` option usage. */
+  contextFit?: number;
 }
 
 /**
@@ -496,7 +540,7 @@ export const allPatterns: PatternDefinition[];
 export function patternChain(
   candles: OHLC[],
   patterns?: PatternDefinition[],
-  options?: { strict?: boolean },
+  options?: { strict?: boolean; trendContext?: TrendContextOptions },
 ): PatternMatch[];
 
 // ========== Utilities Export ==========
