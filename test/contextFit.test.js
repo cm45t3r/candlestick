@@ -53,6 +53,20 @@ describe("expectedTrendDirection", () => {
     assert.equal(expectedTrendDirection({}), 0);
     assert.equal(expectedTrendDirection({ type: "neutral" }), 0);
   });
+
+  it("returns 0 for a non-neutral direction paired with an unrecognized type", () => {
+    // Not a real patternMetadata combination today, but the function must
+    // not assume `type` is always "reversal"/"continuation" when `direction`
+    // is non-neutral — falls through to the explicit 0 default.
+    assert.equal(
+      expectedTrendDirection({ type: "unknown", direction: "bullish" }),
+      0,
+    );
+    assert.equal(
+      expectedTrendDirection({ type: "unknown", direction: "bearish" }),
+      0,
+    );
+  });
 });
 
 describe("computeContextFit", () => {

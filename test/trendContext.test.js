@@ -91,6 +91,22 @@ describe("applyTrendContext", () => {
     assert.equal(results[0].contextFit, 1); // fails safe: no penalty when unmeasurable
   });
 
+  it("labels a declining series as a downtrend", () => {
+    const decliningCandles = precomputeCandleProps([
+      { open: 138, high: 141, low: 133, close: 136 },
+      { open: 134, high: 137, low: 127, close: 130 },
+      { open: 130, high: 133, low: 121, close: 124 },
+      { open: 124, high: 128, low: 115, close: 118 },
+      { open: 118, high: 122, low: 109, close: 112 },
+    ]);
+    const results = applyTrendContext(
+      decliningCandles,
+      [{ index: 4, pattern: "hammer", match: decliningCandles.slice(4, 5) }],
+      { trendMethod: "sma-slope", trendPeriod: 2 },
+    );
+    assert.equal(results[0].trendContext, "downtrend");
+  });
+
   it("resolveConflicts (default false) keeps both sides of a same-candle, opposite-direction conflict", () => {
     const results = applyTrendContext(candles, baseResults(), {
       trendMethod: "sma-slope",
@@ -147,5 +163,25 @@ describe("filterConflicts", () => {
       { index: 3, pattern: "hammer", match: [{}], contextFit: 0.1 },
     ];
     assert.deepStrictEqual(filterConflicts(results), results);
+  });
+
+  it("drops the FIRST match when the second (later) one has the higher contextFit", () => {
+    // Regression check for the `b.contextFit > a.contextFit` branch: order
+    // in the results array must not determine which side survives, only
+    // contextFit should.
+    const weakHammer = {
+      index: 5,
+      pattern: "hammer",
+      match: [{}],
+      contextFit: 0.2,
+    };
+    const strongHangingMan = {
+      index: 4,
+      pattern: "hangingMan",
+      match: [{}, {}],
+      contextFit: 0.8,
+    };
+    const results = [weakHammer, strongHangingMan];
+    assert.deepStrictEqual(filterConflicts(results), [strongHangingMan]);
   });
 });
