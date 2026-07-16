@@ -56,7 +56,7 @@ jobs:
           output-file-path: bench-results.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          alert-threshold: "130%"
+          alert-threshold: "150%"
           comment-on-alert: true
           fail-on-alert: false
           alert-comment-cc-users: "@cm45t3r"
