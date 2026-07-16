@@ -48,29 +48,33 @@ function runBenchmark(size, name) {
   console.log("=".repeat(60));
 
   const candles = generateCandles(size);
-  const startMem = process.memoryUsage().heapUsed;
 
-  // Precomputation benchmark
-  const { time: precomputeTime, result: precomputed } = measureMedian(() =>
+  // Memory: measured around a single dedicated pass, kept separate from
+  // the warm-up/timed-median loop below — running that loop first would
+  // inflate the heap delta with garbage from the repeated executions.
+  const startMem = process.memoryUsage().heapUsed;
+  const precomputed = precomputeCandleProps(candles);
+  const hammerResultsPrecomputed = hammer(precomputed);
+  hammer(candles);
+  const chainResultsPrecomputed = patternChain(precomputed, allPatterns);
+  patternChain(candles, allPatterns);
+  const endMem = process.memoryUsage().heapUsed;
+  const memDelta = ((endMem - startMem) / 1024 / 1024).toFixed(2);
+
+  // Timing: median of WARMUP_RUNS + TIMED_RUNS repeated executions.
+  const { time: precomputeTime } = measureMedian(() =>
     precomputeCandleProps(candles),
   );
-
-  // Single pattern benchmark (hammer)
-  const { time: hammerPrecomputeTime, result: hammerResultsPrecomputed } =
-    measureMedian(() => hammer(precomputed));
-
+  const { time: hammerPrecomputeTime } = measureMedian(() =>
+    hammer(precomputed),
+  );
   const { time: hammerRawTime } = measureMedian(() => hammer(candles));
-
-  // Pattern chain benchmark
-  const { time: chainPrecomputeTime, result: chainResultsPrecomputed } =
-    measureMedian(() => patternChain(precomputed, allPatterns));
-
+  const { time: chainPrecomputeTime } = measureMedian(() =>
+    patternChain(precomputed, allPatterns),
+  );
   const { time: chainRawTime } = measureMedian(() =>
     patternChain(candles, allPatterns),
   );
-
-  const endMem = process.memoryUsage().heapUsed;
-  const memDelta = ((endMem - startMem) / 1024 / 1024).toFixed(2);
 
   // Results
   console.log("\nPrecomputation:");
