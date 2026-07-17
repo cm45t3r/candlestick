@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783722529010,
+  "lastUpdate": 1784258530796,
   "repoUrl": "https://github.com/cm45t3r/candlestick",
   "entries": {
     "Benchmark": [
@@ -98,6 +98,105 @@ window.BENCHMARK_DATA = {
           {
             "name": "Memory 1,000,000",
             "value": 675.94,
+            "unit": "MB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cm45t3r@gmail.com",
+            "name": "cm45t3r",
+            "username": "cm45t3r"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6056dbfc0d0df7138ab703dea29076607adde0be",
+          "message": "feat(patternChain): trend-context-aware confidence, deprecate static confidence (#99)\n\n* feat(patternChain): trend-context-aware confidence, deprecate static confidence\n\nPattern functions are evaluated independently with no shared trend\ncontext. On real data (AAPL, 2025-07-22/23) this lets the identical\ncandle qualify as both `hammer` (bullish reversal, expects a preceding\ndowntrend) and `hangingMan` (bearish reversal, expects a preceding\nuptrend) — opposite signals on the same shape, disambiguated only by\ncontext. Each pattern's static `confidence` also can't distinguish a\ntextbook occurrence from a marginal one.\n\nAdds an opt-in `trendContext` option to `patternChain`:\n\n- `trendMethod: \"sma-slope\" | \"ema-slope\" | \"pct-change\"` — built-in\n  trend measures (src/trend.js), signed fractions comparable across\n  price levels.\n- `externalTrend` / `trendFn` — escape hatches for callers with a more\n  advanced trend/regime model, mirroring #96/#97's design for\n  volatility (this package implements neither GARCH nor an HMM itself).\n- Each match derives its expected preceding-trend direction from its\n  existing `type`+`direction` metadata (src/contextFit.js):\n  reversal patterns expect the OPPOSITE trend, continuation patterns\n  expect the SAME trend, neutral patterns expect nothing. This is the\n  exact rule that resolves the hammer/hangingMan contradiction above.\n- Results carry `trendContext` (a coarse label) and `contextFit` (0-1).\n  `enrichWithMetadata` additionally computes `effectiveConfidence`\n  (`confidence * contextFit`) — the trend-aware alternative to the\n  now-deprecated static `confidence` (kept for backward compatibility,\n  marked `@deprecated` in JSDoc/types, not scheduled for removal before\n  a major version).\n- `resolveConflicts: true` optionally drops the lower-`contextFit` side\n  of a same-candle, opposite-direction conflict (default: surface both).\n\nReuses `src/seriesResolver.js` (#97) for the method/external/callback\nresolution, same precedence as #96's volatility option.\n\nFully backward compatible: omitting `trendContext` preserves\n`patternChain`'s exact pre-existing result shape and the static\n`confidence` field is unchanged.\n\nCloses #95.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XRBitjqZyuWGbSXjYKivE2\n\n* test(trendContext,contextFit): cover remaining branches found via CI coverage\n\nCI coverage on the previous commit showed two real gaps introduced by\nthis PR:\n- contextFit.js 98.57%/95% stmts/branch (line 32): the final `return 0`\n  fallback in expectedTrendDirection, reachable only for a non-neutral\n  direction paired with a type that's neither \"reversal\" nor\n  \"continuation\" — not a combination in today's patternMetadata, but the\n  function shouldn't silently assume it can never happen.\n- trendContext.js 97.84%/90.9% stmts/branch (lines 86-87, 122): the\n  `b.contextFit > a.contextFit` branch in filterConflicts (only the\n  opposite ordering, `a > b`, was exercised) and the \"downtrend\" label\n  branch in applyTrendContext (all prior fixtures used a clean uptrend).\n\nAdds targeted tests for both.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XRBitjqZyuWGbSXjYKivE2\n\n* test(trendContext): cover the remaining sideways/unknown-metadata branches\n\nSecond coverage pass: after fixing the first round of gaps,\ntrendContext.js was still at 94.59% branch (lines 79, 123):\n- line 79: the `!metaB` half of filterConflicts' guard clause (only the\n  \"known pattern, neutral direction\" half was exercised, via doji).\n- line 123: the \"sideways\" trendContext label (all prior fixtures used\n  a clear up or down trend, never a flat/zero-change one).\n\nAdds targeted tests for both.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XRBitjqZyuWGbSXjYKivE2\n\n* perf(benchmark): reduce single-sample noise causing false regression alerts\n\nSingle performance.now() samples on shared CI runners were noisy enough\nto trip PR #99's benchmark alert (up to 4x) despite no actual code-path\nchange in the measured functions. Warm up once then take the median of\n5 timed runs per metric, and loosen alert-threshold to 150% as an\nadditional buffer.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* fix(benchmark): decouple memory measurement from timed-median loop\n\nThe warm-up + 5x timed-median loop added for time measurements was\nrunning before endMem was sampled, inflating the heap delta with\ngarbage from the repeated executions and triggering a spurious\nMemory performance alert (up to 4.4x) on PR #99. Memory is now\nmeasured around a single dedicated pass, independent of the timing\nloop.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* ci(benchmark): always comment benchmark summary, not just on alert\n\nKeeps a single persistent PR comment with the current-vs-previous\ncomparison table on every run, independent of the alert comment\n(which only updates when a new regression alert fires).\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* ci(benchmark): add friendly header to benchmark summary comment\n\ngithub-action-benchmark's comment format is fixed (no input to\ncustomize it), so a follow-up step patches the same PR review via\ngh api using the workflow's own GITHUB_TOKEN, prepending a\nreassuring line before the comparison table.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* debug(benchmark): add progress markers to isolate 404 in comment-header step\n\nThe prior version's PATCH failed with an unattributed 404 with no\nway to tell which of the three gh api calls caused it.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* ci(benchmark): post friendly status as a separate PR comment\n\nEditing the github-action-benchmark review directly isn't possible:\nGitHub's PATCH /pulls/{n}/reviews/{id} 404s on reviews authored by\nthe Actions bot token, even from the same workflow run that created\nthem (confirmed: list/get on that review works, only PATCH fails).\n\nInstead, post/update our own plain issue comment (fully editable,\nno such restriction), worded based on whether this run's SHA\nappears in a fresh Alert comment.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* fix(benchmark): gh api --jq takes an expression, not jq CLI flags\n\n--arg is a jq CLI flag; gh api's --jq only accepts the filter\nexpression itself. Interpolate the SHA directly instead (safe: it's\na git commit SHA, not untrusted input).\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* fix(benchmark): use -F (raw field) so gh api reads the @file body\n\n-f treats @file as a literal string in this gh version; only -F\n(--raw-field) resolves the @filename magic value into the file's\ncontents. Confirmed empirically against the live PR.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* fix(benchmark): embed the comparison table in the status comment itself\n\nThe status comment claimed a table appeared \"below\" it, but the\ntable lived in a separate PR review (github-action-benchmark's own\nSummary comment), which reads confusingly out of context. Fetch and\ninline that table directly instead of just referencing it.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-16T22:21:17-05:00",
+          "tree_id": "92d5c3c0b4482cb678370f22144f99c2e4b7a31f",
+          "url": "https://github.com/cm45t3r/candlestick/commit/6056dbfc0d0df7138ab703dea29076607adde0be"
+        },
+        "date": 1784258530581,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Pattern Chain 100",
+            "value": 0.4,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100",
+            "value": 0.01,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100",
+            "value": 0.11,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000",
+            "value": 1.6,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000",
+            "value": 0.05,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000",
+            "value": 0.73,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 10,000",
+            "value": 12.2,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 10,000",
+            "value": 0.26,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 10,000",
+            "value": 7.04,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 100,000",
+            "value": 140.8,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100,000",
+            "value": 3.2,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100,000",
+            "value": 72.18,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000,000",
+            "value": 1665.2,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000,000",
+            "value": 39.39,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000,000",
+            "value": 520.68,
             "unit": "MB"
           }
         ]
