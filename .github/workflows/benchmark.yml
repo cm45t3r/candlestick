@@ -75,18 +75,24 @@ jobs:
           HAD_ALERT_THIS_RUN=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
             --jq "[.[] | select(.body | startswith(\"<!-- github-benchmark-action-comment(start): Benchmark Alert -->\")) | select(.body | contains(\"Current: $CURRENT_SHA\"))] | length > 0")
 
+          gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq '[.[] | select(.body | startswith("<!-- github-benchmark-action-comment(start): Benchmark Summary -->"))][-1].body // empty' \
+            | sed '/^<!-- github-benchmark-action-comment/d' > /tmp/table.md
+
           MARKER="<!-- benchmark-status-comment -->"
           if [ "$HAD_ALERT_THIS_RUN" = "true" ]; then
             {
               echo "$MARKER"
               echo ":warning: **Performance regression detected in this run** — see the Alert comment above for details."
+              echo ""
+              cat /tmp/table.md
             } > /tmp/status_body.md
           else
             {
               echo "$MARKER"
               echo ":white_check_mark: **Good job — no unexpected performance regressions in this run.**"
               echo ""
-              echo "See the detailed comparison table below."
+              cat /tmp/table.md
             } > /tmp/status_body.md
           fi
 
