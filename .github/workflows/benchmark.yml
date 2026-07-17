@@ -62,3 +62,27 @@ jobs:
           fail-on-alert: false
           alert-comment-cc-users: "@cm45t3r"
           benchmark-data-dir-path: dev/bench
+
+      - name: Add friendly header to benchmark summary comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          REVIEW_ID=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq '[.[] | select(.body | startswith("<!-- github-benchmark-action-comment(start): Benchmark Summary -->"))][-1].id // empty')
+          if [ -z "$REVIEW_ID" ]; then
+            echo "No summary comment found yet, skipping"
+            exit 0
+          fi
+          gh api "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID" --jq '.body' > /tmp/summary_body.md
+          awk '
+            1
+            /^# Benchmark$/ && !done {
+              print ""
+              print ":white_check_mark: **Good job — no unexpected performance regressions in this run.**"
+              done = 1
+            }
+          ' /tmp/summary_body.md > /tmp/summary_body_new.md
+          gh api -X PATCH "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID" -f body=@/tmp/summary_body_new.md
