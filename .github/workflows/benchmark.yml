@@ -63,40 +63,39 @@ jobs:
           alert-comment-cc-users: "@cm45t3r"
           benchmark-data-dir-path: dev/bench
 
-      - name: Add friendly header to benchmark summary comment
+      - name: Add friendly benchmark status comment
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          echo "::group::list reviews"
-          gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" > /tmp/reviews.json
-          echo "list reviews OK"
-          echo "::endgroup::"
+          CURRENT_SHA="${{ github.event.pull_request.head.sha }}"
 
-          REVIEW_ID=$(jq -r '[.[] | select(.body | startswith("<!-- github-benchmark-action-comment(start): Benchmark Summary -->"))][-1].id // empty' /tmp/reviews.json)
-          echo "REVIEW_ID=$REVIEW_ID"
-          if [ -z "$REVIEW_ID" ]; then
-            echo "No summary comment found yet, skipping"
-            exit 0
+          HAD_ALERT_THIS_RUN=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq --arg sha "$CURRENT_SHA" \
+            '[.[] | select(.body | startswith("<!-- github-benchmark-action-comment(start): Benchmark Alert -->")) | select(.body | contains("Current: " + $sha))] | length > 0')
+
+          MARKER="<!-- benchmark-status-comment -->"
+          if [ "$HAD_ALERT_THIS_RUN" = "true" ]; then
+            {
+              echo "$MARKER"
+              echo ":warning: **Performance regression detected in this run** — see the Alert comment above for details."
+            } > /tmp/status_body.md
+          else
+            {
+              echo "$MARKER"
+              echo ":white_check_mark: **Good job — no unexpected performance regressions in this run.**"
+              echo ""
+              echo "See the detailed comparison table below."
+            } > /tmp/status_body.md
           fi
 
-          echo "::group::get review body"
-          gh api "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID" --jq '.body' > /tmp/summary_body.md
-          echo "get review body OK"
-          echo "::endgroup::"
+          COMMENT_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --jq '[.[] | select(.body | startswith("<!-- benchmark-status-comment -->"))][-1].id // empty')
 
-          awk '
-            1
-            /^# Benchmark$/ && !done {
-              print ""
-              print ":white_check_mark: **Good job — no unexpected performance regressions in this run.**"
-              done = 1
-            }
-          ' /tmp/summary_body.md > /tmp/summary_body_new.md
-
-          echo "::group::patch review"
-          gh api -X PATCH "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID" -f body=@/tmp/summary_body_new.md
-          echo "patch review OK"
-          echo "::endgroup::"
+          if [ -z "$COMMENT_ID" ]; then
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -f body=@/tmp/status_body.md
+          else
+            gh api -X PATCH "repos/$REPO/issues/comments/$COMMENT_ID" -f body=@/tmp/status_body.md
+          fi
