@@ -73,8 +73,7 @@ jobs:
           CURRENT_SHA="${{ github.event.pull_request.head.sha }}"
 
           HAD_ALERT_THIS_RUN=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
-            --jq --arg sha "$CURRENT_SHA" \
-            '[.[] | select(.body | startswith("<!-- github-benchmark-action-comment(start): Benchmark Alert -->")) | select(.body | contains("Current: " + $sha))] | length > 0')
+            --jq "[.[] | select(.body | startswith(\"<!-- github-benchmark-action-comment(start): Benchmark Alert -->\")) | select(.body | contains(\"Current: $CURRENT_SHA\"))] | length > 0")
 
           MARKER="<!-- benchmark-status-comment -->"
           if [ "$HAD_ALERT_THIS_RUN" = "true" ]; then
