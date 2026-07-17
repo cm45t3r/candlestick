@@ -14,44 +14,67 @@ function generateCandles(n) {
   });
 }
 
+const WARMUP_RUNS = 1;
+const TIMED_RUNS = 5;
+
+function median(values) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid];
+}
+
+// Runs `fn` WARMUP_RUNS times (discarded, lets the JIT warm up) then
+// TIMED_RUNS times, returning the median wall-clock time and the last
+// return value. A single performance.now() sample is too noisy on shared
+// CI runners (GC pauses, neighbor jitter) and was producing spurious
+// performance-alert comments on PRs with no actual code-path change.
+function measureMedian(fn) {
+  let result;
+  for (let i = 0; i < WARMUP_RUNS; i += 1) result = fn();
+  const times = [];
+  for (let i = 0; i < TIMED_RUNS; i += 1) {
+    const start = performance.now();
+    result = fn();
+    times.push(performance.now() - start);
+  }
+  return { time: median(times), result };
+}
+
 function runBenchmark(size, name) {
   console.log(`\n${"=".repeat(60)}`);
   console.log(`Benchmark: ${name} (N=${size.toLocaleString()})`);
   console.log("=".repeat(60));
 
   const candles = generateCandles(size);
+
+  // Memory: measured around a single dedicated pass, kept separate from
+  // the warm-up/timed-median loop below — running that loop first would
+  // inflate the heap delta with garbage from the repeated executions.
   const startMem = process.memoryUsage().heapUsed;
-
-  // Precomputation benchmark
-  const precomputeStart = performance.now();
   const precomputed = precomputeCandleProps(candles);
-  const precomputeEnd = performance.now();
-  const precomputeTime = precomputeEnd - precomputeStart;
-
-  // Single pattern benchmark (hammer)
-  const hammerPrecomputeStart = performance.now();
   const hammerResultsPrecomputed = hammer(precomputed);
-  const hammerPrecomputeEnd = performance.now();
-  const hammerPrecomputeTime = hammerPrecomputeEnd - hammerPrecomputeStart;
-
-  const hammerRawStart = performance.now();
   hammer(candles);
-  const hammerRawEnd = performance.now();
-  const hammerRawTime = hammerRawEnd - hammerRawStart;
-
-  // Pattern chain benchmark
-  const chainPrecomputeStart = performance.now();
   const chainResultsPrecomputed = patternChain(precomputed, allPatterns);
-  const chainPrecomputeEnd = performance.now();
-  const chainPrecomputeTime = chainPrecomputeEnd - chainPrecomputeStart;
-
-  const chainRawStart = performance.now();
   patternChain(candles, allPatterns);
-  const chainRawEnd = performance.now();
-  const chainRawTime = chainRawEnd - chainRawStart;
-
   const endMem = process.memoryUsage().heapUsed;
   const memDelta = ((endMem - startMem) / 1024 / 1024).toFixed(2);
+
+  // Timing: median of WARMUP_RUNS + TIMED_RUNS repeated executions.
+  const { time: precomputeTime } = measureMedian(() =>
+    precomputeCandleProps(candles),
+  );
+  const { time: hammerPrecomputeTime } = measureMedian(() =>
+    hammer(precomputed),
+  );
+  const { time: hammerRawTime } = measureMedian(() => hammer(candles));
+  const { time: chainPrecomputeTime } = measureMedian(() =>
+    patternChain(precomputed, allPatterns),
+  );
+  const { time: chainRawTime } = measureMedian(() =>
+    patternChain(candles, allPatterns),
+  );
 
   // Results
   console.log("\nPrecomputation:");

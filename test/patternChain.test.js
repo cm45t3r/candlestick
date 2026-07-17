@@ -211,3 +211,63 @@ describe("patternChain strict mode", () => {
     assert.doesNotThrow(() => patternChain(valid, undefined, { strict: true }));
   });
 });
+
+describe("patternChain trendContext option (#95)", () => {
+  // Clean uptrend, then the hammer/hangingMan-shaped candle from #95's
+  // worked example (see test/trendContext.test.js for the full annotation).
+  const candles = [
+    { open: 100, high: 101, low: 99, close: 100 },
+    { open: 100, high: 106, low: 99, close: 105 },
+    { open: 105, high: 111, low: 104, close: 110 },
+    { open: 110, high: 117, low: 109, close: 116 },
+    { open: 116, high: 123, low: 115, close: 122 },
+    { open: 122, high: 130, low: 121, close: 128 },
+    { open: 128, high: 136, low: 127, close: 134 },
+    { open: 134, high: 137, low: 132, close: 136 },
+    { open: 140, high: 141, low: 133, close: 138 },
+  ];
+
+  it("omitting trendContext preserves the exact pre-existing result shape", () => {
+    const results = patternChain(candles);
+    for (const result of results) {
+      assert.deepStrictEqual(Object.keys(result), [
+        "index",
+        "pattern",
+        "match",
+      ]);
+    }
+  });
+
+  it("with trendContext, results carry trendContext/contextFit and correctly rank the hammer/hangingMan conflict", () => {
+    const results = patternChain(candles, allPatterns, {
+      trendContext: {
+        trendMethod: "sma-slope",
+        trendPeriod: 3,
+        contextSensitivity: 10,
+      },
+    });
+    const hangingMan = results.find((r) => r.pattern === "hangingMan");
+    const hammer = results.find((r) => r.pattern === "hammer" && r.index === 8);
+
+    assert.ok(hangingMan);
+    assert.ok(hammer);
+    assert.equal(hangingMan.trendContext, "uptrend");
+    assert.ok(hangingMan.contextFit > hammer.contextFit);
+  });
+
+  it("resolveConflicts: true removes the lower-contextFit side of the hammer/hangingMan conflict", () => {
+    const results = patternChain(candles, allPatterns, {
+      trendContext: {
+        trendMethod: "sma-slope",
+        trendPeriod: 3,
+        contextSensitivity: 10,
+        resolveConflicts: true,
+      },
+    });
+    const patterns = results.map((r) => r.pattern);
+    assert.ok(patterns.includes("hangingMan"));
+    assert.ok(
+      !patterns.some((p, i) => p === "hammer" && results[i].index === 8),
+    );
+  });
+});

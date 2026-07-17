@@ -263,6 +263,44 @@ patternChain(dataArray, allPatterns, { strict: true });
 
 > **Multi-candle patterns:** Two-candle patterns (Engulfing, Harami, Kicker, Hanging Man, Shooting Star, Piercing Line, Dark Cloud Cover, Tweezers Top/Bottom) return a `match` array with 2 candles. Three-candle patterns (Morning Star, Evening Star, Three White Soldiers, Three Black Crows) return 3. Single-candle patterns return 1. This is driven by the `paramCount` property on each pattern definition.
 
+### Trend-Context Confidence Adjustment
+
+The same candle shape can mean opposite things depending on what preceded it — a small body with a long lower shadow is a bullish `hammer` after a downtrend, but a bearish `hangingMan` after an uptrend. By default, pattern functions don't check this: they're evaluated independently, so the identical candle can be flagged as both, with contradictory signals. Each pattern also has a fixed, context-blind `confidence` in its metadata (e.g. `hammer: 0.7`) that doesn't distinguish a textbook occurrence from a marginal one.
+
+Pass a `trendContext` option to `patternChain` to measure the actual preceding trend and score how well it matches what each pattern expects:
+
+```js
+const { patternChain, allPatterns } = require("candlestick");
+const { enrichWithMetadata } = require("candlestick").metadata;
+
+const matches = patternChain(data, allPatterns, {
+  trendContext: { trendMethod: "sma-slope", trendPeriod: 10 },
+});
+const enriched = enrichWithMetadata(matches);
+
+// Each match now carries a `trendContext` label and a `contextFit` (0-1):
+// { index, pattern: "hammer", match, trendContext: "uptrend", contextFit: 0.13 }
+// { index, pattern: "hangingMan", match, trendContext: "uptrend", contextFit: 0.99 }
+//
+// `enrichWithMetadata` additionally computes `effectiveConfidence` (`confidence * contextFit`)
+// on the trend-aware alternative to the deprecated static `confidence`:
+console.log(enriched[0].metadata.effectiveConfidence); // 0.7 * 0.13 ≈ 0.09 (hammer, wrong context)
+console.log(enriched[1].metadata.effectiveConfidence); // 0.75 * 0.99 ≈ 0.74 (hangingMan, correct context)
+```
+
+Built-in `trendMethod` options: `"sma-slope"` (default), `"ema-slope"`, `"pct-change"` — see `src/trend.js`. As with the [Kicker gap threshold](#gap-significance-threshold-kicker), you can also supply `externalTrend` (a precomputed series) or `trendFn` (a per-candle callback) if you already have a more advanced trend/regime model.
+
+To automatically drop the weaker side of a same-candle, opposite-direction conflict instead of surfacing both, pass `resolveConflicts: true`:
+
+```js
+patternChain(data, allPatterns, {
+  trendContext: { trendMethod: "sma-slope", resolveConflicts: true },
+});
+// Only "hangingMan" survives in the example above; "hammer" (the worse contextFit) is dropped.
+```
+
+This is fully opt-in: omitting `trendContext` preserves `patternChain`'s pre-existing result shape exactly.
+
 ---
 
 ## Pattern Descriptions

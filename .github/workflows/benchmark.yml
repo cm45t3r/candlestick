@@ -56,8 +56,51 @@ jobs:
           output-file-path: bench-results.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          alert-threshold: "130%"
+          alert-threshold: "150%"
           comment-on-alert: true
+          comment-always: true
           fail-on-alert: false
           alert-comment-cc-users: "@cm45t3r"
           benchmark-data-dir-path: dev/bench
+
+      - name: Add friendly benchmark status comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          CURRENT_SHA="${{ github.event.pull_request.head.sha }}"
+
+          HAD_ALERT_THIS_RUN=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq "[.[] | select(.body | startswith(\"<!-- github-benchmark-action-comment(start): Benchmark Alert -->\")) | select(.body | contains(\"Current: $CURRENT_SHA\"))] | length > 0")
+
+          gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq '[.[] | select(.body | startswith("<!-- github-benchmark-action-comment(start): Benchmark Summary -->"))][-1].body // empty' \
+            | sed '/^<!-- github-benchmark-action-comment/d' > /tmp/table.md
+
+          MARKER="<!-- benchmark-status-comment -->"
+          if [ "$HAD_ALERT_THIS_RUN" = "true" ]; then
+            {
+              echo "$MARKER"
+              echo ":warning: **Performance regression detected in this run** — see the Alert comment above for details."
+              echo ""
+              cat /tmp/table.md
+            } > /tmp/status_body.md
+          else
+            {
+              echo "$MARKER"
+              echo ":white_check_mark: **Good job — no unexpected performance regressions in this run.**"
+              echo ""
+              cat /tmp/table.md
+            } > /tmp/status_body.md
+          fi
+
+          COMMENT_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --jq '[.[] | select(.body | startswith("<!-- benchmark-status-comment -->"))][-1].id // empty')
+
+          if [ -z "$COMMENT_ID" ]; then
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -F body=@/tmp/status_body.md
+          else
+            gh api -X PATCH "repos/$REPO/issues/comments/$COMMENT_ID" -F body=@/tmp/status_body.md
+          fi

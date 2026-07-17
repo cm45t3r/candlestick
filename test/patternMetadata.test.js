@@ -46,6 +46,24 @@ describe("patternMetadata", () => {
       const enriched = enrichWithMetadata(results);
       assert.equal(enriched[0].metadata, undefined);
     });
+
+    it("does not add contextFit/effectiveConfidence when the result has no contextFit (#95)", () => {
+      const results = [{ index: 0, pattern: "hammer", match: [] }];
+      const enriched = enrichWithMetadata(results);
+      assert.equal("contextFit" in enriched[0].metadata, false);
+      assert.equal("effectiveConfidence" in enriched[0].metadata, false);
+    });
+
+    it("adds contextFit/effectiveConfidence = confidence * contextFit when the result carries a contextFit (#95)", () => {
+      const results = [
+        { index: 0, pattern: "hammer", match: [], contextFit: 0.4 },
+      ];
+      const enriched = enrichWithMetadata(results);
+      assert.equal(enriched[0].metadata.contextFit, 0.4);
+      assert.ok(
+        Math.abs(enriched[0].metadata.effectiveConfidence - 0.7 * 0.4) < 1e-12,
+      );
+    });
   });
 
   describe("filterByConfidence", () => {

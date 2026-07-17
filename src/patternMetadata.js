@@ -7,6 +7,18 @@
  * - type: 'reversal' | 'continuation' | 'neutral'
  * - confidence: 0-1 (higher = more reliable)
  * - strength: 'weak' | 'moderate' | 'strong'
+ *
+ * @deprecated `confidence` is a fixed, context-blind value: it does not
+ * distinguish a textbook occurrence of a pattern from a marginal one, and it
+ * does not check whether the preceding trend actually matches what the
+ * pattern expects (see https://github.com/cm45t3r/candlestick/issues/95 for
+ * the worked example — the same candle can qualify as both `hammer` and
+ * `hangingMan`, with opposite signals, and both report their own fixed
+ * `confidence` regardless). Prefer `effectiveConfidence` (`confidence *
+ * contextFit`), available on `enrichWithMetadata` results when
+ * `patternChain` was called with a `trendContext` option. `confidence` is
+ * kept for backward compatibility and is not scheduled for removal before a
+ * major version.
  */
 
 const patternMetadata = {
@@ -236,7 +248,11 @@ function getPatternMetadata(patternName) {
 }
 
 /**
- * Enhance pattern chain results with metadata
+ * Enhance pattern chain results with metadata. When `result.contextFit` is
+ * present (i.e. `patternChain` was called with a `trendContext` option, see
+ * #95), also attaches `contextFit` and `effectiveConfidence` (`confidence *
+ * contextFit`) to the metadata — the trend-aware alternative to the static,
+ * deprecated `confidence` value.
  * @param {Array<Object>} results - Results from patternChain
  * @return {Array<Object>} Results with metadata added
  */
@@ -244,15 +260,21 @@ function enrichWithMetadata(results) {
   return results.map((result) => {
     const metadata = getPatternMetadata(result.pattern);
     if (metadata) {
+      const enrichedMetadata = {
+        type: metadata.type,
+        direction: metadata.direction,
+        confidence: metadata.confidence,
+        strength: metadata.strength,
+        description: metadata.description,
+      };
+      if (typeof result.contextFit === "number") {
+        enrichedMetadata.contextFit = result.contextFit;
+        enrichedMetadata.effectiveConfidence =
+          metadata.confidence * result.contextFit;
+      }
       return {
         ...result,
-        metadata: {
-          type: metadata.type,
-          direction: metadata.direction,
-          confidence: metadata.confidence,
-          strength: metadata.strength,
-          description: metadata.description,
-        },
+        metadata: enrichedMetadata,
       };
     }
     return result;
