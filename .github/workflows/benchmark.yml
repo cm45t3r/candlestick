@@ -94,7 +94,7 @@ jobs:
             --jq '[.[] | select(.body | startswith("<!-- benchmark-status-comment -->"))][-1].id // empty')
 
           if [ -z "$COMMENT_ID" ]; then
-            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -f body=@/tmp/status_body.md
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -F body=@/tmp/status_body.md
           else
-            gh api -X PATCH "repos/$REPO/issues/comments/$COMMENT_ID" -f body=@/tmp/status_body.md
+            gh api -X PATCH "repos/$REPO/issues/comments/$COMMENT_ID" -F body=@/tmp/status_body.md
           fi
