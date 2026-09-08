@@ -1,6 +1,7 @@
 const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
 const { createStream, processLargeDataset } = require("../src/streaming.js");
+const { patternChain, allPatterns } = require("../index.js");
 
 // Helper to generate test data
 function generateCandles(count) {
@@ -15,6 +16,42 @@ function generateCandles(count) {
     });
   }
   return candles;
+}
+
+// Deterministic (no Math.random) so batch and streaming see identical input.
+function generateDeterministicCandles(count) {
+  const candles = [];
+  for (let i = 0; i < count; i++) {
+    const base = 100 + Math.sin(i / 50) * 20 + (i % 7) * 0.3;
+    const close = base + Math.sin(i / 3) * 1.5;
+    candles.push({
+      open: base,
+      high: Math.max(base, close) + 1,
+      low: Math.min(base, close) - 1.4,
+      close,
+    });
+  }
+  return candles;
+}
+
+// Collect streaming matches as sorted "index|pattern" keys.
+function streamKeys(data, chunkSize, feedSize = chunkSize) {
+  const keys = [];
+  const stream = createStream({
+    chunkSize,
+    onMatch: (r) => keys.push(`${r.index}|${r.pattern}`),
+  });
+  for (let i = 0; i < data.length; i += feedSize) {
+    stream.process(data.slice(i, i + feedSize));
+  }
+  stream.end();
+  return keys.sort();
+}
+
+function batchKeys(data) {
+  return patternChain(data, allPatterns)
+    .map((r) => `${r.index}|${r.pattern}`)
+    .sort();
 }
 
 describe("Streaming API", () => {
@@ -426,6 +463,68 @@ describe("Streaming API", () => {
 
       const stream = createStream({ patterns: ["hammer"], chunkSize: BIG + 1 });
       assert.doesNotThrow(() => stream.process(chunk));
+    });
+  });
+  describe("equivalence with batch patternChain", () => {
+    // Regression for #115: the carry-over overlap is sized for the longest
+    // pattern (maxPatternSize), so patterns shorter than that were re-detected
+    // at the start of every non-first chunk and emitted twice.
+    it("emits exactly the batch matches across many chunk boundaries", () => {
+      const data = generateDeterministicCandles(5000);
+      assert.deepEqual(streamKeys(data, 1000), batchKeys(data));
+    });
+
+    it("emits no duplicate matches at chunk boundaries", () => {
+      const data = generateDeterministicCandles(5000);
+      const keys = streamKeys(data, 1000);
+      assert.equal(
+        keys.length,
+        new Set(keys).size,
+        "streaming emitted duplicate (index, pattern) pairs",
+      );
+    });
+
+    it("matches batch output for a range of chunk sizes", () => {
+      const data = generateDeterministicCandles(3000);
+      const expected = batchKeys(data);
+      for (const chunkSize of [3, 4, 7, 64, 999, 1000, 1001]) {
+        assert.deepEqual(
+          streamKeys(data, chunkSize),
+          expected,
+          `chunkSize ${chunkSize} diverged from batch`,
+        );
+      }
+    });
+
+    it("matches batch output when feed size is not aligned to chunk size", () => {
+      const data = generateDeterministicCandles(3000);
+      assert.deepEqual(streamKeys(data, 1000, 333), batchKeys(data));
+    });
+
+    it("matches batch output when the data never fills a chunk", () => {
+      const data = generateDeterministicCandles(500);
+      assert.deepEqual(streamKeys(data, 1000), batchKeys(data));
+    });
+
+    it("keeps single-candle patterns unduplicated at boundaries", () => {
+      const data = generateDeterministicCandles(4000);
+      const keys = [];
+      const stream = createStream({
+        patterns: ["hammer"],
+        chunkSize: 1000,
+        onMatch: (r) => keys.push(r.index),
+      });
+      for (let i = 0; i < data.length; i += 1000) {
+        stream.process(data.slice(i, i + 1000));
+      }
+      stream.end();
+      assert.equal(keys.length, new Set(keys).size);
+      assert.deepEqual(
+        [...keys].sort((a, b) => a - b),
+        patternChain(data, [allPatterns.find((p) => p.name === "hammer")]).map(
+          (r) => r.index,
+        ),
+      );
     });
   });
 });
