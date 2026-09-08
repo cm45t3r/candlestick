@@ -50,7 +50,32 @@ function createStream(options = {}) {
   let buffer = [];
   let globalOffset = 0;
   let totalProcessed = 0;
-  const maxPatternSize = Math.max(...patternFns.map((p) => p.paramCount || 1));
+  // Every pattern carries a numeric paramCount: the built-ins define it, and
+  // plugins.registerPattern() normalizes and validates it (1-10). Enforced by
+  // the "every pattern declares a numeric paramCount" test.
+  const paramCountByName = new Map(
+    patternFns.map((p) => [p.name, p.paramCount]),
+  );
+  const maxPatternSize = Math.max(...paramCountByName.values());
+
+  /**
+   * The carry-over overlap is sized for the longest pattern (`maxPatternSize`),
+   * so shorter patterns anchored at the start of a non-first chunk were already
+   * detected and emitted by the previous chunk. Drop those repeats: a pattern of
+   * size `k` at local index `i` is a repeat when `i < maxPatternSize - k`.
+   * @param {Array<Object>} results - patternChain results, local indices
+   * @param {boolean} isFirstChunk - first chunk has no preceding overlap
+   * @return {Array<Object>} results with boundary repeats removed
+   */
+  function dropOverlapRepeats(results, isFirstChunk) {
+    if (isFirstChunk) {
+      return results;
+    }
+    return results.filter(
+      // every r.pattern came from patternFns, so the lookup always hits
+      (r) => r.index >= maxPatternSize - paramCountByName.get(r.pattern),
+    );
+  }
 
   /**
    * Process a chunk of data
@@ -70,9 +95,12 @@ function createStream(options = {}) {
       const overlap = buffer.slice(chunkSize - maxPatternSize + 1);
 
       // Detect patterns in this chunk
-      const results = candlestick.patternChain(toProcess, patternFns, {
-        strict,
-      });
+      const results = dropOverlapRepeats(
+        candlestick.patternChain(toProcess, patternFns, {
+          strict,
+        }),
+        globalOffset === 0,
+      );
 
       // Enrich with metadata if requested
       const finalResults = enrichMetadata
@@ -112,7 +140,10 @@ function createStream(options = {}) {
 
     // Process remaining buffer
     if (buffer.length > 0) {
-      const results = candlestick.patternChain(buffer, patternFns, { strict });
+      const results = dropOverlapRepeats(
+        candlestick.patternChain(buffer, patternFns, { strict }),
+        globalOffset === 0,
+      );
       const finalResults = enrichMetadata
         ? candlestick.metadata.enrichWithMetadata(results)
         : results;
