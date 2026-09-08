@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784258530796,
+  "lastUpdate": 1788900717179,
   "repoUrl": "https://github.com/cm45t3r/candlestick",
   "entries": {
     "Benchmark": [
@@ -197,6 +197,105 @@ window.BENCHMARK_DATA = {
           {
             "name": "Memory 1,000,000",
             "value": 520.68,
+            "unit": "MB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cm45t3r@gmail.com",
+            "name": "cm45t3r",
+            "username": "cm45t3r"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "91c9c8479808361bb301421cfe20a888c33902fb",
+          "message": "fix(streaming): drop duplicate matches at chunk boundaries (#116)\n\n* fix(streaming): drop duplicate matches at chunk boundaries\n\nThe carry-over overlap between chunks is sized by `maxPatternSize` (3, from\nthe three-candle formations), so shorter patterns anchored in that carried\nregion were re-detected and emitted again by the next chunk.\n\nMeasured over 200K synthetic candles at chunkSize 1000, streaming emitted\n228,820 matches against batch's 228,381 — 439 duplicates (0.192%), 429 from\nsingle-candle patterns and 10 from two-candle ones, with zero missed and\nzero spurious matches. The rate held at 100K, 500K and 1M candles.\n\nGate emission per pattern by its own paramCount: in a non-first chunk a\npattern of size k at local index i is a repeat when i < maxPatternSize - k.\nThree-candle patterns are unaffected, which is why the overlap was correct\nfor them and wrong for everything else.\n\nAdd equivalence tests asserting streaming output matches batch patternChain\nexactly across chunk sizes, unaligned feed sizes, and datasets that never\nfill a chunk — the gap that let this through, since the existing streaming\ntests never compared against patternChain over multiple chunks.\n\nFixes #115\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01HbetnffFVko1XWFJcVdbWd\n\n* refactor(streaming): enforce paramCount invariant instead of silent fallback\n\nDerive maxPatternSize from the paramCount map so the default is expressed\nonce, and drop the `|| 1` guards entirely. They were unreachable: the 29\nbuilt-ins all declare paramCount, and plugins.registerPattern() normalizes\na missing one to 1 and validates the range, so no pattern object reaching\ncreateStream can lack it.\n\nReplacing dead defensive code with an asserted contract also removes the\nfailure mode it was hiding — a pattern without paramCount would have made\nmaxPatternSize NaN and silently failed every boundary comparison open,\nrather than being caught.\n\nstreaming.js branch coverage 97.61% -> 100%; overall 99.10% -> 99.23%.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01HbetnffFVko1XWFJcVdbWd\n\n---------\n\nCo-authored-by: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-08T15:50:54-05:00",
+          "tree_id": "e152a4963382b2a75301559c86a2e17a6398ebc4",
+          "url": "https://github.com/cm45t3r/candlestick/commit/91c9c8479808361bb301421cfe20a888c33902fb"
+        },
+        "date": 1788900716569,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Pattern Chain 100",
+            "value": 0.3,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100",
+            "value": 0.01,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100",
+            "value": 0.1,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000",
+            "value": 1.1,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000",
+            "value": 0.1,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000",
+            "value": 0.22,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 10,000",
+            "value": 8.5,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 10,000",
+            "value": 0.22,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 10,000",
+            "value": 8.1,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 100,000",
+            "value": 123.8,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100,000",
+            "value": 3.38,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100,000",
+            "value": 78.5,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000,000",
+            "value": 1217.8,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000,000",
+            "value": 28.27,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000,000",
+            "value": 1004.3,
             "unit": "MB"
           }
         ]
