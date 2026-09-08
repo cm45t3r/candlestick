@@ -50,10 +50,13 @@ function createStream(options = {}) {
   let buffer = [];
   let globalOffset = 0;
   let totalProcessed = 0;
-  const maxPatternSize = Math.max(...patternFns.map((p) => p.paramCount || 1));
+  // Every pattern carries a numeric paramCount: the built-ins define it, and
+  // plugins.registerPattern() normalizes and validates it (1-10). Enforced by
+  // the "every pattern declares a numeric paramCount" test.
   const paramCountByName = new Map(
-    patternFns.map((p) => [p.name, p.paramCount || 1]),
+    patternFns.map((p) => [p.name, p.paramCount]),
   );
+  const maxPatternSize = Math.max(...paramCountByName.values());
 
   /**
    * The carry-over overlap is sized for the longest pattern (`maxPatternSize`),
@@ -69,7 +72,8 @@ function createStream(options = {}) {
       return results;
     }
     return results.filter(
-      (r) => r.index >= maxPatternSize - (paramCountByName.get(r.pattern) || 1),
+      // every r.pattern came from patternFns, so the lookup always hits
+      (r) => r.index >= maxPatternSize - paramCountByName.get(r.pattern),
     );
   }
 

@@ -1,7 +1,7 @@
 const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
 const { createStream, processLargeDataset } = require("../src/streaming.js");
-const { patternChain, allPatterns } = require("../index.js");
+const { patternChain, allPatterns, plugins } = require("../index.js");
 
 // Helper to generate test data
 function generateCandles(count) {
@@ -465,6 +465,37 @@ describe("Streaming API", () => {
       assert.doesNotThrow(() => stream.process(chunk));
     });
   });
+  describe("pattern size invariant", () => {
+    // The chunk-overlap math in createStream indexes paramCount directly.
+    // If a pattern ever shipped without it, maxPatternSize would become NaN
+    // and every boundary comparison would silently fail open.
+    it("every built-in pattern declares a numeric paramCount", () => {
+      for (const pattern of allPatterns) {
+        assert.equal(
+          typeof pattern.paramCount,
+          "number",
+          `pattern "${pattern.name}" has no numeric paramCount`,
+        );
+        assert.ok(
+          Number.isInteger(pattern.paramCount) && pattern.paramCount >= 1,
+          `pattern "${pattern.name}" has an invalid paramCount: ${pattern.paramCount}`,
+        );
+      }
+    });
+
+    it("registerPattern normalizes a missing paramCount to 1", () => {
+      const def = plugins.registerPattern({
+        name: "paramCountDefaultProbe",
+        fn: () => [],
+      });
+      try {
+        assert.equal(def.paramCount, 1);
+      } finally {
+        plugins.unregisterPattern("paramCountDefaultProbe");
+      }
+    });
+  });
+
   describe("equivalence with batch patternChain", () => {
     // Regression for #115: the carry-over overlap is sized for the longest
     // pattern (maxPatternSize), so patterns shorter than that were re-detected
