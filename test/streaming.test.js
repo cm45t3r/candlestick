@@ -556,6 +556,15 @@ describe("Streaming API", () => {
       const second = stream.end();
       assert.deepEqual(second, first);
       assert.equal(first.totalProcessed, 1200);
+
+      // A caller mutating the summary must not corrupt later calls
+      assert.notEqual(second, first, "end() handed back the same object");
+      first.totalProcessed = -1;
+      first.patternsDetected = -1;
+      assert.deepEqual(stream.end(), {
+        totalProcessed: 1200,
+        patternsDetected: allPatterns.length,
+      });
     });
 
     it("fires onProgress complete exactly once", () => {

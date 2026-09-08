@@ -151,7 +151,7 @@ function createStream(options = {}) {
    */
   function end() {
     if (ended) {
-      return endSummary;
+      return { ...endSummary };
     }
 
     const pending = buffer;
@@ -193,7 +193,8 @@ function createStream(options = {}) {
       });
     }
 
-    return endSummary;
+    // Hand back a copy: the memoized summary must survive a caller mutating it.
+    return { ...endSummary };
   }
 
   /**
