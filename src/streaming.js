@@ -50,6 +50,8 @@ function createStream(options = {}) {
   let buffer = [];
   let globalOffset = 0;
   let totalProcessed = 0;
+  let ended = false;
+  let endSummary = null;
   // Every pattern carries a numeric paramCount: the built-ins define it, and
   // plugins.registerPattern() normalizes and validates it (1-10). Enforced by
   // the "every pattern declares a numeric paramCount" test.
@@ -80,8 +82,14 @@ function createStream(options = {}) {
   /**
    * Process a chunk of data
    * @param {Array<Object>} chunk - Array of OHLC objects
+   * @throws {Error} If called after end(); call reset() to reuse the stream
    */
   function process(chunk) {
+    if (ended) {
+      throw new Error(
+        "Cannot process() after end(); call reset() to reuse this stream",
+      );
+    }
     if (!Array.isArray(chunk) || chunk.length === 0) {
       return;
     }
@@ -111,7 +119,10 @@ function createStream(options = {}) {
       const chunkOffset = globalOffset;
       buffer = overlap;
       globalOffset += chunkSize - maxPatternSize + 1;
-      totalProcessed += toProcess.length;
+      // Only the candles this iteration leaves behind are consumed; the last
+      // maxPatternSize - 1 are carried into `overlap` and counted by the
+      // iteration (or by end()) that finally consumes them.
+      totalProcessed += chunkSize - maxPatternSize + 1;
 
       // Progress callback
       if (onProgress) {
@@ -132,10 +143,16 @@ function createStream(options = {}) {
   }
 
   /**
-   * Process remaining data and finalize
-   * @return {Object} Summary statistics
+   * Process remaining data and finalize. Idempotent: the first call drains the
+   * buffer and emits its matches, and later calls return the same summary
+   * without re-emitting or firing onProgress again.
+   * @return {Object} Summary statistics; `totalProcessed` is the number of
+   *   distinct candles consumed, excluding the overlap re-scanned per chunk
    */
   function end() {
+    if (ended) {
+      return endSummary;
+    }
     let finalMatches = 0;
 
     // Process remaining buffer
@@ -152,6 +169,10 @@ function createStream(options = {}) {
       totalProcessed += buffer.length;
       finalMatches = finalResults.length;
 
+      // Drain before the callbacks so a throwing onMatch cannot leave the
+      // buffer behind for a second end() to re-emit.
+      buffer = [];
+
       finalResults.forEach((result) => {
         result.index += endOffset;
         if (onMatch) {
@@ -159,6 +180,12 @@ function createStream(options = {}) {
         }
       });
     }
+
+    ended = true;
+    endSummary = {
+      totalProcessed,
+      patternsDetected: patternFns.length,
+    };
 
     // Final progress
     if (onProgress) {
@@ -169,11 +196,7 @@ function createStream(options = {}) {
       });
     }
 
-    // Return summary
-    return {
-      totalProcessed,
-      patternsDetected: patternFns.length,
-    };
+    return endSummary;
   }
 
   /**
@@ -183,6 +206,8 @@ function createStream(options = {}) {
     buffer = [];
     globalOffset = 0;
     totalProcessed = 0;
+    ended = false;
+    endSummary = null;
   }
 
   return {

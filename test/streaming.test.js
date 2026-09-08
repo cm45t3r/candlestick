@@ -496,6 +496,126 @@ describe("Streaming API", () => {
     });
   });
 
+  describe("end() finalization", () => {
+    // Regression for #119: end() left the buffer in place and never advanced
+    // globalOffset, so each call reprocessed the trailing buffer; totalProcessed
+    // additionally charged the carry-over overlap to every chunk that saw it.
+    it("reports totalProcessed equal to the candles fed", () => {
+      for (const [count, chunkSize, feedSize] of [
+        [5000, 1000, 1000],
+        [5000, 1000, 333],
+        [3000, 7, 7],
+        [500, 1000, 500],
+        [2, 1000, 2],
+      ]) {
+        const data = generateDeterministicCandles(count);
+        const stream = createStream({ chunkSize });
+        for (let i = 0; i < count; i += feedSize) {
+          stream.process(data.slice(i, i + feedSize));
+        }
+        assert.equal(
+          stream.end().totalProcessed,
+          count,
+          `count ${count} / chunk ${chunkSize} / feed ${feedSize}`,
+        );
+      }
+    });
+
+    it("does not re-emit matches when end() is called repeatedly", () => {
+      const data = generateDeterministicCandles(5000);
+      const seen = [];
+      const stream = createStream({
+        chunkSize: 1000,
+        onMatch: (r) => seen.push(`${r.index}|${r.pattern}`),
+      });
+      for (let i = 0; i < data.length; i += 1000) {
+        stream.process(data.slice(i, i + 1000));
+      }
+      stream.end();
+      const afterFirst = seen.length;
+      stream.end();
+      stream.end();
+
+      assert.equal(
+        seen.length,
+        afterFirst,
+        "repeated end() re-emitted matches",
+      );
+      assert.equal(
+        seen.length,
+        new Set(seen).size,
+        "duplicate matches emitted",
+      );
+    });
+
+    it("returns the same summary from every end() call", () => {
+      const data = generateDeterministicCandles(1200);
+      const stream = createStream({ chunkSize: 500 });
+      stream.process(data);
+      const first = stream.end();
+      const second = stream.end();
+      assert.deepEqual(second, first);
+      assert.equal(first.totalProcessed, 1200);
+    });
+
+    it("fires onProgress complete exactly once", () => {
+      const data = generateDeterministicCandles(3000);
+      let completeCount = 0;
+      const stream = createStream({
+        chunkSize: 500,
+        onProgress: (p) => {
+          if (p.complete) completeCount++;
+        },
+      });
+      stream.process(data);
+      stream.end();
+      stream.end();
+      assert.equal(completeCount, 1);
+    });
+
+    it("throws when process() is called after end()", () => {
+      const stream = createStream({ chunkSize: 500 });
+      stream.process(generateDeterministicCandles(600));
+      stream.end();
+      assert.throws(
+        () => stream.process(generateDeterministicCandles(10)),
+        /Cannot process\(\) after end\(\)/,
+      );
+    });
+
+    it("allows reuse after reset() following end()", () => {
+      const data = generateDeterministicCandles(2000);
+      const expected = batchKeys(data);
+
+      const stream = createStream({ chunkSize: 500 });
+      stream.process(generateDeterministicCandles(700));
+      stream.end();
+      stream.reset();
+
+      const seen = [];
+      const reused = createStream({
+        chunkSize: 500,
+        onMatch: (r) => seen.push(`${r.index}|${r.pattern}`),
+      });
+      reused.process(data);
+      const summary = reused.end();
+
+      assert.equal(summary.totalProcessed, 2000);
+      assert.deepEqual(seen.sort(), expected);
+
+      // the reset stream itself accepts input again
+      assert.doesNotThrow(() => stream.process(data.slice(0, 10)));
+    });
+
+    it("is idempotent for a stream that never received data", () => {
+      const stream = createStream({ chunkSize: 100 });
+      const first = stream.end();
+      const second = stream.end();
+      assert.equal(first.totalProcessed, 0);
+      assert.deepEqual(second, first);
+    });
+  });
+
   describe("equivalence with batch patternChain", () => {
     // Regression for #115: the carry-over overlap is sized for the longest
     // pattern (maxPatternSize), so patterns shorter than that were re-detected
