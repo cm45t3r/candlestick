@@ -607,6 +607,42 @@ describe("Streaming API", () => {
       assert.doesNotThrow(() => stream.process(data.slice(0, 10)));
     });
 
+    it("stays ended when onMatch throws during the final drain", () => {
+      // The buffer is drained before callbacks fire, so the stream must also be
+      // marked ended before them: otherwise a throwing onMatch would leave it
+      // drained but still accepting input, and a resumed process() would miss
+      // patterns spanning the discarded overlap.
+      const data = generateDeterministicCandles(3000);
+      let inEnd = false;
+      let armed = true;
+      const seen = [];
+      const stream = createStream({
+        chunkSize: 1000,
+        onMatch: (r) => {
+          if (inEnd && armed) {
+            armed = false;
+            throw new Error("onMatch failure");
+          }
+          seen.push(`${r.index}|${r.pattern}`);
+        },
+      });
+      for (let i = 0; i < data.length; i += 1000) {
+        stream.process(data.slice(i, i + 1000));
+      }
+      inEnd = true;
+      assert.throws(() => stream.end(), /onMatch failure/);
+
+      assert.throws(
+        () => stream.process(data.slice(0, 10)),
+        /Cannot process\(\) after end\(\)/,
+        "stream must be ended even though onMatch threw",
+      );
+
+      const afterThrow = seen.length;
+      stream.end();
+      assert.equal(seen.length, afterThrow, "re-emitted after a failed end()");
+    });
+
     it("is idempotent for a stream that never received data", () => {
       const stream = createStream({ chunkSize: 100 });
       const first = stream.end();

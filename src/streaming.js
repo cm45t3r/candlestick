@@ -153,45 +153,42 @@ function createStream(options = {}) {
     if (ended) {
       return endSummary;
     }
-    let finalMatches = 0;
 
-    // Process remaining buffer
-    if (buffer.length > 0) {
+    const pending = buffer;
+    let finalResults = [];
+    if (pending.length > 0) {
       const results = dropOverlapRepeats(
-        candlestick.patternChain(buffer, patternFns, { strict }),
+        candlestick.patternChain(pending, patternFns, { strict }),
         globalOffset === 0,
       );
-      const finalResults = enrichMetadata
+      finalResults = enrichMetadata
         ? candlestick.metadata.enrichWithMetadata(results)
         : results;
-
-      const endOffset = globalOffset;
-      totalProcessed += buffer.length;
-      finalMatches = finalResults.length;
-
-      // Drain before the callbacks so a throwing onMatch cannot leave the
-      // buffer behind for a second end() to re-emit.
-      buffer = [];
-
-      finalResults.forEach((result) => {
-        result.index += endOffset;
-        if (onMatch) {
-          onMatch(result);
-        }
-      });
+      totalProcessed += pending.length;
     }
+    const endOffset = globalOffset;
 
+    // Finalize state before any callback runs. A throwing onMatch must not
+    // leave the stream drained but still accepting input: resuming without the
+    // carry-over candles would silently miss patterns spanning that boundary.
+    buffer = [];
     ended = true;
     endSummary = {
       totalProcessed,
       patternsDetected: patternFns.length,
     };
 
-    // Final progress
+    finalResults.forEach((result) => {
+      result.index += endOffset;
+      if (onMatch) {
+        onMatch(result);
+      }
+    });
+
     if (onProgress) {
       onProgress({
         processed: totalProcessed,
-        matchesFound: finalMatches,
+        matchesFound: finalResults.length,
         complete: true,
       });
     }
