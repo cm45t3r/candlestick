@@ -146,8 +146,8 @@ function createStream(options = {}) {
    * Process remaining data and finalize. Idempotent: the first call drains the
    * buffer and emits its matches, and later calls return the same summary
    * without re-emitting or firing onProgress again.
-   * @return {Object} Summary statistics; `totalProcessed` is the number of
-   *   distinct candles consumed, excluding the overlap re-scanned per chunk
+   * @return {Object} Summary statistics; `totalProcessed` equals the total
+   *   candles passed to process(), counting the per-chunk overlap only once
    */
   function end() {
     if (ended) {
@@ -178,19 +178,24 @@ function createStream(options = {}) {
       patternsDetected: patternFns.length,
     };
 
-    finalResults.forEach((result) => {
-      result.index += endOffset;
-      if (onMatch) {
-        onMatch(result);
-      }
-    });
-
-    if (onProgress) {
-      onProgress({
-        processed: totalProcessed,
-        matchesFound: finalResults.length,
-        complete: true,
+    // The completion signal must survive a throwing onMatch: consumers close
+    // their sink on it, and the memoized early-return above means a retried
+    // end() would never deliver it. Mirrors the guarantee added for #83.
+    try {
+      finalResults.forEach((result) => {
+        result.index += endOffset;
+        if (onMatch) {
+          onMatch(result);
+        }
       });
+    } finally {
+      if (onProgress) {
+        onProgress({
+          processed: totalProcessed,
+          matchesFound: finalResults.length,
+          complete: true,
+        });
+      }
     }
 
     // Hand back a copy: the memoized summary must survive a caller mutating it.

@@ -596,24 +596,59 @@ describe("Streaming API", () => {
       const data = generateDeterministicCandles(2000);
       const expected = batchKeys(data);
 
-      const stream = createStream({ chunkSize: 500 });
-      stream.process(generateDeterministicCandles(700));
-      stream.end();
-      stream.reset();
-
       const seen = [];
-      const reused = createStream({
+      const stream = createStream({
         chunkSize: 500,
         onMatch: (r) => seen.push(`${r.index}|${r.pattern}`),
       });
-      reused.process(data);
-      const summary = reused.end();
 
-      assert.equal(summary.totalProcessed, 2000);
-      assert.deepEqual(seen.sort(), expected);
+      // a complete first run, then reset and drive the SAME stream again
+      stream.process(generateDeterministicCandles(700));
+      stream.end();
+      stream.reset();
+      seen.length = 0;
 
-      // the reset stream itself accepts input again
-      assert.doesNotThrow(() => stream.process(data.slice(0, 10)));
+      stream.process(data);
+      const summary = stream.end();
+
+      assert.equal(summary.totalProcessed, 2000, "reset() left stale counters");
+      assert.deepEqual(seen.sort(), expected, "reset() left stale offsets");
+      assert.equal(seen.length, new Set(seen).size);
+    });
+
+    it("adds the completion signal exactly once when onMatch throws in end()", () => {
+      // Regression: committing `ended` before the emit loop must not swallow
+      // onProgress({ complete: true }) — consumers close their sink on it and
+      // the memoized end() would never deliver it on a retry. See #83.
+      const data = generateDeterministicCandles(3000);
+      let inEnd = false;
+      let armed = true;
+      let completeCount = 0;
+      const stream = createStream({
+        chunkSize: 1000,
+        onMatch: () => {
+          if (inEnd && armed) {
+            armed = false;
+            throw new Error("sink failure");
+          }
+        },
+        onProgress: (p) => {
+          if (p.complete) completeCount++;
+        },
+      });
+      for (let i = 0; i < data.length; i += 1000) {
+        stream.process(data.slice(i, i + 1000));
+      }
+      inEnd = true;
+
+      assert.throws(() => stream.end(), /sink failure/);
+      assert.equal(
+        completeCount,
+        1,
+        "completion signal lost on a failed end()",
+      );
+      stream.end();
+      assert.equal(completeCount, 1, "completion signal repeated on retry");
     });
 
     it("stays ended when onMatch throws during the final drain", () => {

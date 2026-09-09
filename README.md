@@ -424,8 +424,9 @@ const results = streaming.processLargeDataset(largeData, {
 idempotent — later calls return the same summary without re-emitting matches or
 firing `onProgress` again — and `process()` throws once a stream has ended, since
 resuming would skip the carry-over candles and miss patterns spanning that
-boundary. Call `reset()` to reuse a stream. The `totalProcessed` in the summary
-counts distinct candles consumed, not the overlap re-scanned at each boundary.
+boundary. Call `reset()` to reuse a stream. The `totalProcessed` in the summary equals the
+total number of candles you passed to `process()` — the overlap re-scanned at
+each chunk boundary is counted once, not twice.
 
 **Benefits:** Reduces memory usage by ~70% for datasets > 100K candles
 
