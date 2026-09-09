@@ -155,47 +155,65 @@ function createStream(options = {}) {
     }
 
     const pending = buffer;
-    let finalResults = [];
-    if (pending.length > 0) {
-      const results = dropOverlapRepeats(
-        candlestick.patternChain(pending, patternFns, { strict }),
-        globalOffset === 0,
-      );
-      finalResults = enrichMetadata
-        ? candlestick.metadata.enrichWithMetadata(results)
-        : results;
-      totalProcessed += pending.length;
-    }
     const endOffset = globalOffset;
 
-    // Finalize state before any callback runs. A throwing onMatch must not
-    // leave the stream drained but still accepting input: resuming without the
-    // carry-over candles would silently miss patterns spanning that boundary.
+    // Finalize the stream before anything that can fail: detection (strict
+    // validation throws here), enrichment and the callbacks all run afterwards.
+    // Leaving the stream un-ended on any of those would keep process() open on
+    // a drained buffer — resuming without the carry-over candles would silently
+    // miss patterns spanning that boundary — and would make every retried end()
+    // rethrow, so the stream could never be finalized at all.
     buffer = [];
     ended = true;
+    totalProcessed += pending.length;
     endSummary = {
       totalProcessed,
       patternsDetected: patternFns.length,
     };
 
-    // The completion signal must survive a throwing onMatch: consumers close
-    // their sink on it, and the memoized early-return above means a retried
-    // end() would never deliver it. Mirrors the guarantee added for #83.
+    let finalResults = [];
+    let primaryError;
     try {
+      if (pending.length > 0) {
+        const results = dropOverlapRepeats(
+          candlestick.patternChain(pending, patternFns, { strict }),
+          endOffset === 0,
+        );
+        finalResults = enrichMetadata
+          ? candlestick.metadata.enrichWithMetadata(results)
+          : results;
+      }
+
       finalResults.forEach((result) => {
         result.index += endOffset;
         if (onMatch) {
           onMatch(result);
         }
       });
-    } finally {
-      if (onProgress) {
+    } catch (err) {
+      primaryError = err;
+    }
+
+    // The completion signal must survive a failure above: consumers close their
+    // sink on it, and the memoized early-return means a retried end() would
+    // never deliver it. Mirrors the guarantee added for #83. A failing
+    // onProgress must not mask the original error either.
+    if (onProgress) {
+      try {
         onProgress({
           processed: totalProcessed,
           matchesFound: finalResults.length,
           complete: true,
         });
+      } catch (err) {
+        if (primaryError === undefined) {
+          primaryError = err;
+        }
       }
+    }
+
+    if (primaryError !== undefined) {
+      throw primaryError;
     }
 
     // Hand back a copy: the memoized summary must survive a caller mutating it.

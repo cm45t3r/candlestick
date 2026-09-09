@@ -687,6 +687,72 @@ describe("Streaming API", () => {
       assert.equal(seen.length, afterThrow, "re-emitted after a failed end()");
     });
 
+    it("finalizes the stream when detection throws in end()", () => {
+      // strict validation throws inside patternChain, before any callback. The
+      // stream must still end: otherwise process() stays open on a drained
+      // buffer and every retried end() rethrows, so it could never finalize.
+      const invalid = Array.from({ length: 20 }, () => ({
+        open: 100,
+        close: 95,
+      }));
+      let completeCount = 0;
+      const stream = createStream({
+        chunkSize: 1000,
+        strict: true,
+        onProgress: (p) => {
+          if (p.complete) completeCount++;
+        },
+      });
+      stream.process(invalid);
+
+      assert.throws(() => stream.end(), /NaN geometry/);
+      assert.equal(completeCount, 1, "completion signal lost");
+      assert.throws(
+        () => stream.process(invalid),
+        /Cannot process\(\) after end\(\)/,
+        "stream left open after a failed detection",
+      );
+      assert.deepEqual(stream.end(), {
+        totalProcessed: 20,
+        patternsDetected: allPatterns.length,
+      });
+      assert.equal(completeCount, 1, "completion signal repeated");
+    });
+
+    it("does not let a failing onProgress mask the onMatch error", () => {
+      const data = generateDeterministicCandles(2000);
+      let inEnd = false;
+      let armed = true;
+      const stream = createStream({
+        chunkSize: 500,
+        onMatch: () => {
+          if (inEnd && armed) {
+            armed = false;
+            throw new Error("sink failure");
+          }
+        },
+        onProgress: (p) => {
+          if (p.complete) throw new Error("progress failure");
+        },
+      });
+      for (let i = 0; i < data.length; i += 500) {
+        stream.process(data.slice(i, i + 500));
+      }
+      inEnd = true;
+      assert.throws(() => stream.end(), /sink failure/);
+    });
+
+    it("propagates an onProgress failure when nothing else failed", () => {
+      const stream = createStream({
+        chunkSize: 1000,
+        onProgress: (p) => {
+          if (p.complete) throw new Error("progress failure");
+        },
+      });
+      stream.process(generateDeterministicCandles(50));
+      assert.throws(() => stream.end(), /progress failure/);
+    });
+
     it("is idempotent for a stream that never received data", () => {
       const stream = createStream({ chunkSize: 100 });
       const first = stream.end();
