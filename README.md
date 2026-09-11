@@ -22,7 +22,7 @@ A modern, modular JavaScript library for [candlestick pattern](https://en.wikipe
 - ✅ Comprehensive test suite with high coverage (run `npm test` and `npm run coverage`)
 - 🪶 Zero runtime dependencies
 
-> **Requires Node.js >= 20**
+> **Requires Node.js >= 20.** Tested in CI on Node 20.x, 22.x and 24.x across Linux, Windows and macOS.
 
 ---
 
