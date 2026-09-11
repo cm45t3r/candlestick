@@ -196,31 +196,59 @@ function outputTable(results) {
     return;
   }
 
-  console.log(
-    "\n┌─────────┬─────────────────────┬────────────┬────────────┬────────────┐",
+  const columns = [
+    { header: "Index", min: 7, value: (r) => String(r.index) },
+    { header: "Pattern", min: 19, value: (r) => String(r.pattern) },
+    {
+      header: "Type",
+      min: 10,
+      value: (r) => String((r.metadata || {}).type || "N/A"),
+    },
+    {
+      header: "Confidence",
+      min: 10,
+      value: (r) => {
+        const { confidence } = r.metadata || {};
+        return confidence ? confidence.toFixed(2) : "N/A";
+      },
+    },
+    {
+      header: "Strength",
+      min: 10,
+      value: (r) => String((r.metadata || {}).strength || "N/A"),
+    },
+  ];
+
+  // Widen each column to its longest cell so long pattern names cannot
+  // overflow and break the box borders.
+  const widths = columns.map((col) =>
+    results.reduce(
+      (width, r) => Math.max(width, col.value(r).length),
+      Math.max(col.min, col.header.length),
+    ),
   );
-  console.log(
-    "│  Index  │       Pattern       │    Type    │ Confidence │  Strength  │",
-  );
-  console.log(
-    "├─────────┼─────────────────────┼────────────┼────────────┼────────────┤",
-  );
+
+  const rule = (left, mid, right) =>
+    left + widths.map((w) => "─".repeat(w + 2)).join(mid) + right;
+
+  const center = (text, width) => {
+    const pad = width - text.length;
+    return (
+      " ".repeat(Math.floor(pad / 2)) + text + " ".repeat(Math.ceil(pad / 2))
+    );
+  };
+
+  const row = (cells) => `│ ${cells.join(" │ ")} │`;
+
+  console.log("\n" + rule("┌", "┬", "┐"));
+  console.log(row(columns.map((col, i) => center(col.header, widths[i]))));
+  console.log(rule("├", "┼", "┤"));
 
   results.forEach((r) => {
-    const meta = r.metadata || {};
-    const index = String(r.index).padEnd(7);
-    const pattern = String(r.pattern).padEnd(19);
-    const type = String(meta.type || "N/A").padEnd(10);
-    const conf = String(
-      meta.confidence ? meta.confidence.toFixed(2) : "N/A",
-    ).padEnd(10);
-    const strength = String(meta.strength || "N/A").padEnd(10);
-    console.log(`│ ${index} │ ${pattern} │ ${type} │ ${conf} │ ${strength} │`);
+    console.log(row(columns.map((col, i) => col.value(r).padEnd(widths[i]))));
   });
 
-  console.log(
-    "└─────────┴─────────────────────┴────────────┴────────────┴────────────┘",
-  );
+  console.log(rule("└", "┴", "┘"));
   console.log(`\nTotal patterns detected: ${results.length}\n`);
 }
 
