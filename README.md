@@ -541,15 +541,20 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 ## Performance
 
 <!-- BENCH:START -->
-
 | Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |
-| ------------ | ------------------ | ------------------------ | ----------- |
-| 1,000        | 7.0                | 142K                     | 1.7         |
-| 10,000       | 29.9               | 334K                     | 16.6        |
-| 100,000      | 294.7              | 339K                     | 114.8       |
-| 1,000,000    | 2288.8             | 437K                     | 667.5       |
-
+|---|---|---|---|
+| 1,000 | 2.5 | 399K | <0.1 |
+| 10,000 | 23.5 | 426K | 3.5 |
+| 100,000 | 244.7 | 409K | 62.4 |
+| 1,000,000 | 2328.6 | 429K | 997.6 |
 <!-- BENCH:END -->
+
+Measured on 2026-09-11 with `npm run bench:readme`, Node v24.21.0, Intel Core
+i7-9750H @ 2.60GHz, 16 GB RAM, macOS 26.6. Figures are single-run and
+machine-specific — treat them as an order of magnitude, not a guarantee.
+Regenerate with `npm run bench:readme`, and update this line when you do. Memory
+on the smallest dataset is below the resolution of `process.memoryUsage()`,
+hence `<0.1`.
 
 When calling multiple pattern functions on the same dataset, use `precomputeCandleProps` to avoid redundant work:
 
