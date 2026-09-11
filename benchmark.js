@@ -215,31 +215,68 @@ console.log("=".repeat(60));
 
 const { createStream } = require("./src/streaming.js");
 
-function runStreamBenchmark(label, totalCandles, chunkSize) {
+// Two independent axes, previously conflated (#118):
+//   feedSize  - how many candles are handed to process() per call
+//   chunkSize - the stream's internal buffer threshold
+// Varying the first says nothing about the second, so each row states both.
+const STREAM_PATTERNS = ["hammer", "doji"];
+const streamPatternFns = allPatterns.filter((p) =>
+  STREAM_PATTERNS.includes(p.name),
+);
+// chunkSize must be at least the longest active pattern (#117), so the sweep
+// is clamped rather than silently throwing partway through a run.
+const MIN_CHUNK_SIZE = Math.max(...streamPatternFns.map((p) => p.paramCount));
+
+function runStreamBenchmark(totalCandles, feedSize, chunkSize) {
+  if (chunkSize < MIN_CHUNK_SIZE) {
+    throw new Error(
+      `benchmark misconfigured: chunkSize ${chunkSize} is below the minimum ` +
+        `${MIN_CHUNK_SIZE} for patterns ${STREAM_PATTERNS.join(", ")}`,
+    );
+  }
+
   const data = generateCandles(totalCandles);
   const chunks = [];
-  for (let i = 0; i < data.length; i += chunkSize) {
-    chunks.push(data.slice(i, i + chunkSize));
+  for (let i = 0; i < data.length; i += feedSize) {
+    chunks.push(data.slice(i, i + feedSize));
   }
 
   const start = performance.now();
-  const stream = createStream({
-    patterns: ["hammer", "doji"],
-    chunkSize: 1000,
-  });
+  const stream = createStream({ patterns: STREAM_PATTERNS, chunkSize });
   for (const chunk of chunks) stream.process(chunk);
-  stream.end();
+  const summary = stream.end();
   const elapsed = performance.now() - start;
 
+  // Cheap correctness guard: a run that silently dropped candles is not a
+  // measurement worth reporting.
+  if (summary.totalProcessed !== totalCandles) {
+    throw new Error(
+      `benchmark processed ${summary.totalProcessed} of ${totalCandles} candles ` +
+        `(feed=${feedSize}, chunkSize=${chunkSize})`,
+    );
+  }
+
   console.log(
-    `  ${label}: ${totalCandles.toLocaleString()} candles, chunks of ${chunkSize} → ${elapsed.toFixed(2)} ms (${((totalCandles / elapsed) * 1000).toFixed(0)} candles/sec)`,
+    `  ${totalCandles.toLocaleString().padStart(9)} candles | feed ${String(feedSize).padStart(5)} | chunkSize ${String(chunkSize).padStart(5)} → ${elapsed.toFixed(2).padStart(8)} ms (${((totalCandles / elapsed) * 1000).toFixed(0).padStart(9)} candles/sec)`,
   );
 }
 
-console.log("\nBatch mode (large chunks):");
-runStreamBenchmark("10k  / chunk=500 ", 10_000, 500);
-runStreamBenchmark("100k / chunk=1000", 100_000, 1000);
+console.log(
+  `\nMeasuring ${streamPatternFns.length} of ${allPatterns.length} patterns ` +
+    `(${STREAM_PATTERNS.join(", ")} — both single-candle), so these figures are` +
+    `\nnot representative of the streaming API over the full pattern set.`,
+);
 
-console.log("\nTick-by-tick mode (chunk=1):");
-runStreamBenchmark("1k ticks ", 1_000, 1);
-runStreamBenchmark("10k ticks", 10_000, 1);
+console.log(
+  "\nFeed size (candles per process() call), chunkSize fixed at 1000:",
+);
+runStreamBenchmark(100_000, 1, 1000);
+runStreamBenchmark(100_000, 500, 1000);
+runStreamBenchmark(100_000, 1000, 1000);
+runStreamBenchmark(100_000, 10_000, 1000);
+
+console.log("\nchunkSize (internal buffer threshold), feed fixed at 1000:");
+runStreamBenchmark(100_000, 1000, MIN_CHUNK_SIZE);
+runStreamBenchmark(100_000, 1000, 100);
+runStreamBenchmark(100_000, 1000, 1000);
+runStreamBenchmark(100_000, 1000, 10_000);
