@@ -541,12 +541,14 @@ See [`examples/README.md`](./examples/README.md) for more details and instructio
 ## Performance
 
 <!-- BENCH:START -->
+
 | Dataset Size | Pattern Chain (ms) | Throughput (candles/sec) | Memory (MB) |
-|---|---|---|---|
-| 1,000 | 2.5 | 399K | <0.1 |
-| 10,000 | 23.5 | 426K | 3.5 |
-| 100,000 | 244.7 | 409K | 62.4 |
-| 1,000,000 | 2328.6 | 429K | 997.6 |
+| ------------ | ------------------ | ------------------------ | ----------- |
+| 1,000        | 2.7                | 370K                     | 0.6         |
+| 10,000       | 21.1               | 474K                     | 10.4        |
+| 100,000      | 227.1              | 440K                     | 47.7        |
+| 1,000,000    | 2436.9             | 410K                     | 891.8       |
+
 <!-- BENCH:END -->
 
 Measured on 2026-09-11 with `npm run bench:readme`, Node v24.21.0, Intel Core

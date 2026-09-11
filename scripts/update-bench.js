@@ -53,6 +53,23 @@ function formatMemory(mb) {
   return mb < 0.1 ? "<0.1" : mb.toFixed(1);
 }
 
+function writeFormatted(filePath, contents) {
+  const prettier = require("prettier");
+  const config = prettier.resolveConfig.sync
+    ? prettier.resolveConfig.sync(filePath)
+    : null;
+  const formatted = prettier.format(contents, {
+    ...(config || {}),
+    filepath: filePath,
+  });
+  // prettier v3 returns a promise; v2 returns a string.
+  if (typeof formatted.then === "function") {
+    return formatted.then((out) => fs.writeFileSync(filePath, out));
+  }
+  fs.writeFileSync(filePath, formatted);
+  return undefined;
+}
+
 function updateReadme(results) {
   const readme = fs.readFileSync(readmePath, "utf8");
 
@@ -84,7 +101,12 @@ function updateReadme(results) {
     readme.slice(0, startIdx) +
     newContent +
     readme.slice(endIdx + endMarker.length);
-  fs.writeFileSync(readmePath, updated);
+
+  // The rows above are emitted unpadded, which is valid Markdown but not what
+  // prettier produces, so writing them raw leaves `npm run format:check`
+  // failing until someone notices. Format the result the same way the repo
+  // does instead of hand-rolling prettier's column padding.
+  writeFormatted(readmePath, updated);
 
   console.log("\nREADME.md performance table updated:");
   console.log(table);
