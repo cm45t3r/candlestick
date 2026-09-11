@@ -73,6 +73,74 @@ describe("CLI Output Functions", () => {
     assert.ok(longRow.trim().endsWith("│"), "long row must close its border");
   });
 
+  it("populates the metadata columns for table and csv without --metadata", () => {
+    const cli = require("../cli/index.js");
+
+    const testData = [
+      { open: 50, high: 51, low: 40, close: 41 },
+      { open: 38, high: 48, low: 37, close: 47 },
+    ];
+    const baseArgs = {
+      patterns: null,
+      confidence: 0,
+      type: null,
+      direction: null,
+      validate: false,
+      metadata: false,
+    };
+
+    for (const output of ["table", "csv"]) {
+      const results = cli.processData(testData, { ...baseArgs, output });
+      assert.ok(results.length > 0, `no patterns detected for ${output}`);
+      for (const r of results) {
+        assert.ok(r.metadata, `${output}: missing metadata on ${r.pattern}`);
+        assert.ok(r.metadata.type, `${output}: missing type`);
+        assert.equal(typeof r.metadata.confidence, "number");
+      }
+    }
+
+    // The CSV header must keep its six fixed columns, in order.
+    logs = [];
+    cli.outputCSV(cli.processData(testData, { ...baseArgs, output: "csv" }));
+    assert.equal(
+      logs[0],
+      "index,pattern,type,direction,confidence,strength",
+      "CSV column contract changed",
+    );
+    assert.ok(
+      logs.slice(1).every((line) => line.split(",").length === 6),
+      "every CSV row must have six fields",
+    );
+  });
+
+  it("leaves json output untouched unless --metadata is passed", () => {
+    const cli = require("../cli/index.js");
+
+    const testData = [
+      { open: 50, high: 51, low: 40, close: 41 },
+      { open: 38, high: 48, low: 37, close: 47 },
+    ];
+    const args = {
+      patterns: null,
+      confidence: 0,
+      type: null,
+      direction: null,
+      validate: false,
+      metadata: false,
+      output: "json",
+    };
+
+    const plain = cli.processData(testData, args);
+    assert.ok(plain.length > 0);
+    assert.ok(
+      plain.every((r) => r.metadata === undefined),
+      "json must not gain metadata implicitly",
+    );
+
+    const enriched = cli.processData(testData, { ...args, metadata: true });
+    assert.ok(enriched.every((r) => r.metadata));
+  });
+
   it("outputs results in CSV format", () => {
     const cli = require("../cli/index.js");
 

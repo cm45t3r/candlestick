@@ -503,7 +503,7 @@ Detect patterns from command line:
 npm install -g candlestick
 
 # Detect patterns in JSON file
-candlestick -i data.json --output table --metadata
+candlestick -i data.json --output table
 
 # Filter by confidence
 candlestick -i data.csv --confidence 0.85 --output csv

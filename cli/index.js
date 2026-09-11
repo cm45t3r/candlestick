@@ -6,6 +6,9 @@ const path = require("path");
 const candlestick = require("../index.js");
 
 const { version } = require("../package.json");
+// Output formats with fixed metadata columns, which therefore always enrich.
+const TABULAR_FORMATS = new Set(["table", "csv"]);
+
 const BANNER_TITLE = `Candlestick Pattern Detection CLI v${version}`;
 const BANNER_WIDTH = 62;
 const BANNER_PAD = Math.max(0, BANNER_WIDTH - BANNER_TITLE.length);
@@ -27,7 +30,8 @@ Options:
   -t, --type <type>        Filter by type: reversal, continuation, neutral
   -d, --direction <dir>    Filter by direction: bullish, bearish, neutral
   --validate               Validate OHLC data before processing
-  --metadata               Include pattern metadata in output
+  --metadata               Include pattern metadata in JSON output
+                           (table and csv always include it)
   --help, -h               Show this help message
 
 Examples:
@@ -163,8 +167,18 @@ function processData(data, args) {
   // Detect patterns
   let results = candlestick.patternChain(data, patterns);
 
-  // Enrich with metadata
-  if (args.metadata || args.confidence > 0 || args.type || args.direction) {
+  // Enrich with metadata. The table and CSV formats always print the type,
+  // direction, confidence and strength columns, so they always need it —
+  // otherwise those columns render empty and read as "could not classify".
+  // Enrichment is a lookup against PATTERN_METADATA (~2.5% of detection time).
+  const needsMetadata =
+    args.metadata ||
+    args.confidence > 0 ||
+    args.type ||
+    args.direction ||
+    TABULAR_FORMATS.has(args.output);
+
+  if (needsMetadata) {
     results = candlestick.metadata.enrichWithMetadata(results);
   }
 

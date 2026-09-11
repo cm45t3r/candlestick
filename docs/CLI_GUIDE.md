@@ -48,8 +48,13 @@ cat data.json | candlestick --output table
 | `--type <type>`      | `-t`  | Filter by type: reversal, continuation, neutral | none    |
 | `--direction <dir>`  | `-d`  | Filter by direction: bullish, bearish, neutral  | none    |
 | `--validate`         |       | Validate OHLC data before processing            | false   |
-| `--metadata`         |       | Include pattern metadata in output              | false   |
+| `--metadata`         |       | Include pattern metadata in JSON output         | false   |
 | `--help`             | `-h`  | Show help message                               |         |
+
+`--metadata` only affects `--output json`, where it adds a nested `metadata`
+object to each result. The `table` and `csv` formats have fixed type,
+direction, confidence and strength columns, so they always include metadata
+whether or not the flag is passed.
 
 ## Input Formats
 
@@ -100,7 +105,7 @@ candlestick -i data.json --output json --metadata
 ### Table Output
 
 ```bash
-candlestick -i data.json --output table --metadata
+candlestick -i data.json --output table
 ```
 
 ```
@@ -115,7 +120,7 @@ candlestick -i data.json --output table --metadata
 ### CSV Output
 
 ```bash
-candlestick -i data.json --output csv --metadata
+candlestick -i data.json --output csv
 ```
 
 ```csv
