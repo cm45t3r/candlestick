@@ -1,5 +1,46 @@
 # Changelog
 
+## [v2.1.0](https://github.com/cm45t3r/candlestick/tree/v2.1.0) (2026-09-11)
+
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.0.2...v2.1.0)
+
+**Implemented enhancements:**
+
+- Chore: extract shared method/external-series/callback resolution helper for \#95 and \#96 [\#97](https://github.com/cm45t3r/candlestick/issues/97)
+- Feature: configurable, pluggable volatility-based gap significance threshold for kicker\(\) \(ATR/stddev/percentile/external\) [\#96](https://github.com/cm45t3r/candlestick/issues/96)
+- feature: trend-context-aware pattern confidence \(and deprecate static confidence field\) [\#95](https://github.com/cm45t3r/candlestick/issues/95)
+
+**Fixed bugs:**
+
+- streaming: chunkSize below maxPatternSize hangs or silently drops candles [\#121](https://github.com/cm45t3r/candlestick/issues/121)
+- streaming: end\(\) is not idempotent and totalProcessed double-counts overlap candles [\#119](https://github.com/cm45t3r/candlestick/issues/119)
+- benchmark: runStreamBenchmark ignores its chunkSize parameter, labels misreport the measurement [\#118](https://github.com/cm45t3r/candlestick/issues/118)
+- streaming: chunkSize below maxPatternSize hangs or silently corrupts output [\#117](https://github.com/cm45t3r/candlestick/issues/117)
+- streaming: duplicate matches emitted at chunk boundaries for patterns shorter than maxPatternSize [\#115](https://github.com/cm45t3r/candlestick/issues/115)
+
+**Merged pull requests:**
+
+- ci: publish on tag push instead of release creation [\#127](https://github.com/cm45t3r/candlestick/pull/127) ([cm45t3r](https://github.com/cm45t3r))
+- chore\(release\): 2.1.0 [\#126](https://github.com/cm45t3r/candlestick/pull/126) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(benchmark\): separate feed size from chunkSize in the streaming benchmark [\#125](https://github.com/cm45t3r/candlestick/pull/125) ([cm45t3r](https://github.com/cm45t3r))
+- ci: test on Node 24.x and document the supported matrix [\#124](https://github.com/cm45t3r/candlestick/pull/124) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(streaming\): reject chunkSize below the longest active pattern [\#122](https://github.com/cm45t3r/candlestick/pull/122) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(streaming\): make end\(\) idempotent and count totalProcessed exactly [\#120](https://github.com/cm45t3r/candlestick/pull/120) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(streaming\): drop duplicate matches at chunk boundaries [\#116](https://github.com/cm45t3r/candlestick/pull/116) ([cm45t3r](https://github.com/cm45t3r))
+- chore\(deps\): bump brace-expansion [\#114](https://github.com/cm45t3r/candlestick/pull/114) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump @eslint/eslintrc from 3.3.6 to 3.3.7 [\#113](https://github.com/cm45t3r/candlestick/pull/113) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump @humanfs/node from 0.16.6 to 0.16.8 [\#112](https://github.com/cm45t3r/candlestick/pull/112) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump eslint from 10.7.0 to 10.9.1 [\#111](https://github.com/cm45t3r/candlestick/pull/111) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump js-yaml from 4.3.0 to 4.3.1 [\#109](https://github.com/cm45t3r/candlestick/pull/109) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(actions\): bump actions/stale from 10 to 11 [\#108](https://github.com/cm45t3r/candlestick/pull/108) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump prettier from 3.9.5 to 3.9.6 [\#107](https://github.com/cm45t3r/candlestick/pull/107) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump @eslint/eslintrc from 3.3.5 to 3.3.6 [\#103](https://github.com/cm45t3r/candlestick/pull/103) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump prettier from 3.9.4 to 3.9.5 [\#102](https://github.com/cm45t3r/candlestick/pull/102) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump eslint from 10.6.0 to 10.7.0 [\#101](https://github.com/cm45t3r/candlestick/pull/101) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump fast-check from 4.8.0 to 4.9.0 [\#100](https://github.com/cm45t3r/candlestick/pull/100) ([dependabot[bot]](https://github.com/apps/dependabot))
+- feat\(patternChain\): trend-context-aware confidence, deprecate static confidence [\#99](https://github.com/cm45t3r/candlestick/pull/99) ([cm45t3r](https://github.com/cm45t3r))
+- feat\(kicker\): configurable, pluggable volatility-based gap significance threshold [\#98](https://github.com/cm45t3r/candlestick/pull/98) ([cm45t3r](https://github.com/cm45t3r))
+
 ## [v2.0.2](https://github.com/cm45t3r/candlestick/tree/v2.0.2) (2026-07-10)
 
 [Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.0.1...v2.0.2)
