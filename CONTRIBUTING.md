@@ -24,8 +24,16 @@ suite on **20.x, 22.x and 24.x** across Linux, Windows and macOS, so a change
 must pass on all three before it can merge. Develop on a version inside that
 range; anything that only works on a newer runtime will fail the 20.x jobs.
 
-`.nvmrc` pins **20**, the floor, so `nvm use` puts you on the oldest supported
-runtime — the one most likely to catch an accidental dependency on a newer API.
+`.nvmrc` pins **20.19**, the floor, so `nvm use` puts you on the oldest
+supported runtime — the one most likely to catch an accidental dependency on a
+newer API.
+
+The patch version in `.nvmrc` is deliberate: `c8`, the coverage tool, declares
+`engines: ^20.19.0 || ^22.12.0 || >=23`, so an older 20.x installs it with an
+`EBADENGINE` warning and `npm run coverage` may misbehave. If you see that
+warning, update your local Node 20 (`nvm install 20.19`). This affects
+contributors only — `c8` is a devDependency and never reaches anyone who
+installs the package, whose requirement stays `>=20`.
 
 ## Running Tests
 
