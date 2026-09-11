@@ -17,6 +17,13 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
 - Ensure TypeScript definitions are updated for new functions (types/index.d.ts).
 - Write tests for all new features (target 99%+ line coverage and 100% function coverage).
 
+## Supported Node.js Versions
+
+The package requires Node.js >= 20 (`package.json#engines`). CI runs the full
+suite on **20.x, 22.x and 24.x** across Linux, Windows and macOS, so a change
+must pass on all three before it can merge. Develop on a version inside that
+range; anything that only works on a newer runtime will fail the 20.x jobs.
+
 ## Running Tests
 
 - Run all tests with:
