@@ -14,6 +14,18 @@ describe("threeWhiteSoldiers", () => {
     assert.equal(isThreeWhiteSoldiers(first, second, third), true);
   });
 
+  it("isThreeWhiteSoldiers: rejects when the first candle's upper shadow exceeds 30% of its body", () => {
+    // Body 10, wick 4 (104 - 100) — over the 30% limit, so the guard rejects it.
+    const first = { open: 90, high: 104, low: 90, close: 100 };
+    const second = { open: 95, high: 105, low: 95, close: 105 };
+    const third = { open: 100, high: 110, low: 100, close: 110 };
+    assert.equal(isThreeWhiteSoldiers(first, second, third), false);
+
+    // Same triple with no wick on the first candle: the guard is what rejected it.
+    const noWick = { ...first, high: 100 };
+    assert.equal(isThreeWhiteSoldiers(noWick, second, third), true);
+  });
+
   it("isThreeWhiteSoldiers: rejects when any candle is bearish", () => {
     const first = { open: 10, high: 20, low: 9, close: 19 };
     const second = { open: 24, high: 25, low: 14, close: 15 }; // Bearish

@@ -14,6 +14,18 @@ describe("threeBlackCrows", () => {
     assert.equal(isThreeBlackCrows(first, second, third), true);
   });
 
+  it("isThreeBlackCrows: rejects when the first candle's lower shadow exceeds 30% of its body", () => {
+    // Body 10, tail 4 (90 - 86) — over the 30% limit, so the guard rejects it.
+    const first = { open: 100, high: 100, low: 86, close: 90 };
+    const second = { open: 95, high: 95, low: 85, close: 85 };
+    const third = { open: 90, high: 90, low: 80, close: 80 };
+    assert.equal(isThreeBlackCrows(first, second, third), false);
+
+    // Same triple with no tail on the first candle: the guard is what rejected it.
+    const noTail = { ...first, low: 90 };
+    assert.equal(isThreeBlackCrows(noTail, second, third), true);
+  });
+
   it("isThreeBlackCrows: rejects when any candle is bullish", () => {
     const first = { open: 30, high: 31, low: 20, close: 21 };
     const second = { open: 17, high: 27, low: 16, close: 26 }; // Bullish
