@@ -17,7 +17,7 @@ A modern, modular JavaScript library for [candlestick pattern](https://en.wikipe
 
 - 📊 18 candlestick patterns, 29 variants across single, two, and three-candle formations
 - 📦 ESM & CommonJS dual export with full TypeScript definitions
-- 🌊 Streaming API for massive datasets (~70% memory reduction)
+- 🌊 Streaming API for massive datasets (resident memory bounded by `chunkSize`, not dataset size)
 - 🔌 Plugin system for custom patterns, data validation, pattern metadata
 - ✅ Comprehensive test suite with high coverage (run `npm test` and `npm run coverage`)
 - 🪶 Zero runtime dependencies
@@ -435,7 +435,23 @@ at least as large as the longest active pattern (3 candles for the full built-in
 set, less for a narrower `patterns` subset); smaller values throw, since the
 chunk overlap would no longer advance.
 
-**Benefits:** Reduces memory usage by ~70% for datasets > 100K candles
+**Benefits:** Resident memory stays bounded by `chunkSize` instead of scaling
+with the dataset. Measured on 200,000 candles with five patterns: 41.9 MB live
+heap for `patternChain` against 0.2 MB for the stream — the same 61,866 matches
+in both cases.
+
+Two conditions are doing the work, and both are easy to lose:
+
+- **Consume matches in `onMatch` rather than collecting them.** Pushing every
+  match into an array puts the result set back in memory, and at high match
+  counts it dominates whatever the buffering saved.
+- **Feed the stream incrementally.** Passing `process()` slices of an array you
+  already built keeps that array resident, so there is nothing left to save.
+  `processLargeDataset` is a convenience wrapper and does both of these, so it
+  trades the memory benefit for a simpler call.
+
+See `examples/streaming.js`, which measures this and prints the comparison; run
+it with `node --expose-gc` for stable figures.
 
 ### Data Validation
 
