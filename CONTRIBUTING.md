@@ -24,6 +24,9 @@ suite on **20.x, 22.x and 24.x** across Linux, Windows and macOS, so a change
 must pass on all three before it can merge. Develop on a version inside that
 range; anything that only works on a newer runtime will fail the 20.x jobs.
 
+`.nvmrc` pins **20**, the floor, so `nvm use` puts you on the oldest supported
+runtime — the one most likely to catch an accidental dependency on a newer API.
+
 ## Running Tests
 
 - Run all tests with:
