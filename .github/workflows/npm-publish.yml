@@ -1,11 +1,22 @@
-# This workflow will run tests using node and then publish a package to npm when a release is created
-# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+# Publishes the package to npm when a v*.*.* tag is pushed.
+#
+# The trigger is the tag, not the GitHub Release. Release Automation creates
+# the release with secrets.GITHUB_TOKEN, and GitHub does not start new workflow
+# runs from events raised by that token, so an `on: release` trigger never
+# fired — every version on npm so far was published by hand.
 
 name: Publish to npm
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish, e.g. v2.1.0"
+        required: true
+        type: string
 
 jobs:
   build:
@@ -13,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: 20
@@ -24,15 +37,31 @@ jobs:
     name: Publish to npm
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required by `npm publish --provenance`, which mints a signed
+      # attestation from an OIDC token. Without it the publish fails.
+      id-token: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
+      - name: Verify tag matches package.json version
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          PKG="v$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "::error::tag $TAG does not match package.json version $PKG"
+            exit 1
+          fi
+          echo "publishing $PKG"
       - run: npm ci
       - run: npm run lint
       - run: npm test
       - run: npm publish --provenance
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
