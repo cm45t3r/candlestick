@@ -55,6 +55,24 @@ describe("CLI Output Functions", () => {
     assert.ok(logs.length > 0);
   });
 
+  it("keeps table borders aligned when a pattern name is wider than the column", () => {
+    const cli = require("../cli/index.js");
+
+    cli.outputTable([
+      { index: 0, pattern: "bearishInvertedHammer" },
+      { index: 1, pattern: "doji" },
+    ]);
+
+    const box = logs.filter((line) => /^[┌├└│]/.test(line.trim()));
+    assert.equal(box.length, 6, "expected 3 rules, a header and 2 data rows");
+
+    const widths = new Set(box.map((line) => [...line.trim()].length));
+    assert.equal(widths.size, 1, `border widths differ: ${[...widths]}`);
+
+    const longRow = box.find((line) => line.includes("bearishInvertedHammer"));
+    assert.ok(longRow.trim().endsWith("│"), "long row must close its border");
+  });
+
   it("outputs results in CSV format", () => {
     const cli = require("../cli/index.js");
 
