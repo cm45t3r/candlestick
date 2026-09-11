@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-console */
+
 /* Runs the benchmark suite and updates the performance table in README.md.
    Usage: node scripts/update-bench.js            (run bench + update)
           node scripts/update-bench.js results.json (use existing JSON) */
