@@ -686,8 +686,17 @@ export interface StreamOptions {
  * Stream processor interface
  */
 export interface StreamProcessor {
+  /** Throws if called after `end()`; call `reset()` to reuse the stream. */
   process(chunk: OHLC[]): void;
-  /** `patternsDetected` is the number of pattern *detectors* that were active, not the number of matches found. */
+  /**
+   * Drains the buffer and finalizes the stream. Idempotent: later calls return
+   * the same summary without re-emitting matches or firing `onProgress` again.
+   *
+   * `totalProcessed` equals the total number of candles passed to `process()`;
+   * the overlap re-scanned at each chunk boundary is counted once, not twice.
+   * `patternsDetected` is the number of pattern *detectors* that were active,
+   * not the number of matches found.
+   */
   end(): { totalProcessed: number; patternsDetected: number };
   reset(): void;
 }

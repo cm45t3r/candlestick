@@ -50,6 +50,8 @@ function createStream(options = {}) {
   let buffer = [];
   let globalOffset = 0;
   let totalProcessed = 0;
+  let ended = false;
+  let endSummary = null;
   // Every pattern carries a numeric paramCount: the built-ins define it, and
   // plugins.registerPattern() normalizes and validates it (1-10). Enforced by
   // the "every pattern declares a numeric paramCount" test.
@@ -80,8 +82,14 @@ function createStream(options = {}) {
   /**
    * Process a chunk of data
    * @param {Array<Object>} chunk - Array of OHLC objects
+   * @throws {Error} If called after end(); call reset() to reuse the stream
    */
   function process(chunk) {
+    if (ended) {
+      throw new Error(
+        "Cannot process() after end(); call reset() to reuse this stream",
+      );
+    }
     if (!Array.isArray(chunk) || chunk.length === 0) {
       return;
     }
@@ -111,7 +119,10 @@ function createStream(options = {}) {
       const chunkOffset = globalOffset;
       buffer = overlap;
       globalOffset += chunkSize - maxPatternSize + 1;
-      totalProcessed += toProcess.length;
+      // Only the candles this iteration leaves behind are consumed; the last
+      // maxPatternSize - 1 are carried into `overlap` and counted by the
+      // iteration (or by end()) that finally consumes them.
+      totalProcessed += chunkSize - maxPatternSize + 1;
 
       // Progress callback
       if (onProgress) {
@@ -132,25 +143,46 @@ function createStream(options = {}) {
   }
 
   /**
-   * Process remaining data and finalize
-   * @return {Object} Summary statistics
+   * Process remaining data and finalize. Idempotent: the first call drains the
+   * buffer and emits its matches, and later calls return the same summary
+   * without re-emitting or firing onProgress again.
+   * @return {Object} Summary statistics; `totalProcessed` equals the total
+   *   candles passed to process(), counting the per-chunk overlap only once
    */
   function end() {
-    let finalMatches = 0;
+    if (ended) {
+      return { ...endSummary };
+    }
 
-    // Process remaining buffer
-    if (buffer.length > 0) {
-      const results = dropOverlapRepeats(
-        candlestick.patternChain(buffer, patternFns, { strict }),
-        globalOffset === 0,
-      );
-      const finalResults = enrichMetadata
-        ? candlestick.metadata.enrichWithMetadata(results)
-        : results;
+    const pending = buffer;
+    const endOffset = globalOffset;
 
-      const endOffset = globalOffset;
-      totalProcessed += buffer.length;
-      finalMatches = finalResults.length;
+    // Finalize the stream before anything that can fail: detection (strict
+    // validation throws here), enrichment and the callbacks all run afterwards.
+    // Leaving the stream un-ended on any of those would keep process() open on
+    // a drained buffer — resuming without the carry-over candles would silently
+    // miss patterns spanning that boundary — and would make every retried end()
+    // rethrow, so the stream could never be finalized at all.
+    buffer = [];
+    ended = true;
+    totalProcessed += pending.length;
+    endSummary = {
+      totalProcessed,
+      patternsDetected: patternFns.length,
+    };
+
+    let finalResults = [];
+    let primaryError;
+    try {
+      if (pending.length > 0) {
+        const results = dropOverlapRepeats(
+          candlestick.patternChain(pending, patternFns, { strict }),
+          endOffset === 0,
+        );
+        finalResults = enrichMetadata
+          ? candlestick.metadata.enrichWithMetadata(results)
+          : results;
+      }
 
       finalResults.forEach((result) => {
         result.index += endOffset;
@@ -158,22 +190,34 @@ function createStream(options = {}) {
           onMatch(result);
         }
       });
+    } catch (err) {
+      primaryError = err;
     }
 
-    // Final progress
+    // The completion signal must survive a failure above: consumers close their
+    // sink on it, and the memoized early-return means a retried end() would
+    // never deliver it. Mirrors the guarantee added for #83. A failing
+    // onProgress must not mask the original error either.
     if (onProgress) {
-      onProgress({
-        processed: totalProcessed,
-        matchesFound: finalMatches,
-        complete: true,
-      });
+      try {
+        onProgress({
+          processed: totalProcessed,
+          matchesFound: finalResults.length,
+          complete: true,
+        });
+      } catch (err) {
+        if (primaryError === undefined) {
+          primaryError = err;
+        }
+      }
     }
 
-    // Return summary
-    return {
-      totalProcessed,
-      patternsDetected: patternFns.length,
-    };
+    if (primaryError !== undefined) {
+      throw primaryError;
+    }
+
+    // Hand back a copy: the memoized summary must survive a caller mutating it.
+    return { ...endSummary };
   }
 
   /**
@@ -183,6 +227,8 @@ function createStream(options = {}) {
     buffer = [];
     globalOffset = 0;
     totalProcessed = 0;
+    ended = false;
+    endSummary = null;
   }
 
   return {

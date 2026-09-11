@@ -496,6 +496,272 @@ describe("Streaming API", () => {
     });
   });
 
+  describe("end() finalization", () => {
+    // Regression for #119: end() left the buffer in place and never advanced
+    // globalOffset, so each call reprocessed the trailing buffer; totalProcessed
+    // additionally charged the carry-over overlap to every chunk that saw it.
+    it("reports totalProcessed equal to the candles fed", () => {
+      for (const [count, chunkSize, feedSize] of [
+        [5000, 1000, 1000],
+        [5000, 1000, 333],
+        [3000, 7, 7],
+        [500, 1000, 500],
+        [2, 1000, 2],
+      ]) {
+        const data = generateDeterministicCandles(count);
+        const stream = createStream({ chunkSize });
+        for (let i = 0; i < count; i += feedSize) {
+          stream.process(data.slice(i, i + feedSize));
+        }
+        assert.equal(
+          stream.end().totalProcessed,
+          count,
+          `count ${count} / chunk ${chunkSize} / feed ${feedSize}`,
+        );
+      }
+    });
+
+    it("does not re-emit matches when end() is called repeatedly", () => {
+      const data = generateDeterministicCandles(5000);
+      const seen = [];
+      const stream = createStream({
+        chunkSize: 1000,
+        onMatch: (r) => seen.push(`${r.index}|${r.pattern}`),
+      });
+      for (let i = 0; i < data.length; i += 1000) {
+        stream.process(data.slice(i, i + 1000));
+      }
+      stream.end();
+      const afterFirst = seen.length;
+      stream.end();
+      stream.end();
+
+      assert.equal(
+        seen.length,
+        afterFirst,
+        "repeated end() re-emitted matches",
+      );
+      assert.equal(
+        seen.length,
+        new Set(seen).size,
+        "duplicate matches emitted",
+      );
+    });
+
+    it("returns the same summary from every end() call", () => {
+      const data = generateDeterministicCandles(1200);
+      const stream = createStream({ chunkSize: 500 });
+      stream.process(data);
+      const first = stream.end();
+      const second = stream.end();
+      assert.deepEqual(second, first);
+      assert.equal(first.totalProcessed, 1200);
+
+      // A caller mutating the summary must not corrupt later calls
+      assert.notEqual(second, first, "end() handed back the same object");
+      first.totalProcessed = -1;
+      first.patternsDetected = -1;
+      assert.deepEqual(stream.end(), {
+        totalProcessed: 1200,
+        patternsDetected: allPatterns.length,
+      });
+    });
+
+    it("fires onProgress complete exactly once", () => {
+      const data = generateDeterministicCandles(3000);
+      let completeCount = 0;
+      const stream = createStream({
+        chunkSize: 500,
+        onProgress: (p) => {
+          if (p.complete) completeCount++;
+        },
+      });
+      stream.process(data);
+      stream.end();
+      stream.end();
+      assert.equal(completeCount, 1);
+    });
+
+    it("throws when process() is called after end()", () => {
+      const stream = createStream({ chunkSize: 500 });
+      stream.process(generateDeterministicCandles(600));
+      stream.end();
+      assert.throws(
+        () => stream.process(generateDeterministicCandles(10)),
+        /Cannot process\(\) after end\(\)/,
+      );
+    });
+
+    it("allows reuse after reset() following end()", () => {
+      const data = generateDeterministicCandles(2000);
+      const expected = batchKeys(data);
+
+      const seen = [];
+      const stream = createStream({
+        chunkSize: 500,
+        onMatch: (r) => seen.push(`${r.index}|${r.pattern}`),
+      });
+
+      // a complete first run, then reset and drive the SAME stream again
+      stream.process(generateDeterministicCandles(700));
+      stream.end();
+      stream.reset();
+      seen.length = 0;
+
+      stream.process(data);
+      const summary = stream.end();
+
+      assert.equal(summary.totalProcessed, 2000, "reset() left stale counters");
+      assert.deepEqual(seen.sort(), expected, "reset() left stale offsets");
+      assert.equal(seen.length, new Set(seen).size);
+    });
+
+    it("adds the completion signal exactly once when onMatch throws in end()", () => {
+      // Regression: committing `ended` before the emit loop must not swallow
+      // onProgress({ complete: true }) — consumers close their sink on it and
+      // the memoized end() would never deliver it on a retry. See #83.
+      const data = generateDeterministicCandles(3000);
+      let inEnd = false;
+      let armed = true;
+      let completeCount = 0;
+      const stream = createStream({
+        chunkSize: 1000,
+        onMatch: () => {
+          if (inEnd && armed) {
+            armed = false;
+            throw new Error("sink failure");
+          }
+        },
+        onProgress: (p) => {
+          if (p.complete) completeCount++;
+        },
+      });
+      for (let i = 0; i < data.length; i += 1000) {
+        stream.process(data.slice(i, i + 1000));
+      }
+      inEnd = true;
+
+      assert.throws(() => stream.end(), /sink failure/);
+      assert.equal(
+        completeCount,
+        1,
+        "completion signal lost on a failed end()",
+      );
+      stream.end();
+      assert.equal(completeCount, 1, "completion signal repeated on retry");
+    });
+
+    it("stays ended when onMatch throws during the final drain", () => {
+      // The buffer is drained before callbacks fire, so the stream must also be
+      // marked ended before them: otherwise a throwing onMatch would leave it
+      // drained but still accepting input, and a resumed process() would miss
+      // patterns spanning the discarded overlap.
+      const data = generateDeterministicCandles(3000);
+      let inEnd = false;
+      let armed = true;
+      const seen = [];
+      const stream = createStream({
+        chunkSize: 1000,
+        onMatch: (r) => {
+          if (inEnd && armed) {
+            armed = false;
+            throw new Error("onMatch failure");
+          }
+          seen.push(`${r.index}|${r.pattern}`);
+        },
+      });
+      for (let i = 0; i < data.length; i += 1000) {
+        stream.process(data.slice(i, i + 1000));
+      }
+      inEnd = true;
+      assert.throws(() => stream.end(), /onMatch failure/);
+
+      assert.throws(
+        () => stream.process(data.slice(0, 10)),
+        /Cannot process\(\) after end\(\)/,
+        "stream must be ended even though onMatch threw",
+      );
+
+      const afterThrow = seen.length;
+      stream.end();
+      assert.equal(seen.length, afterThrow, "re-emitted after a failed end()");
+    });
+
+    it("finalizes the stream when detection throws in end()", () => {
+      // strict validation throws inside patternChain, before any callback. The
+      // stream must still end: otherwise process() stays open on a drained
+      // buffer and every retried end() rethrows, so it could never finalize.
+      const invalid = Array.from({ length: 20 }, () => ({
+        open: 100,
+        close: 95,
+      }));
+      let completeCount = 0;
+      const stream = createStream({
+        chunkSize: 1000,
+        strict: true,
+        onProgress: (p) => {
+          if (p.complete) completeCount++;
+        },
+      });
+      stream.process(invalid);
+
+      assert.throws(() => stream.end(), /NaN geometry/);
+      assert.equal(completeCount, 1, "completion signal lost");
+      assert.throws(
+        () => stream.process(invalid),
+        /Cannot process\(\) after end\(\)/,
+        "stream left open after a failed detection",
+      );
+      assert.deepEqual(stream.end(), {
+        totalProcessed: 20,
+        patternsDetected: allPatterns.length,
+      });
+      assert.equal(completeCount, 1, "completion signal repeated");
+    });
+
+    it("does not let a failing onProgress mask the onMatch error", () => {
+      const data = generateDeterministicCandles(2000);
+      let inEnd = false;
+      let armed = true;
+      const stream = createStream({
+        chunkSize: 500,
+        onMatch: () => {
+          if (inEnd && armed) {
+            armed = false;
+            throw new Error("sink failure");
+          }
+        },
+        onProgress: (p) => {
+          if (p.complete) throw new Error("progress failure");
+        },
+      });
+      for (let i = 0; i < data.length; i += 500) {
+        stream.process(data.slice(i, i + 500));
+      }
+      inEnd = true;
+      assert.throws(() => stream.end(), /sink failure/);
+    });
+
+    it("propagates an onProgress failure when nothing else failed", () => {
+      const stream = createStream({
+        chunkSize: 1000,
+        onProgress: (p) => {
+          if (p.complete) throw new Error("progress failure");
+        },
+      });
+      stream.process(generateDeterministicCandles(50));
+      assert.throws(() => stream.end(), /progress failure/);
+    });
+
+    it("is idempotent for a stream that never received data", () => {
+      const stream = createStream({ chunkSize: 100 });
+      const first = stream.end();
+      const second = stream.end();
+      assert.equal(first.totalProcessed, 0);
+      assert.deepEqual(second, first);
+    });
+  });
+
   describe("equivalence with batch patternChain", () => {
     // Regression for #115: the carry-over overlap is sized for the longest
     // pattern (maxPatternSize), so patterns shorter than that were re-detected
