@@ -4,7 +4,7 @@
    Usage: node scripts/update-bench.js            (run bench + update)
           node scripts/update-bench.js results.json (use existing JSON) */
 
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
@@ -19,7 +19,12 @@ if (existingJson) {
   updateReadme(data.table || data);
 } else {
   console.log("Running benchmark suite...\n");
-  execSync(`node benchmark.js --json ${tmpJson}`, {
+  // execFileSync, not execSync: tmpJson is an absolute path derived from
+  // __dirname, so interpolating it into a shell string breaks on a checkout
+  // directory containing a space and would execute anything a directory name
+  // smuggled in. Passing argv directly runs no shell at all. process.execPath
+  // also keeps the child on the same Node binary as the parent.
+  execFileSync(process.execPath, ["benchmark.js", "--json", tmpJson], {
     cwd: root,
     stdio: "inherit",
   });
