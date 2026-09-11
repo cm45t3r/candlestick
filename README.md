@@ -428,6 +428,12 @@ boundary. Call `reset()` to reuse a stream. The `totalProcessed` in the summary 
 total number of candles you passed to `process()` — the overlap re-scanned at
 each chunk boundary is counted once, not twice.
 
+**`chunkSize` is the internal buffer threshold, not a cap on what you hand to
+`process()`** — feeding one candle at a time works at any `chunkSize`. It must be
+at least as large as the longest active pattern (3 candles for the full built-in
+set, less for a narrower `patterns` subset); smaller values throw, since the
+chunk overlap would no longer advance.
+
 **Benefits:** Reduces memory usage by ~70% for datasets > 100K candles
 
 ### Data Validation

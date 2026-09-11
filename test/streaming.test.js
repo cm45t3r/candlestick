@@ -465,6 +465,123 @@ describe("Streaming API", () => {
       assert.doesNotThrow(() => stream.process(chunk));
     });
   });
+  describe("chunkSize lower bound", () => {
+    // Regression for #117: the process() loop consumes
+    // `chunkSize - maxPatternSize + 1` candles per iteration. At zero the
+    // overlap is the whole buffer and the loop never terminates; below zero
+    // buffer.slice() counts from the end, dropping unscanned candles and
+    // driving globalOffset negative. Both were silent — only chunkSize < 1 and
+    // non-integers were rejected.
+    const maxPatternSize = Math.max(...allPatterns.map((p) => p.paramCount));
+
+    function keysFor(data, patternNames, chunkSize) {
+      const keys = [];
+      const stream = createStream({
+        patterns: patternNames,
+        chunkSize,
+        onMatch: (r) => keys.push(`${r.index}|${r.pattern}`),
+      });
+      for (const candle of data) stream.process([candle]);
+      stream.end();
+      return keys.sort();
+    }
+
+    function batchKeysFor(data, patternNames) {
+      const fns = allPatterns.filter((p) => patternNames.includes(p.name));
+      return patternChain(data, fns)
+        .map((r) => `${r.index}|${r.pattern}`)
+        .sort();
+    }
+
+    it("throws at maxPatternSize - 1, the value that used to hang", () => {
+      // Guards the infinite loop: overlap === buffer.slice(0) === the whole
+      // buffer, so the while condition stays true forever. A failure here does
+      // not assert — it hangs the suite.
+      assert.throws(
+        () => createStream({ chunkSize: maxPatternSize - 1 }),
+        new RegExp(`chunkSize must be at least ${maxPatternSize}`),
+      );
+    });
+
+    it("throws below maxPatternSize - 1, where output used to be corrupt", () => {
+      assert.throws(
+        () => createStream({ chunkSize: 1 }),
+        new RegExp(`chunkSize must be at least ${maxPatternSize}`),
+      );
+    });
+
+    it("names the offending value and the required minimum", () => {
+      assert.throws(() => createStream({ chunkSize: 2 }), {
+        message: `chunkSize must be at least 3 for the selected patterns (the longest takes 3 candles), got: 2`,
+      });
+    });
+
+    it("accepts exactly maxPatternSize and matches batch output", () => {
+      const data = generateDeterministicCandles(300);
+      const names = allPatterns.map((p) => p.name);
+      assert.deepEqual(
+        keysFor(data, names, maxPatternSize),
+        batchKeysFor(data, names),
+      );
+    });
+
+    it("keeps the non-integer and < 1 checks ahead of the new bound", () => {
+      // The integer check runs before patterns are resolved, so its message
+      // must still win for values that fail both.
+      assert.throws(
+        () => createStream({ chunkSize: 0 }),
+        /chunkSize must be a positive integer/,
+      );
+      assert.throws(
+        () => createStream({ chunkSize: 2.5 }),
+        /chunkSize must be a positive integer/,
+      );
+    });
+
+    describe("the bound follows the active pattern set", () => {
+      it("allows chunkSize 1 for a paramCount-1 pattern", () => {
+        const data = generateDeterministicCandles(200);
+        assert.doesNotThrow(() =>
+          createStream({ patterns: ["doji"], chunkSize: 1 }),
+        );
+        assert.deepEqual(
+          keysFor(data, ["doji"], 1),
+          batchKeysFor(data, ["doji"]),
+        );
+      });
+
+      it("requires chunkSize 2 for a paramCount-2 pattern", () => {
+        const data = generateDeterministicCandles(200);
+        assert.throws(
+          () => createStream({ patterns: ["bullishEngulfing"], chunkSize: 1 }),
+          /chunkSize must be at least 2 for the selected patterns/,
+        );
+        assert.deepEqual(
+          keysFor(data, ["bullishEngulfing"], 2),
+          batchKeysFor(data, ["bullishEngulfing"]),
+        );
+      });
+
+      it("takes the longest pattern when the subset is mixed", () => {
+        assert.throws(
+          () =>
+            createStream({
+              patterns: ["doji", "bullishEngulfing"],
+              chunkSize: 1,
+            }),
+          /chunkSize must be at least 2 for the selected patterns/,
+        );
+      });
+    });
+
+    it("processLargeDataset surfaces the same error", () => {
+      assert.throws(
+        () => processLargeDataset(generateCandles(50), { chunkSize: 1 }),
+        new RegExp(`chunkSize must be at least ${maxPatternSize}`),
+      );
+    });
+  });
+
   describe("pattern size invariant", () => {
     // The chunk-overlap math in createStream indexes paramCount directly.
     // If a pattern ever shipped without it, maxPatternSize would become NaN

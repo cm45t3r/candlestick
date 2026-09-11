@@ -671,6 +671,12 @@ export const metadata: {
  */
 export interface StreamOptions {
   patterns?: string[] | string | null;
+  /**
+   * Internal buffer threshold, not a limit on how much you may hand to
+   * `process()` — feeding one candle at a time is fine at any `chunkSize`.
+   * Must be at least the `paramCount` of the longest active pattern (3 for the
+   * full built-in set); smaller values throw.
+   */
   chunkSize?: number;
   onMatch?: (match: PatternMatch) => void;
   onProgress?: (progress: {

@@ -60,6 +60,20 @@ function createStream(options = {}) {
   );
   const maxPatternSize = Math.max(...paramCountByName.values());
 
+  // Each iteration of the process() loop consumes `chunkSize - maxPatternSize + 1`
+  // candles and carries the rest forward as overlap. That expression must be
+  // positive: at zero the overlap is the whole buffer and the loop never
+  // terminates, and below zero `buffer.slice()` counts from the end, dropping
+  // unscanned candles and driving `globalOffset` negative. The threshold depends
+  // on the active pattern set, so it is checked here rather than next to the
+  // integer check above.
+  if (chunkSize < maxPatternSize) {
+    throw new Error(
+      `chunkSize must be at least ${maxPatternSize} for the selected patterns ` +
+        `(the longest takes ${maxPatternSize} candles), got: ${chunkSize}`,
+    );
+  }
+
   /**
    * The carry-over overlap is sized for the longest pattern (`maxPatternSize`),
    * so shorter patterns anchored at the start of a non-first chunk were already
