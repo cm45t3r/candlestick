@@ -27,6 +27,18 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
+### v2.1.0 (2026-09-11)
+
+Streaming correctness release. Three changes are observable through the public
+API — see "Upgrading to v2.1" in the README before updating.
+
+- fix(streaming): drop duplicate matches at chunk boundaries for patterns shorter than `maxPatternSize` ([#115](https://github.com/cm45t3r/candlestick/issues/115))
+- fix(streaming): make `end()` idempotent and count `totalProcessed` exactly ([#119](https://github.com/cm45t3r/candlestick/issues/119))
+- fix(streaming): reject `chunkSize` below the longest active pattern, which previously hung or silently corrupted output ([#117](https://github.com/cm45t3r/candlestick/issues/117))
+- fix(benchmark): separate feed size from `chunkSize` in the streaming benchmark ([#118](https://github.com/cm45t3r/candlestick/issues/118))
+- fix(cli): derive the banner version from `package.json` instead of hardcoding it
+- ci: test on Node 24.x; CI matrix is now 20.x / 22.x / 24.x across Linux, Windows and macOS
+
 ### v2.0.2 (2026-07-10)
 
 - chore(deps): bump `prettier` from 3.8.4 to 3.9.4
