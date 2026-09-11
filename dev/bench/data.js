@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788900717179,
+  "lastUpdate": 1789096246203,
   "repoUrl": "https://github.com/cm45t3r/candlestick",
   "entries": {
     "Benchmark": [
@@ -296,6 +296,105 @@ window.BENCHMARK_DATA = {
           {
             "name": "Memory 1,000,000",
             "value": 1004.3,
+            "unit": "MB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cm45t3r@gmail.com",
+            "name": "cm45t3r",
+            "username": "cm45t3r"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc6da7cdc0aa755203717f64981fe8b75b0dff77",
+          "message": "Merge pull request #120 from cm45t3r/fix/streaming-end-idempotency\n\nfix(streaming): make end() idempotent and count totalProcessed exactly",
+          "timestamp": "2026-09-10T22:09:44-05:00",
+          "tree_id": "408db34af7741b70562ebdd65808d2e44f1a00f9",
+          "url": "https://github.com/cm45t3r/candlestick/commit/fc6da7cdc0aa755203717f64981fe8b75b0dff77"
+        },
+        "date": 1789096245886,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Pattern Chain 100",
+            "value": 0.4,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100",
+            "value": 0.01,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100",
+            "value": 0.08,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000",
+            "value": 1.6,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000",
+            "value": 0.05,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000",
+            "value": 0.69,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 10,000",
+            "value": 12.9,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 10,000",
+            "value": 0.26,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 10,000",
+            "value": 6.76,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 100,000",
+            "value": 148.2,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100,000",
+            "value": 3.12,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100,000",
+            "value": 67.6,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000,000",
+            "value": 1991,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000,000",
+            "value": 47.62,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000,000",
+            "value": 1114.32,
             "unit": "MB"
           }
         ]
