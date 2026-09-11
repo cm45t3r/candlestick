@@ -38,6 +38,7 @@ A modern, modular JavaScript library for [candlestick pattern](https://en.wikipe
 - [Development](#development)
 - [Architecture](#architecture)
 - [Contributing](#contributing)
+- [Upgrading to v2.1](#upgrading-to-v21)
 - [Upgrading from v1.x](#upgrading-from-v1x)
 - [FAQ](#faq)
 - [Changelog](#changelog)
@@ -602,6 +603,36 @@ See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for an overview of the librar
 5. Write tests in `test/myPattern.test.js` covering valid matches, non-matches, and edge cases
 6. Add an example file in `examples/myPattern.js`
 7. Run `npm test && npm run lint` to verify
+
+---
+
+## Upgrading to v2.1
+
+v2.1.0 fixes three streaming defects. The fixes are behavioural, so code that
+relied on the broken behaviour will see a difference:
+
+1. **`totalProcessed` no longer double-counts the chunk overlap.** The summary
+   from `end()` now equals the exact number of candles passed to `process()`.
+   Previously it was inflated by `maxPatternSize - 1` per chunk boundary. If you
+   assert on this value, update the expected number.
+
+2. **`end()` is idempotent, and `process()` after `end()` throws.** Repeat
+   `end()` calls return the same summary without re-emitting matches or firing
+   `onProgress({ complete: true })` again. Draining the buffer means a later
+   `process()` would resume without the carry-over candles and silently miss
+   patterns spanning that boundary, so it raises
+   `Cannot process() after end(); call reset() to reuse this stream`. Call
+   `reset()` to reuse a stream.
+
+3. **`chunkSize` below the longest active pattern is rejected.** Such values
+   previously hung `process()` in an infinite loop or silently dropped candles
+   and produced negative indices. `chunkSize` is the internal buffer threshold,
+   not a limit on what you hand to `process()` — feeding one candle at a time
+   works at any valid `chunkSize`, so the usual fix is to remove the option and
+   take the default.
+
+Nothing changes for streams using the default `chunkSize` that call `end()`
+once, and no API signatures changed.
 
 ---
 

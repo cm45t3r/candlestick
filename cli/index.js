@@ -5,10 +5,17 @@ const fs = require("fs");
 const path = require("path");
 const candlestick = require("../index.js");
 
+const { version } = require("../package.json");
+const BANNER_TITLE = `Candlestick Pattern Detection CLI v${version}`;
+const BANNER_WIDTH = 62;
+const BANNER_PAD = Math.max(0, BANNER_WIDTH - BANNER_TITLE.length);
+const BANNER_LEFT = " ".repeat(Math.floor(BANNER_PAD / 2));
+const BANNER_RIGHT = " ".repeat(Math.ceil(BANNER_PAD / 2));
+
 const HELP_TEXT = `
-╔══════════════════════════════════════════════════════════════╗
-║          Candlestick Pattern Detection CLI v2.0.2            ║
-╚══════════════════════════════════════════════════════════════╝
+╔${"═".repeat(BANNER_WIDTH)}╗
+║${BANNER_LEFT}${BANNER_TITLE}${BANNER_RIGHT}║
+╚${"═".repeat(BANNER_WIDTH)}╝
 
 Usage: candlestick [options]
 
