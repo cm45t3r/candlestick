@@ -27,6 +27,60 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
+### Unreleased
+
+CLI output and project-tooling fixes on top of v2.1.0.
+
+**Observable when using the CLI:**
+
+- `table` and `csv` output now always populate the type, direction, confidence
+  and strength columns, with no `--metadata` flag required.
+- Table columns widen to their content, so long pattern names no longer break
+  the box borders.
+- `-i -` is honoured as stdin, matching the behaviour of omitting `-i`.
+
+**All changes:**
+
+- feat(cli): always include metadata in `table` and `csv` output, so their fixed
+  columns are never empty ([#141](https://github.com/cm45t3r/candlestick/issues/141))
+- fix(cli): honour `-` as stdin when picking the parser; `-i -` previously read
+  stdin and then failed with `Unsupported file format: .`
+  ([#147](https://github.com/cm45t3r/candlestick/pull/147))
+- fix(cli): size table columns to their content ([#140](https://github.com/cm45t3r/candlestick/pull/140))
+- fix(scripts): run the benchmark without a shell in `update-bench`, and format
+  the README through Prettier after regenerating the table
+  ([#128](https://github.com/cm45t3r/candlestick/pull/128))
+- docs(cli): document `-` as an explicit stdin path in `--help` and the CLI
+  guide, and note that piped input is parsed as JSON ([#147](https://github.com/cm45t3r/candlestick/pull/147))
+- docs: refresh the README benchmark table and record the date, Node version and
+  hardware it came from ([#136](https://github.com/cm45t3r/candlestick/issues/136))
+- docs(streaming): replace the unsupported "~70% memory reduction" claim with a
+  measured comparison ([#135](https://github.com/cm45t3r/candlestick/issues/135))
+- docs(contributing): pin the `.nvmrc` floor to 20.19 and explain the
+  `EBADENGINE` warning ([#143](https://github.com/cm45t3r/candlestick/pull/143))
+- ci: test on Node 26.x; CI matrix is now 20.x / 22.x / 24.x / 26.x across
+  Linux, Windows and macOS ([#145](https://github.com/cm45t3r/candlestick/pull/145))
+- ci: remove the GitHub Packages publish workflow, which could not work for an
+  unscoped package name ([#129](https://github.com/cm45t3r/candlestick/issues/129))
+- ci: run CodeQL on `main` instead of the non-existent `master` branch
+  ([#132](https://github.com/cm45t3r/candlestick/pull/132))
+- chore: pin `.nvmrc` to Node 20 to match `engines` ([#123](https://github.com/cm45t3r/candlestick/issues/123))
+- chore: exclude the generated `CHANGELOG.md` from Prettier
+  ([#130](https://github.com/cm45t3r/candlestick/issues/130))
+- chore: silence `no-console` in `update-bench` like its peers
+  ([#137](https://github.com/cm45t3r/candlestick/pull/137))
+- chore(deps): bump `c8` to 12 so coverage runs on Node 26
+  ([#143](https://github.com/cm45t3r/candlestick/pull/143))
+- test: cover the first-candle shadow guards in the three-candle patterns
+  ([#144](https://github.com/cm45t3r/candlestick/pull/144))
+- test: cover the stdin branch of `readInput` and `validateOHLCArray`'s catch,
+  taking `src/utils.js` to 100% statements and branches ([#147](https://github.com/cm45t3r/candlestick/pull/147))
+
+Known gaps, tracked for a later release: [#148](https://github.com/cm45t3r/candlestick/issues/148) (`parseArgs`
+swallows the next flag when an option value is missing), [#149](https://github.com/cm45t3r/candlestick/issues/149)
+(`--` is not honoured as end-of-options) and [#150](https://github.com/cm45t3r/candlestick/issues/150) (CSV cannot
+be piped; stdin is always parsed as JSON).
+
 ### v2.1.0 (2026-09-11)
 
 Streaming correctness release. Three changes are observable through the public
@@ -63,6 +117,11 @@ API — see "Upgrading to v2.1" in the README before updating.
 
 - 3 new patterns: Marubozu (1-candle), Spinning Top (1-candle), Tweezers Top/Bottom (2-candle)
 - Streaming API (`streaming.createStream`, `streaming.processLargeDataset`) with ~70% memory reduction
+  <br>_Correction: the ~70% figure was never substantiated and is kept here only
+  as the record of what v1.2.0 claimed. The reduction measured later is far
+  larger — 41.9 MB to 0.2 MB on 200,000 candles — because resident memory is
+  bounded by `chunkSize` rather than the dataset. See the README streaming
+  section ([#135](https://github.com/cm45t3r/candlestick/issues/135))._
 - Property-based testing with fast-check (1000+ generated OHLC scenarios)
 - Test suite: 306 tests, 99.75% line coverage, 97.63% branch coverage
 - Benchmark suite with throughput metrics (59K+ candles/sec)
