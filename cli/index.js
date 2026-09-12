@@ -24,6 +24,7 @@ Usage: candlestick [options]
 
 Options:
   -i, --input <file>       Input CSV or JSON file with OHLC data
+                           ("-", or omitted, reads JSON from stdin)
   -o, --output <format>    Output format: json, table, csv (default: json)
   -p, --patterns <list>    Comma-separated pattern names (default: all)
   -c, --confidence <min>   Minimum confidence threshold 0-1 (default: 0)
@@ -39,6 +40,7 @@ Examples:
   candlestick -i data.csv --patterns hammer,doji --output table
   candlestick -i data.json --confidence 0.8 --type reversal
   cat data.json | candlestick --output csv
+  cat data.json | candlestick -i - --output csv
 
 Input Format:
   JSON: Array of {open, high, low, close} objects
@@ -99,18 +101,17 @@ function parseArgs() {
 }
 
 function readInput(inputPath) {
-  let data;
+  // One source of truth for "this is stdin": an omitted path and an explicit
+  // "-" must agree, both when reading and when picking the parser.
+  const fromStdin = !inputPath || inputPath === "-";
 
-  if (!inputPath || inputPath === "-") {
-    // Read from stdin
-    data = fs.readFileSync(0, "utf-8");
-  } else {
-    data = fs.readFileSync(inputPath, "utf-8");
-  }
+  const data = fromStdin
+    ? fs.readFileSync(0, "utf-8")
+    : fs.readFileSync(inputPath, "utf-8");
 
-  const ext = inputPath ? path.extname(inputPath).toLowerCase() : ".json";
+  const ext = fromStdin ? ".json" : path.extname(inputPath).toLowerCase();
 
-  if (ext === ".json" || !inputPath) {
+  if (ext === ".json") {
     return JSON.parse(data);
   } else if (ext === ".csv") {
     return parseCSV(data);

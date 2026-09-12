@@ -33,15 +33,19 @@ candlestick -i data.csv --output table
 
 ### Use with Pipes (stdin)
 
+Omitting `--input` reads from stdin, and `-` is accepted as an explicit
+spelling of the same thing. Piped data is always parsed as JSON.
+
 ```bash
 cat data.json | candlestick --output table
+cat data.json | candlestick --input - --output table
 ```
 
 ## Options
 
 | Option               | Short | Description                                     | Default |
 | -------------------- | ----- | ----------------------------------------------- | ------- |
-| `--input <file>`     | `-i`  | Input CSV or JSON file                          | stdin   |
+| `--input <file>`     | `-i`  | Input CSV or JSON file, or `-` for stdin (JSON) | stdin   |
 | `--output <format>`  | `-o`  | Output format: json, table, csv                 | json    |
 | `--patterns <list>`  | `-p`  | Comma-separated pattern names                   | all     |
 | `--confidence <min>` | `-c`  | Minimum confidence threshold (0-1)              | 0       |

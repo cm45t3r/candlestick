@@ -141,6 +141,33 @@ describe("CLI Output Functions", () => {
     assert.ok(enriched.every((r) => r.metadata));
   });
 
+  it('reads stdin both when the path is omitted and when it is "-"', () => {
+    const cli = require("../cli/index.js");
+    const fs = require("node:fs");
+
+    const payload = '[{"open":1,"high":2,"low":0,"close":1.5}]';
+    const real = fs.readFileSync;
+    const seen = [];
+    fs.readFileSync = (fd) => {
+      seen.push(fd);
+      return payload;
+    };
+
+    try {
+      // Both spellings must read fd 0 and parse it as JSON. "-" used to read
+      // stdin correctly and then die on "Unsupported file format: ".
+      for (const path of [null, "-"]) {
+        const data = cli.readInput(path);
+        assert.equal(data.length, 1);
+        assert.equal(data[0].open, 1);
+      }
+    } finally {
+      fs.readFileSync = real;
+    }
+
+    assert.deepEqual(seen, [0, 0], "both calls must read file descriptor 0");
+  });
+
   it("outputs results in CSV format", () => {
     const cli = require("../cli/index.js");
 
@@ -195,8 +222,10 @@ describe("CLI Output Functions", () => {
     assert.ok(logs.length > 0);
   });
 
-  it("handles stdin input", () => {
-    // Test that processData works with data from stdin
+  it("processData accepts an already-parsed candle array", () => {
+    // Named "handles stdin input" until it was pointed out that nothing here
+    // touches stdin or readInput; the real stdin coverage is the fd 0 test
+    // above. Keep this one for what it does test: processData on a plain array.
     const testData = [
       { open: 100, high: 110, low: 95, close: 105 },
       { open: 105, high: 115, low: 100, close: 110 },
