@@ -24,6 +24,7 @@ Usage: candlestick [options]
 
 Options:
   -i, --input <file>       Input CSV or JSON file with OHLC data
+                           ("-", or omitted, reads JSON from stdin)
   -o, --output <format>    Output format: json, table, csv (default: json)
   -p, --patterns <list>    Comma-separated pattern names (default: all)
   -c, --confidence <min>   Minimum confidence threshold 0-1 (default: 0)
@@ -39,6 +40,7 @@ Examples:
   candlestick -i data.csv --patterns hammer,doji --output table
   candlestick -i data.json --confidence 0.8 --type reversal
   cat data.json | candlestick --output csv
+  cat data.json | candlestick -i - --output csv
 
 Input Format:
   JSON: Array of {open, high, low, close} objects
