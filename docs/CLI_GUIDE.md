@@ -279,4 +279,6 @@ const results = processData(data, { confidence: 0.8 });
 
 ---
 
-**CLI Tool is part of Candlestick v1.1.0+** (Enhanced in v1.2.0 with more patterns, v2.0.0 requires Node.js >= 20)
+**The CLI ships with Candlestick v1.1.0+.** It requires Node.js >= 20; the
+authoritative floor is `engines` in `package.json`, and the tested matrix is in
+[CONTRIBUTING.md](../CONTRIBUTING.md).
