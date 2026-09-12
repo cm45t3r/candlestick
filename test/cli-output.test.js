@@ -222,8 +222,10 @@ describe("CLI Output Functions", () => {
     assert.ok(logs.length > 0);
   });
 
-  it("handles stdin input", () => {
-    // Test that processData works with data from stdin
+  it("processData accepts an already-parsed candle array", () => {
+    // Named "handles stdin input" until it was pointed out that nothing here
+    // touches stdin or readInput; the real stdin coverage is the fd 0 test
+    // above. Keep this one for what it does test: processData on a plain array.
     const testData = [
       { open: 100, high: 110, low: 95, close: 105 },
       { open: 105, high: 115, low: 100, close: 110 },
