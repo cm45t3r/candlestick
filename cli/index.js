@@ -99,18 +99,17 @@ function parseArgs() {
 }
 
 function readInput(inputPath) {
-  let data;
+  // One source of truth for "this is stdin": an omitted path and an explicit
+  // "-" must agree, both when reading and when picking the parser.
+  const fromStdin = !inputPath || inputPath === "-";
 
-  if (!inputPath || inputPath === "-") {
-    // Read from stdin
-    data = fs.readFileSync(0, "utf-8");
-  } else {
-    data = fs.readFileSync(inputPath, "utf-8");
-  }
+  const data = fromStdin
+    ? fs.readFileSync(0, "utf-8")
+    : fs.readFileSync(inputPath, "utf-8");
 
-  const ext = inputPath ? path.extname(inputPath).toLowerCase() : ".json";
+  const ext = fromStdin ? ".json" : path.extname(inputPath).toLowerCase();
 
-  if (ext === ".json" || !inputPath) {
+  if (ext === ".json") {
     return JSON.parse(data);
   } else if (ext === ".csv") {
     return parseCSV(data);
