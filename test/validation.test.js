@@ -148,11 +148,30 @@ describe("validateOHLCArray", () => {
     assert.equal(validateOHLCArray(candles, false), false);
   });
 
+  it("returns false instead of throwing when a candle's own getter throws", () => {
+    // Nothing in validateOHLC throws with throwError=false, so the loop's
+    // catch is only reachable when reading the candle itself throws.
+    const boom = {
+      get open() {
+        throw new Error("exploding getter");
+      },
+      high: 1,
+      low: 1,
+      close: 1,
+    };
+
+    assert.equal(validateOHLCArray([boom], false), false);
+    assert.throws(
+      () => validateOHLCArray([boom], true),
+      /Invalid candle at index 0: exploding getter/,
+    );
+  });
+
   it("catches validation error in loop when throwError is false", () => {
     // This test specifically targets the catch block in validateOHLCArray
     const candles = [
       { open: 10, high: 15, low: 8, close: 12 },
-      null, // This will cause validateOHLC to throw
+      null, // validateOHLC returns false for this; it does not throw
     ];
     assert.equal(validateOHLCArray(candles, false), false);
   });
