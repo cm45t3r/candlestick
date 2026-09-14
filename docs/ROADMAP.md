@@ -27,7 +27,7 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
-### Unreleased
+### v2.2.0 (2026-09-14)
 
 CLI output and project-tooling fixes on top of v2.1.0.
 
