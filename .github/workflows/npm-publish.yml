@@ -1,20 +1,27 @@
-# Publishes the package to npm when a v*.*.* tag is pushed.
+# Publishes the package to npm, on demand only.
 #
-# The trigger is the tag, not the GitHub Release. Release Automation creates
-# the release with secrets.GITHUB_TOKEN, and GitHub does not start new workflow
+# The automatic tag trigger is disabled. Authentication is still the expired
+# NPM_TOKEN secret, which fails the publish with E404 on PUT — that is how
+# v2.1.0 was tagged and released on GitHub but never reached the registry.
+# Leaving the trigger on would only add a red run to every release.
+#
+# Restore the `push: tags` trigger once the package is configured for Trusted
+# Publishing on npmjs.com, which replaces the secret with an OIDC exchange.
+# That also requires npm >= 11.5.1 in this job (Node 20 ships npm 10) and
+# dropping the NODE_AUTH_TOKEN env below.
+#
+# The trigger was never the GitHub Release: Release Automation creates the
+# release with secrets.GITHUB_TOKEN, and GitHub does not start new workflow
 # runs from events raised by that token, so an `on: release` trigger never
 # fired — every version on npm so far was published by hand.
 
 name: Publish to npm
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to publish, e.g. v2.1.0"
+        description: "Tag to publish, e.g. v2.2.0"
         required: true
         type: string
 
