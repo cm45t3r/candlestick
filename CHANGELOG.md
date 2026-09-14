@@ -1,13 +1,48 @@
 # Changelog
 
+## [v2.2.0](https://github.com/cm45t3r/candlestick/tree/v2.2.0) (2026-09-14)
+
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.1.0...v2.2.0)
+
+**Fixed bugs:**
+
+- docs: README benchmark table is stale and understates current performance [\#136](https://github.com/cm45t3r/candlestick/issues/136)
+- docs: streaming example contradicts the ~70% memory reduction claim [\#135](https://github.com/cm45t3r/candlestick/issues/135)
+- chore: generated CHANGELOG.md always fails prettier format:check [\#130](https://github.com/cm45t3r/candlestick/issues/130)
+- ci: Publish to GitHub Packages cannot work for an unscoped package name [\#129](https://github.com/cm45t3r/candlestick/issues/129)
+- chore: .nvmrc pins Node 18 while engines and docs require \>= 20 [\#123](https://github.com/cm45t3r/candlestick/issues/123)
+
+**Closed issues:**
+
+- CLI: Type/Confidence/Strength are empty unless --metadata is passed [\#141](https://github.com/cm45t3r/candlestick/issues/141)
+
+**Merged pull requests:**
+
+- chore\(release\): v2.2.0 [\#154](https://github.com/cm45t3r/candlestick/pull/154) ([cm45t3r](https://github.com/cm45t3r))
+- chore\(deps\): bump eslint from 10.9.1 to 10.10.0 [\#153](https://github.com/cm45t3r/candlestick/pull/153) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump fast-check from 4.9.0 to 4.10.0 [\#152](https://github.com/cm45t3r/candlestick/pull/152) ([dependabot[bot]](https://github.com/apps/dependabot))
+- docs: reconcile the docs with everything resolved since v2.1.0 [\#151](https://github.com/cm45t3r/candlestick/pull/151) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(cli\): honour "-" as stdin when picking the parser [\#147](https://github.com/cm45t3r/candlestick/pull/147) ([cm45t3r](https://github.com/cm45t3r))
+- ci: test on node 26 as well [\#145](https://github.com/cm45t3r/candlestick/pull/145) ([cm45t3r](https://github.com/cm45t3r))
+- test: cover the first-candle shadow guards in the three-candle patterns [\#144](https://github.com/cm45t3r/candlestick/pull/144) ([cm45t3r](https://github.com/cm45t3r))
+- chore\(deps\): bump c8 to 12 so coverage runs on node 26 [\#143](https://github.com/cm45t3r/candlestick/pull/143) ([cm45t3r](https://github.com/cm45t3r))
+- feat\(cli\): always include metadata in table and csv output [\#142](https://github.com/cm45t3r/candlestick/pull/142) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(cli\): size table columns to their content [\#140](https://github.com/cm45t3r/candlestick/pull/140) ([cm45t3r](https://github.com/cm45t3r))
+- docs: refresh the README benchmark table and record where it came from [\#139](https://github.com/cm45t3r/candlestick/pull/139) ([cm45t3r](https://github.com/cm45t3r))
+- docs\(streaming\): measure the memory claim honestly in the example [\#138](https://github.com/cm45t3r/candlestick/pull/138) ([cm45t3r](https://github.com/cm45t3r))
+- chore: silence no-console in update-bench like its peers [\#137](https://github.com/cm45t3r/candlestick/pull/137) ([cm45t3r](https://github.com/cm45t3r))
+- chore: exclude the generated CHANGELOG from prettier [\#134](https://github.com/cm45t3r/candlestick/pull/134) ([cm45t3r](https://github.com/cm45t3r))
+- ci: remove the GitHub Packages publish workflow [\#133](https://github.com/cm45t3r/candlestick/pull/133) ([cm45t3r](https://github.com/cm45t3r))
+- ci: run CodeQL on main, not the non-existent master branch [\#132](https://github.com/cm45t3r/candlestick/pull/132) ([cm45t3r](https://github.com/cm45t3r))
+- chore: pin .nvmrc to Node 20 to match engines [\#131](https://github.com/cm45t3r/candlestick/pull/131) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(scripts\): run the benchmark without a shell in update-bench [\#128](https://github.com/cm45t3r/candlestick/pull/128) ([cm45t3r](https://github.com/cm45t3r))
+
 ## [v2.1.0](https://github.com/cm45t3r/candlestick/tree/v2.1.0) (2026-09-11)
 
-[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.0.2...v2.1.0)
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/archive/feat-trend-context-confidence...v2.1.0)
 
 **Implemented enhancements:**
 
-- Chore: extract shared method/external-series/callback resolution helper for \#95 and \#96 [\#97](https://github.com/cm45t3r/candlestick/issues/97)
-- Feature: configurable, pluggable volatility-based gap significance threshold for kicker\(\) \(ATR/stddev/percentile/external\) [\#96](https://github.com/cm45t3r/candlestick/issues/96)
 - feature: trend-context-aware pattern confidence \(and deprecate static confidence field\) [\#95](https://github.com/cm45t3r/candlestick/issues/95)
 
 **Fixed bugs:**
@@ -40,6 +75,15 @@
 - chore\(deps\): bump fast-check from 4.8.0 to 4.9.0 [\#100](https://github.com/cm45t3r/candlestick/pull/100) ([dependabot[bot]](https://github.com/apps/dependabot))
 - feat\(patternChain\): trend-context-aware confidence, deprecate static confidence [\#99](https://github.com/cm45t3r/candlestick/pull/99) ([cm45t3r](https://github.com/cm45t3r))
 - feat\(kicker\): configurable, pluggable volatility-based gap significance threshold [\#98](https://github.com/cm45t3r/candlestick/pull/98) ([cm45t3r](https://github.com/cm45t3r))
+
+## [archive/feat-trend-context-confidence](https://github.com/cm45t3r/candlestick/tree/archive/feat-trend-context-confidence) (2026-07-17)
+
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.0.2...archive/feat-trend-context-confidence)
+
+**Implemented enhancements:**
+
+- Chore: extract shared method/external-series/callback resolution helper for \#95 and \#96 [\#97](https://github.com/cm45t3r/candlestick/issues/97)
+- Feature: configurable, pluggable volatility-based gap significance threshold for kicker\(\) \(ATR/stddev/percentile/external\) [\#96](https://github.com/cm45t3r/candlestick/issues/96)
 
 ## [v2.0.2](https://github.com/cm45t3r/candlestick/tree/v2.0.2) (2026-07-10)
 
