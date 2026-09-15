@@ -588,21 +588,23 @@ Run `npm run bench` for the full benchmark suite on your hardware.
 
 ### Install footprint
 
-|                             | candlestick 2.2.0 |
-| --------------------------- | ----------------- |
-| Published tarball           | ~43 kB            |
-| Unpacked on disk            | ~171 kB           |
-| Runtime dependencies        | 0 (0 transitive)  |
-| Native build step           | none              |
-| Bundled, minified + gzipped | 7.8 kB            |
+|                        | candlestick      |
+| ---------------------- | ---------------- |
+| Runtime dependencies   | 0 (0 transitive) |
+| Native build step      | none             |
+| Install scripts        | none             |
+| Platform-specific code | none             |
 
-Tarball and unpacked sizes are what `npm pack --dry-run` reports for the
-published file list, rounded: this README ships inside the package, so editing
-this section moves the number it states. Run `npm pack --dry-run` for the exact
-figure at any commit. The bundled figure is `esbuild 0.28.2 --bundle --minify
---format=esm --platform=neutral` over the package entry, gzipped with `gzip -9`;
-it covers the whole library, since importing a single pattern currently pulls in
-the same code ([#155](https://github.com/cm45t3r/candlestick/issues/155)).
+Install size is deliberately not stated here. This README ships inside the
+package, so any figure printed in this section changes the number it reports —
+the last two attempts were both stale by the time they were committed. Run
+`npm pack --dry-run` for the exact size at any commit; it is on the order of
+tens of kilobytes, and the rows above are the part that actually affects
+whether an install succeeds.
+
+For a browser bundle, note that the package is not usefully tree-shakeable
+today: importing one pattern pulls in the same code as importing all of them
+([#155](https://github.com/cm45t3r/candlestick/issues/155)).
 
 The comparison that matters for install cost is the dependency tree, not the
 kilobytes: libraries in this space that bind to TA-Lib or Tulip ship a native
