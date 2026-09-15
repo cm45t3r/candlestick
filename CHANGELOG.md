@@ -1,5 +1,37 @@
 # Changelog
 
+## [v3.0.0](https://github.com/cm45t3r/candlestick/tree/v3.0.0) (2026-09-15)
+
+[Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.2.0...v3.0.0)
+
+**Implemented enhancements:**
+
+- enhancement\(cli\): CSV cannot be piped — stdin is always parsed as JSON [\#150](https://github.com/cm45t3r/candlestick/issues/150)
+
+**Fixed bugs:**
+
+- bug\(esm\): the ESM entry is not tree-shakeable — importing one pattern pulls in the whole library [\#155](https://github.com/cm45t3r/candlestick/issues/155)
+- bug\(cli\): "--" is not honoured as end-of-options [\#149](https://github.com/cm45t3r/candlestick/issues/149)
+- bug\(cli\): parseArgs swallows the next flag when an option value is missing [\#148](https://github.com/cm45t3r/candlestick/issues/148)
+
+**Closed issues:**
+
+- Decide when to drop Node 20 \(EOL since 2026-04-30\) [\#146](https://github.com/cm45t3r/candlestick/issues/146)
+
+**Merged pull requests:**
+
+- chore\(release\): v3.0.0 [\#166](https://github.com/cm45t3r/candlestick/pull/166) ([cm45t3r](https://github.com/cm45t3r))
+- chore!: require Node.js \>= 22 [\#165](https://github.com/cm45t3r/candlestick/pull/165) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(esm\): make the ESM entry tree-shakeable [\#164](https://github.com/cm45t3r/candlestick/pull/164) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(cli\): detect the input format from content when the extension cannot [\#163](https://github.com/cm45t3r/candlestick/pull/163) ([cm45t3r](https://github.com/cm45t3r))
+- fix\(cli\): diagnose missing option values and honour "--" [\#162](https://github.com/cm45t3r/candlestick/pull/162) ([cm45t3r](https://github.com/cm45t3r))
+- chore: remove the Kiro spec tooling [\#161](https://github.com/cm45t3r/candlestick/pull/161) ([cm45t3r](https://github.com/cm45t3r))
+- docs: source the size badge from npm instead of bundlephobia [\#160](https://github.com/cm45t3r/candlestick/pull/160) ([cm45t3r](https://github.com/cm45t3r))
+- docs: stop printing an install size that printing changes [\#159](https://github.com/cm45t3r/candlestick/pull/159) ([cm45t3r](https://github.com/cm45t3r))
+- docs: link the blog, and stop the footprint figures chasing themselves [\#158](https://github.com/cm45t3r/candlestick/pull/158) ([cm45t3r](https://github.com/cm45t3r))
+- chore\(npm\): prune the keyword list from 21 to 15 [\#157](https://github.com/cm45t3r/candlestick/pull/157) ([cm45t3r](https://github.com/cm45t3r))
+- docs: lead with the install footprint, drop the decorative badges [\#156](https://github.com/cm45t3r/candlestick/pull/156) ([cm45t3r](https://github.com/cm45t3r))
+
 ## [v2.2.0](https://github.com/cm45t3r/candlestick/tree/v2.2.0) (2026-09-14)
 
 [Full Changelog](https://github.com/cm45t3r/candlestick/compare/v2.1.0...v2.2.0)
