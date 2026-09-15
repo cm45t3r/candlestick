@@ -68,14 +68,21 @@ surrounding data says is meaningless.
 
 This is the claim every library makes and few quantify, so here is the whole install:
 
-| | candlestick 2.2.0 |
+| | candlestick |
 | --- | --- |
-| Published tarball | 42.5 kB |
-| Unpacked on disk | 170.6 kB |
 | Runtime dependencies | 0 (0 transitive) |
 | Native build step | none |
+| Install scripts | none |
+| Platform-specific code | none |
 
-The kilobytes are the least interesting column. The one that matters is the last.
+I had a size in kilobytes here and took it out, for a reason worth repeating: the
+README ships inside the package, so writing the install size into it changes the
+install size. Two attempts were both stale by the time they were committed. It's
+on the order of tens of kilobytes; `npm pack --dry-run` gives the exact figure at
+any commit.
+
+The kilobytes were never the interesting part anyway. The rows above are what
+determines whether an install succeeds.
 
 Several established libraries in this space are bindings to TA-Lib or Tulip — C libraries with decades of history and far more indicators than I'll ever ship. The tradeoff is that installing them compiles a native addon: `node-gyp`, a toolchain, Python, and a build that can fail differently on every platform in your matrix. If you've ever watched a CI job go red on Windows only, you know the shape of it.
 
