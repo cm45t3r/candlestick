@@ -289,7 +289,9 @@ describe("CLI main and argument parsing", () => {
     }
   });
 
-  it("readInput throws on unsupported file format", () => {
+  it("reports what it tried when an unrecognized extension cannot be parsed", () => {
+    // Was "Unsupported file format: .txt". The extension no longer decides, so
+    // the error now names the format that was detected and failed.
     const tempFile = path.join(__dirname, "../cli/temp-data.txt");
     fs.writeFileSync(tempFile, "some text data");
 
@@ -297,7 +299,7 @@ describe("CLI main and argument parsing", () => {
 
     assert.throws(() => {
       cli.readInput(tempFile);
-    }, /Unsupported file format/);
+    }, /Could not parse input as CSV, detected from its content/);
 
     // Clean up
     try {
@@ -484,6 +486,97 @@ describe("CLI argument validation", () => {
     it("accepts long spellings", () => {
       assert.equal(parseArgs(["--input", "d.json"]).input, "d.json");
       assert.equal(parseArgs(["--patterns", "hammer"]).patterns, "hammer");
+    });
+  });
+});
+
+describe("CLI input format detection (#150)", () => {
+  const { readInput } = require("../cli/index.js");
+  const tmp = path.join(__dirname, "..", "cli");
+
+  const JSON_DATA = JSON.stringify([
+    { open: 100, high: 110, low: 95, close: 105 },
+  ]);
+  const CSV_DATA = "open,high,low,close\n100,110,95,105";
+
+  const write = (name, contents) => {
+    const file = path.join(tmp, name);
+    fs.writeFileSync(file, contents);
+    return file;
+  };
+
+  const written = [];
+  afterEach(() => {
+    while (written.length) fs.rmSync(written.pop(), { force: true });
+  });
+  const temp = (name, contents) => {
+    const file = write(name, contents);
+    written.push(file);
+    return file;
+  };
+
+  describe("an explicit extension stays authoritative", () => {
+    it("parses .json as JSON", () => {
+      assert.equal(readInput(temp("fmt-a.json", JSON_DATA))[0].open, 100);
+    });
+
+    it("parses .csv as CSV", () => {
+      assert.equal(readInput(temp("fmt-b.csv", CSV_DATA))[0].close, 105);
+    });
+
+    it("does not reinterpret a malformed .json as CSV", () => {
+      // The file should report what it failed to be, not be silently retried
+      // as the other format.
+      assert.throws(
+        () => readInput(temp("fmt-c.json", "not json at all")),
+        /JSON/,
+      );
+    });
+  });
+
+  describe("content decides when the extension cannot", () => {
+    it("reads CSV from a file with no extension", () => {
+      // Previously: "Unsupported file format: ." -- the capability existed but
+      // was unreachable without a .csv name.
+      assert.equal(readInput(temp("fmt-noext", CSV_DATA))[0].high, 110);
+    });
+
+    it("reads JSON from a file with no extension", () => {
+      assert.equal(readInput(temp("fmt-noext2", JSON_DATA))[0].low, 95);
+    });
+
+    it("reads CSV from a file whose extension is unrecognized", () => {
+      assert.equal(readInput(temp("fmt-d.txt", CSV_DATA))[0].open, 100);
+    });
+
+    it("reads a file named like a flag, reachable via -- (#149)", () => {
+      assert.equal(readInput(temp("-dashy", CSV_DATA))[0].close, 105);
+    });
+
+    it("ignores leading blank lines when detecting", () => {
+      assert.equal(readInput(temp("fmt-e", "\n\n  " + JSON_DATA))[0].open, 100);
+    });
+
+    it("detects a JSON object, not just an array", () => {
+      assert.deepEqual(readInput(temp("fmt-f", '{"a":1}')), { a: 1 });
+    });
+
+    it("stays on the JSON path for empty input, keeping its existing error", () => {
+      // Nothing to detect from. Falling back to CSV here would replace the
+      // familiar "Unexpected end of JSON input" with a header complaint.
+      assert.throws(() => readInput(temp("fmt-empty", "")), /JSON/);
+      assert.throws(() => readInput(temp("fmt-blank", "\n  \n")), /JSON/);
+    });
+
+    it("preserves the underlying failure as the error cause", () => {
+      try {
+        readInput(temp("fmt-g.txt", "some text data"));
+        assert.fail("should have thrown");
+      } catch (error) {
+        assert.match(error.message, /detected from its content/);
+        assert.ok(error.cause, "cause is preserved");
+        assert.match(error.cause.message, /CSV must have headers/);
+      }
     });
   });
 });

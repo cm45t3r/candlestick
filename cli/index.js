@@ -24,7 +24,7 @@ Usage: candlestick [options] [file]
 
 Options:
   -i, --input <file>       Input CSV or JSON file with OHLC data
-                           ("-", or omitted, reads JSON from stdin)
+                           ("-", or omitted, reads from stdin)
   -o, --output <format>    Output format: json, table, csv (default: json)
   -p, --patterns <list>    Comma-separated pattern names (default: all)
   -c, --confidence <min>   Minimum confidence threshold 0-1 (default: 0)
@@ -48,6 +48,8 @@ Examples:
 Input Format:
   JSON: Array of {open, high, low, close} objects
   CSV:  Headers: open,high,low,close (first line)
+  A .json or .csv extension picks the parser; otherwise it is detected
+  from the first non-blank line, so both formats can be piped.
 
 Supported Patterns (use exact names with --patterns):
   1-candle: hammer, bullishHammer, bearishHammer,
@@ -173,6 +175,21 @@ function parseArgs(argv = process.argv.slice(2)) {
   return args;
 }
 
+// Picks a parser by looking at the payload, for input that has no usable file
+// extension. The CSV format requires an open,high,low,close header line, and
+// JSON input is an array or an object, so the first non-blank character
+// separates them unambiguously.
+function sniffFormat(data) {
+  const firstLine = data.split("\n").find((line) => line.trim() !== "");
+  if (firstLine === undefined) {
+    // Nothing to go on. Stay on the JSON path so an empty input keeps its
+    // existing error rather than gaining a CSV-flavoured one.
+    return ".json";
+  }
+  const firstChar = firstLine.trim()[0];
+  return firstChar === "{" || firstChar === "[" ? ".json" : ".csv";
+}
+
 function readInput(inputPath) {
   // One source of truth for "this is stdin": an omitted path and an explicit
   // "-" must agree, both when reading and when picking the parser.
@@ -182,14 +199,33 @@ function readInput(inputPath) {
     ? fs.readFileSync(0, "utf-8")
     : fs.readFileSync(inputPath, "utf-8");
 
-  const ext = fromStdin ? ".json" : path.extname(inputPath).toLowerCase();
+  // An explicit .json or .csv extension is authoritative: a malformed file
+  // should report what it failed to be, not be reinterpreted as the other
+  // format. Everything else -- stdin, no extension, an unrecognized one --
+  // is decided by the payload.
+  const ext = fromStdin ? null : path.extname(inputPath).toLowerCase();
+  const explicit = ext === ".json" || ext === ".csv";
+  const format = explicit ? ext : sniffFormat(data);
+  const parse = () => (format === ".json" ? JSON.parse(data) : parseCSV(data));
 
-  if (ext === ".json") {
-    return JSON.parse(data);
-  } else if (ext === ".csv") {
-    return parseCSV(data);
-  } else {
-    throw new Error(`Unsupported file format: ${ext}. Use .json or .csv`);
+  if (explicit) {
+    return parse();
+  }
+
+  // The format was a guess, so a parse failure has two possible causes: the
+  // input is malformed, or the guess was wrong. Saying which format was tried
+  // keeps this at least as diagnostic as the "Unsupported file format" error
+  // it replaces, which could only ever report the extension.
+  try {
+    return parse();
+  } catch (cause) {
+    const guessed = format === ".json" ? "JSON" : "CSV";
+    throw new Error(
+      `Could not parse input as ${guessed}, detected from its content: ` +
+        `${cause.message}. Use a .json or .csv file extension to choose ` +
+        `the parser explicitly.`,
+      { cause },
+    );
   }
 }
 
