@@ -1,4 +1,19 @@
-# Publishes the package to npm when a v*.*.* tag is pushed.
+# Stages the package for publishing when a v*.*.* tag is pushed.
+#
+# This does not make the version public. It uploads the built, tested artifact
+# and defers the 2FA proof-of-presence, so a human still has to approve before
+# anyone can install it:
+#
+#   npm stage list                 # find the staged version
+#   npm stage view <stage-id>      # inspect what CI built
+#   npm stage approve <stage-id>   # publish it, with 2FA
+#   npm stage reject <stage-id>    # discard it
+#
+# Direct publishing is possible and npm advises against it: a tag push would
+# then reach every consumer with nothing in between, so anyone able to push a
+# tag — or to compromise a third-party action used here — could publish
+# unreviewed. The trusted publisher on npmjs.com is configured to allow staging
+# only, which is what makes that a setting rather than a convention.
 #
 # Authentication is Trusted Publishing: the job exchanges a GitHub OIDC token
 # for a short-lived npm credential, so there is no NPM_TOKEN secret to expire.
@@ -15,7 +30,7 @@
 # runs from events raised by that token, so an `on: release` trigger never
 # fires.
 
-name: Publish to npm
+name: Stage for npm
 
 on:
   push:
@@ -43,8 +58,8 @@ jobs:
       - run: npm run lint
       - run: npm test
 
-  publish-npm:
-    name: Publish to npm
+  stage-npm:
+    name: Stage for npm
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -84,4 +99,8 @@ jobs:
       - run: npm run lint
       - run: npm test
       # No NODE_AUTH_TOKEN: the credential comes from the OIDC exchange above.
-      - run: npm publish --provenance
+      # Staged, not published: approve it with `npm stage approve <stage-id>`.
+      - run: npm stage publish . --provenance
+      - name: Say what to do next
+        run: |
+          echo "::notice::Staged ${{ inputs.tag || github.ref_name }}. Run 'npm stage list' then 'npm stage approve <stage-id>' to publish it."
