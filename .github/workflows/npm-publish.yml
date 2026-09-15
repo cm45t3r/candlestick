@@ -1,27 +1,45 @@
-# Publishes the package to npm, on demand only.
+# Stages the package for publishing when a v*.*.* tag is pushed.
 #
-# The automatic tag trigger is disabled. Authentication is still the expired
-# NPM_TOKEN secret, which fails the publish with E404 on PUT — that is how
-# v2.1.0 was tagged and released on GitHub but never reached the registry.
-# Leaving the trigger on would only add a red run to every release.
+# This does not make the version public. It uploads the built, tested artifact
+# and defers the 2FA proof-of-presence, so a human still has to approve before
+# anyone can install it:
 #
-# Restore the `push: tags` trigger once the package is configured for Trusted
-# Publishing on npmjs.com, which replaces the secret with an OIDC exchange.
-# That also requires npm >= 11.5.1 in this job (Node 22 ships npm 10) and
-# dropping the NODE_AUTH_TOKEN env below.
+#   npm stage list                 # find the staged version
+#   npm stage view <stage-id>      # inspect what CI built
+#   npm stage approve <stage-id>   # publish it, with 2FA
+#   npm stage reject <stage-id>    # discard it
 #
-# The trigger was never the GitHub Release: Release Automation creates the
-# release with secrets.GITHUB_TOKEN, and GitHub does not start new workflow
+# Direct publishing is possible and npm advises against it: a tag push would
+# then reach every consumer with nothing in between, so anyone able to push a
+# tag — or to compromise a third-party action used here — could publish
+# unreviewed. The trusted publisher on npmjs.com is configured to allow staging
+# only, which is what makes that a setting rather than a convention.
+#
+# Authentication is Trusted Publishing: the job exchanges a GitHub OIDC token
+# for a short-lived npm credential, so there is no NPM_TOKEN secret to expire.
+# The previous secret did expire, which is why v2.1.0 was tagged and released
+# on GitHub but never reached the registry — npm answers an unauthorised PUT
+# with 404, not 401.
+#
+# This requires a matching trusted publisher on npmjs.com, configured against
+# this repository and this workflow filename. Renaming this file breaks the
+# publish until the setting is updated to match.
+#
+# The trigger is the tag, not the GitHub Release. Release Automation creates
+# the release with secrets.GITHUB_TOKEN, and GitHub does not start new workflow
 # runs from events raised by that token, so an `on: release` trigger never
-# fired — every version on npm so far was published by hand.
+# fires.
 
-name: Publish to npm
+name: Stage for npm
 
 on:
+  push:
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to publish, e.g. v2.2.0"
+        description: "Tag to publish, e.g. v3.0.1"
         required: true
         type: string
 
@@ -40,14 +58,15 @@ jobs:
       - run: npm run lint
       - run: npm test
 
-  publish-npm:
-    name: Publish to npm
+  stage-npm:
+    name: Stage for npm
     needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      # Required by `npm publish --provenance`, which mints a signed
-      # attestation from an OIDC token. Without it the publish fails.
+      # The OIDC token Trusted Publishing exchanges for a publish credential,
+      # and that `--provenance` signs the attestation with. Without it the
+      # publish cannot authenticate at all.
       id-token: write
     steps:
       - uses: actions/checkout@v7
@@ -55,8 +74,18 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          # Node 24 ships npm 11.19; Node 22 ships 10.9, which predates OIDC
+          # publishing. The build job above still runs on 22, the oldest
+          # supported runtime.
+          node-version: 24
           registry-url: https://registry.npmjs.org/
+      - name: Ensure npm supports Trusted Publishing
+        # Pinned rather than assumed: a runner image that shipped an older npm
+        # would otherwise fail later, at the publish, with an auth error that
+        # does not mention the cause.
+        run: |
+          npm install -g npm@^11.5.1
+          echo "npm $(npm --version)"
       - name: Verify tag matches package.json version
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
@@ -69,6 +98,9 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
-      - run: npm publish --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # No NODE_AUTH_TOKEN: the credential comes from the OIDC exchange above.
+      # Staged, not published: approve it with `npm stage approve <stage-id>`.
+      - run: npm stage publish . --provenance
+      - name: Say what to do next
+        run: |
+          echo "::notice::Staged ${{ inputs.tag || github.ref_name }}. Run 'npm stage list' then 'npm stage approve <stage-id>' to publish it."

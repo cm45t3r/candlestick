@@ -70,11 +70,28 @@ rewriting history.
 
 1. Bump `package.json`, promote the roadmap's `Unreleased` section to the version.
 2. Merge, then tag `vX.Y.Z` on `main`. Release Automation generates the changelog
-   and creates the GitHub release.
-3. Publish with `npm publish`. It is a manual step: the account requires an OTP,
-   and the tag trigger in `npm-publish.yml` is disabled because `NPM_TOKEN` is
-   expired. The header of that workflow records what restoring it needs
-   (Trusted Publishing on npmjs.com, npm >= 11.5.1, dropping `NODE_AUTH_TOKEN`).
+   and creates the GitHub release, and `npm-publish.yml` builds, tests and
+   **stages** the package — it does not make it public.
+3. Approve the staged version, which is where the 2FA prompt now lives:
+
+   ```bash
+   npm stage list                 # find the staged version
+   npm stage view <stage-id>      # inspect what CI built
+   npm stage approve <stage-id>   # publish it
+   ```
+
+Authentication is Trusted Publishing (OIDC), so there is no `NPM_TOKEN` to
+expire. Two things it depends on, neither obvious from the file itself: the
+trusted publisher on npmjs.com is pinned to the **filename** `npm-publish.yml`,
+so renaming the workflow breaks publishing; and it is configured to allow
+staging only, so `npm publish` from CI would be refused even if the workflow
+asked for it.
+
+Expect the registry to lag a publish. Metadata and the tarball propagate
+separately — 3.0.0 showed `dist-tags` updated while the tarball still 404ed,
+and a `HEAD` on that tarball returned 200 while a `GET` returned 404, which is
+Cloudflare edge inconsistency rather than a failed publish. `npm install` can
+also serve a cached older version; use `--prefer-online` when verifying.
 
 Note that `v2.1.0` exists as a tag and GitHub release but never reached npm — the
 publish failed and `2.2.0` was released instead, deliberately leaving the gap.
