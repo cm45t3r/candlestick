@@ -101,7 +101,22 @@ For reference, measured with `npm view <pkg> dist.unpackedSize`:
 
 This isn't a claim that `candlestick` replaces TA-Lib. It doesn't; TA-Lib does far more. It's a claim about a narrower job: if what you need is candlestick pattern detection specifically, you can have it as plain JavaScript that installs identically on Linux, Windows and macOS, with nothing to compile and no supply-chain surface you didn't ask for.
 
-One thing I won't claim: the package is not usefully tree-shakeable today. The ESM entry re-exports the CommonJS module by destructuring it at runtime, which is opaque to a bundler's static analysis, so importing one pattern currently pulls in the same code as importing all of them. It's [tracked as a known defect](https://github.com/cm45t3r/candlestick/issues/155) rather than papered over. At 7.8 kB minified and gzipped for the whole library, it isn't urgent — but `sideEffects: false` in the manifest is currently writing a cheque the entry point doesn't cash.
+When I first wrote this, there was a caveat here: the package was not usefully
+tree-shakeable. The ESM entry re-exported the CommonJS module by destructuring it
+at runtime, which is opaque to a bundler's static analysis, so importing one
+pattern pulled in the same code as importing all eighteen. `sideEffects: false`
+in the manifest was writing a cheque the entry point could not cash.
+
+It's fixed in v3.0.0. The entry now names each export against its own module,
+which a bundler can follow. `import { hammer }` measures **1.5 kB** minified and
+gzipped, against 8.1 kB for the whole library. The default export still pulls
+everything in, because that is what it means.
+
+I'm leaving the original paragraph's substance here rather than quietly swapping
+the numbers, because the interesting part is not the fix — it's that measuring
+the claim is what turned up the defect. Writing "modular, tree-shakeable" in a
+README costs nothing. Running esbuild over a single import is what tells you
+whether it was true.
 
 ## Streaming, and where the savings actually come from
 
@@ -138,11 +153,11 @@ what you'll get in your program.
 
 ## Proving it works
 
-Design decisions are cheap to write about and expensive to get right, so the test suite does the real talking: **450 tests across 97 suites, 99.94% line coverage, 100% function coverage, and branch coverage a hair over 99%.** Property-based tests via `fast-check` generate randomized OHLC scenarios per invariant, which is how most of the interesting edge cases surfaced — hand-written examples tend to test the cases you already thought of.
+Design decisions are cheap to write about and expensive to get right, so the test suite does the real talking: **484 tests across 107 suites, 99.94% line coverage, 100% function coverage, and branch coverage a hair over 99%.** Property-based tests via `fast-check` generate randomized OHLC scenarios per invariant, which is how most of the interesting edge cases surfaced — hand-written examples tend to test the cases you already thought of.
 
 That randomness is also why I won't quote a branch-coverage decimal: the generated cases reach slightly different branches on every run, so the figure moves between 99.1% and 99.3% run to run. A precise number there would be one nobody could reproduce, including me.
 
-CI runs the full suite on Node 20, 22, 24 and 26 across Linux, Windows and macOS.
+CI runs the full suite on Node 22, 24 and 26 across Linux, Windows and macOS.
 
 Throughput for the full 29-pattern chain, measured 2026-09-11 on Node v24.21.0, Intel Core i7-9750H, 16 GB RAM, macOS 26.6:
 
@@ -159,13 +174,13 @@ Single-run figures on one machine — treat them as an order of magnitude, not a
 
 The package has been on npm since 2016. The trend-context work is recent; a lot of the rest is the accumulated result of using it, finding it wrong, and fixing it — which is why the roadmap carries corrections to claims earlier versions made, including a memory figure that turned out to be unsubstantiated.
 
-Next up: visual examples for each pattern (they're text-only descriptions today), a few more multi-candle formations, and the tree-shaking fix above. If there's a pattern you rely on that isn't covered, [issues and PRs are open](https://github.com/cm45t3r/candlestick/issues).
+Next up: visual examples for each pattern (they're text-only descriptions today), and a few more multi-candle formations. If there's a pattern you rely on that isn't covered, [issues and PRs are open](https://github.com/cm45t3r/candlestick/issues).
 
 ```bash
 npm install candlestick
 ```
 
-Requires Node.js >= 20.
+Requires Node.js >= 22. Node 20 reached end of life on 2026-04-30 and was dropped in v3.0.0.
 
 ---
 
