@@ -27,7 +27,7 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
-### Unreleased
+### v3.0.0 (2026-09-15)
 
 Breaking release. The library API is unchanged; the breaks are in the CLI and
 the runtime requirement.
