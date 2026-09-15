@@ -20,7 +20,7 @@ const HELP_TEXT = `
 ║${BANNER_LEFT}${BANNER_TITLE}${BANNER_RIGHT}║
 ╚${"═".repeat(BANNER_WIDTH)}╝
 
-Usage: candlestick [options]
+Usage: candlestick [options] [file]
 
 Options:
   -i, --input <file>       Input CSV or JSON file with OHLC data
@@ -34,6 +34,8 @@ Options:
   --metadata               Include pattern metadata in JSON output
                            (table and csv always include it)
   --help, -h               Show this help message
+  --                       End of options; everything after is a file path,
+                           for names that begin with a dash
 
 Examples:
   candlestick -i data.json
@@ -41,6 +43,7 @@ Examples:
   candlestick -i data.json --confidence 0.8 --type reversal
   cat data.json | candlestick --output csv
   cat data.json | candlestick -i - --output csv
+  candlestick -- -weird-name.json
 
 Input Format:
   JSON: Array of {open, high, low, close} objects
@@ -60,7 +63,39 @@ Supported Patterns (use exact names with --patterns):
   3-candle: morningStar, eveningStar, threeWhiteSoldiers, threeBlackCrows
 `;
 
-function parseArgs() {
+// Options that take a value, mapped to the key they set.
+const VALUE_OPTIONS = new Map([
+  ["-i", "input"],
+  ["--input", "input"],
+  ["-o", "output"],
+  ["--output", "output"],
+  ["-p", "patterns"],
+  ["--patterns", "patterns"],
+  ["-c", "confidence"],
+  ["--confidence", "confidence"],
+  ["-t", "type"],
+  ["--type", "type"],
+  ["-d", "direction"],
+  ["--direction", "direction"],
+]);
+
+// Options that are their own value.
+const FLAG_OPTIONS = new Map([
+  ["-h", "help"],
+  ["--help", "help"],
+  ["--validate", "validate"],
+  ["--metadata", "metadata"],
+]);
+
+// A token starting with "-" is a flag, not a value: without this check a
+// forgotten value swallows the following flag, and that flag's effect is lost
+// silently. "-" alone is the documented spelling for stdin, so it is the one
+// exception. Anything else that legitimately starts with a dash goes after "--".
+function isFlagLike(token) {
+  return typeof token === "string" && token.startsWith("-") && token !== "-";
+}
+
+function parseArgs(argv = process.argv.slice(2)) {
   const args = {
     input: null,
     output: "json",
@@ -73,27 +108,65 @@ function parseArgs() {
     help: false,
   };
 
-  for (let i = 2; i < process.argv.length; i++) {
-    const arg = process.argv[i];
+  // --help wins over any other parse error, so that a malformed command line
+  // can still reach the usage text.
+  if (argv.includes("--help") || argv.includes("-h")) {
+    args.help = true;
+    return args;
+  }
 
-    if (arg === "--help" || arg === "-h") {
-      args.help = true;
-    } else if (arg === "-i" || arg === "--input") {
-      args.input = process.argv[++i];
-    } else if (arg === "-o" || arg === "--output") {
-      args.output = process.argv[++i];
-    } else if (arg === "-p" || arg === "--patterns") {
-      args.patterns = process.argv[++i];
-    } else if (arg === "-c" || arg === "--confidence") {
-      args.confidence = parseFloat(process.argv[++i]);
-    } else if (arg === "-t" || arg === "--type") {
-      args.type = process.argv[++i];
-    } else if (arg === "-d" || arg === "--direction") {
-      args.direction = process.argv[++i];
-    } else if (arg === "--validate") {
-      args.validate = true;
-    } else if (arg === "--metadata") {
-      args.metadata = true;
+  const operands = [];
+
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+
+    // End of options: everything after is an operand, dashes and all.
+    if (arg === "--") {
+      operands.push(...argv.slice(i + 1));
+      break;
+    }
+
+    if (FLAG_OPTIONS.has(arg)) {
+      args[FLAG_OPTIONS.get(arg)] = true;
+      continue;
+    }
+
+    if (VALUE_OPTIONS.has(arg)) {
+      const value = argv[i + 1];
+      if (value === undefined || isFlagLike(value)) {
+        throw new Error(`${arg} requires a value`);
+      }
+      i++;
+
+      const key = VALUE_OPTIONS.get(arg);
+      if (key === "confidence") {
+        const parsed = Number.parseFloat(value);
+        if (!Number.isFinite(parsed)) {
+          throw new Error(`${arg} requires a number, got "${value}"`);
+        }
+        args.confidence = parsed;
+      } else {
+        args[key] = value;
+      }
+      continue;
+    }
+
+    // An unrecognized dashed token is a typo, not something to ignore.
+    if (isFlagLike(arg)) {
+      throw new Error(`Unknown option: ${arg}`);
+    }
+
+    operands.push(arg);
+  }
+
+  // The only operand this CLI accepts is an input path, equivalent to -i.
+  if (operands.length > 0) {
+    if (args.input !== null) {
+      throw new Error(`Unexpected argument: ${operands[0]}`);
+    }
+    args.input = operands[0];
+    if (operands.length > 1) {
+      throw new Error(`Unexpected argument: ${operands[1]}`);
     }
   }
 

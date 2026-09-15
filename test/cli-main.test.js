@@ -351,3 +351,139 @@ describe("CLI main and argument parsing", () => {
     assert.ok(errors.some((e) => e.includes("Unsupported output format")));
   });
 });
+
+describe("CLI argument validation", () => {
+  const { parseArgs } = require("../cli/index.js");
+
+  describe("a missing option value is diagnosed, not mis-parsed (#148)", () => {
+    it("rejects an option whose value is the next flag, instead of swallowing it", () => {
+      // Previously: input became "-o" and `-o csv` was silently lost.
+      assert.throws(() => parseArgs(["-i", "-o", "csv"]), {
+        message: "-i requires a value",
+      });
+    });
+
+    it("rejects a missing -p rather than reporting zero patterns with exit 0", () => {
+      // Previously: patterns became "-o", matched nothing, and the run printed
+      // [] successfully -- a silent wrong answer.
+      assert.throws(() => parseArgs(["-p", "-o", "csv"]), {
+        message: "-p requires a value",
+      });
+    });
+
+    it("rejects an option with no value at the end of argv", () => {
+      assert.throws(() => parseArgs(["-i", "x.json", "-c"]), {
+        message: "-c requires a value",
+      });
+    });
+
+    it("rejects a non-numeric confidence instead of silently skipping the filter", () => {
+      // Previously: parseFloat("abc") is NaN, NaN > 0 is false, no filtering.
+      assert.throws(() => parseArgs(["-c", "abc"]), {
+        message: '-c requires a number, got "abc"',
+      });
+    });
+
+    it("accepts a confidence of 0, which is falsy but valid", () => {
+      assert.equal(parseArgs(["-c", "0"]).confidence, 0);
+    });
+
+    it("accepts a fractional confidence", () => {
+      assert.equal(parseArgs(["-c", "0.5"]).confidence, 0.5);
+    });
+
+    it("rejects an unknown option rather than ignoring it", () => {
+      assert.throws(() => parseArgs(["--bogus", "-i", "x.json"]), {
+        message: "Unknown option: --bogus",
+      });
+    });
+
+    it("still accepts - as the value meaning stdin (#147)", () => {
+      assert.equal(parseArgs(["-i", "-"]).input, "-");
+    });
+  });
+
+  describe("-- ends option parsing (#149)", () => {
+    it("does not take -- itself as an option value", () => {
+      // Previously: input became "--".
+      assert.throws(() => parseArgs(["-i", "--", "-o", "csv"]), {
+        message: "-i requires a value",
+      });
+    });
+
+    it("stops treating dashed tokens as options after --", () => {
+      // Previously: `-- -i x.json` silently dropped the -- and parsed -i as an
+      // option, the opposite of what -- means.
+      assert.throws(() => parseArgs(["--", "-i", "x.json"]), {
+        message: "Unexpected argument: x.json",
+      });
+    });
+
+    it("lets a path that would otherwise look like a flag through", () => {
+      assert.equal(parseArgs(["--", "./-"]).input, "./-");
+      assert.equal(parseArgs(["--", "-weird.json"]).input, "-weird.json");
+    });
+  });
+
+  describe("operands", () => {
+    it("accepts a bare path as the input, equivalent to -i", () => {
+      assert.equal(parseArgs(["data.json"]).input, "data.json");
+    });
+
+    it("rejects a second path rather than ignoring one of them", () => {
+      assert.throws(() => parseArgs(["-i", "a.json", "b.json"]), {
+        message: "Unexpected argument: b.json",
+      });
+    });
+  });
+
+  describe("--help", () => {
+    it("wins over an otherwise invalid command line", () => {
+      assert.equal(parseArgs(["--bogus", "--help"]).help, true);
+      assert.equal(parseArgs(["-i", "--help"]).help, true);
+    });
+
+    it("is returned by both spellings", () => {
+      assert.equal(parseArgs(["-h"]).help, true);
+      assert.equal(parseArgs(["--help"]).help, true);
+    });
+  });
+
+  describe("unchanged behaviour", () => {
+    it("parses a full option set", () => {
+      const args = parseArgs([
+        "-i",
+        "d.json",
+        "-o",
+        "csv",
+        "-c",
+        "0.8",
+        "-t",
+        "reversal",
+        "-d",
+        "bullish",
+        "--validate",
+        "--metadata",
+      ]);
+      assert.equal(args.input, "d.json");
+      assert.equal(args.output, "csv");
+      assert.equal(args.confidence, 0.8);
+      assert.equal(args.type, "reversal");
+      assert.equal(args.direction, "bullish");
+      assert.equal(args.validate, true);
+      assert.equal(args.metadata, true);
+    });
+
+    it("defaults to stdin and json with no arguments", () => {
+      const args = parseArgs([]);
+      assert.equal(args.input, null);
+      assert.equal(args.output, "json");
+      assert.equal(args.confidence, 0);
+    });
+
+    it("accepts long spellings", () => {
+      assert.equal(parseArgs(["--input", "d.json"]).input, "d.json");
+      assert.equal(parseArgs(["--patterns", "hammer"]).patterns, "hammer");
+    });
+  });
+});
