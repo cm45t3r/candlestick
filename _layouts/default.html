@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{%- seo -%}
+<link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+{%- feed_meta -%}
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="{{ '/' | relative_url }}">candlestick</a>
+    <nav>
+      <a href="https://github.com/cm45t3r/candlestick">GitHub</a>
+      <a href="https://www.npmjs.com/package/candlestick">npm</a>
+    </nav>
+  </header>
+  {{ content }}
+  <footer class="site">
+    <p>
+      <a href="https://github.com/cm45t3r/candlestick">candlestick</a> is MIT-licensed
+      and maintained by <a href="https://github.com/cm45t3r">cm45t3r</a>.
+      <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+    </p>
+  </footer>
+</div>
+</body>
+</html>

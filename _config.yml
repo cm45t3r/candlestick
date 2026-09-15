@@ -1,0 +1,26 @@
+title: candlestick
+tagline: Candlestick pattern detection for Node, with trend context.
+description: >-
+  Notes from building candlestick, an open-source candlestick pattern
+  detection library for Node.js with zero runtime dependencies.
+url: https://cm45t3r.github.io
+baseurl: /candlestick
+author: cm45t3r
+repository: cm45t3r/candlestick
+
+permalink: /blog/:title/
+
+# dev/bench is written by the benchmark workflow; Jekyll copies it verbatim.
+keep_files:
+  - dev
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
