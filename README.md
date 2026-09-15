@@ -5,12 +5,8 @@
 [![npm downloads](https://img.shields.io/npm/dm/candlestick.svg)](https://www.npmjs.com/package/candlestick)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/candlestick)](https://bundlephobia.com/package/candlestick)
 [![Coverage Status](https://coveralls.io/repos/github/cm45t3r/candlestick/badge.svg?branch=main)](https://coveralls.io/github/cm45t3r/candlestick?branch=main)
-[![ESLint](https://img.shields.io/badge/code%20style-eslint-brightgreen.svg)](https://eslint.org/)
-[![code style: prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg?style=flat)](https://prettier.io/)
 [![Socket Badge](https://socket.dev/api/badge/npm/package/candlestick)](https://socket.dev/npm/package/candlestick)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/cm45t3r/candlestick/pulls)
-[![Contributors](https://img.shields.io/github/contributors/cm45t3r/candlestick.svg)](https://github.com/cm45t3r/candlestick/graphs/contributors)
 [![Last Commit](https://img.shields.io/github/last-commit/cm45t3r/candlestick)](https://github.com/cm45t3r/candlestick/commits/main)
 
 A modern, modular JavaScript library for [candlestick pattern](https://en.wikipedia.org/wiki/Candlestick_chart) detection. Detects classic reversal and continuation patterns in OHLC (Open, High, Low, Close) price data, with a clean API and no native dependencies.
@@ -20,7 +16,8 @@ A modern, modular JavaScript library for [candlestick pattern](https://en.wikipe
 - 🌊 Streaming API for massive datasets (resident memory bounded by `chunkSize`, not dataset size)
 - 🔌 Plugin system for custom patterns, data validation, pattern metadata
 - ✅ Comprehensive test suite with high coverage (run `npm test` and `npm run coverage`)
-- 🪶 Zero runtime dependencies
+- 🪶 Zero runtime dependencies and no native build step — `npm install` never
+  invokes `node-gyp`, so it installs identically on Linux, Windows and macOS
 
 > **Requires Node.js >= 20.** Tested in CI on Node 20.x, 22.x, 24.x and 26.x across Linux, Windows and macOS.
 
@@ -128,7 +125,7 @@ const { isHammer, hammer, patternChain } = require("candlestick");
 // Import all patterns
 import candlestick from "candlestick";
 
-// Or import only what you need (recommended for tree-shaking)
+// Or import named exports directly
 import { isHammer, hammer, patternChain } from "candlestick";
 ```
 
@@ -587,6 +584,27 @@ const dojis = doji(precomputed);
 `patternChain` handles this internally — no manual call needed there.
 
 Run `npm run bench` for the full benchmark suite on your hardware.
+
+### Install footprint
+
+|                             | candlestick 2.2.0 |
+| --------------------------- | ----------------- |
+| Published tarball           | 42.5 kB           |
+| Unpacked on disk            | 170.6 kB          |
+| Runtime dependencies        | 0 (0 transitive)  |
+| Native build step           | none              |
+| Bundled, minified + gzipped | 7.8 kB            |
+
+Tarball and unpacked sizes are what `npm pack --dry-run` reports for the
+published file list. The bundled figure is `esbuild 0.28.2 --bundle --minify
+--format=esm --platform=neutral` over the package entry, gzipped with `gzip -9`;
+it covers the whole library, since importing a single pattern currently pulls in
+the same code ([#155](https://github.com/cm45t3r/candlestick/issues/155)).
+
+The comparison that matters for install cost is the dependency tree, not the
+kilobytes: libraries in this space that bind to TA-Lib or Tulip ship a native
+addon and compile on install, which is where cross-platform CI breaks. This one
+is plain JavaScript end to end.
 
 ---
 
