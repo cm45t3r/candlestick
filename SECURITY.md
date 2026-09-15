@@ -2,14 +2,35 @@
 
 ## Supported Versions
 
-The following versions are currently supported with security updates:
+**Only the current major version receives security fixes.** This is a
+single-maintainer project; backporting across release lines is not something it
+can sustain, and saying otherwise would promise more than it delivers.
 
-| Version    | Supported          |
-| ---------- | ------------------ |
-| `>= 1.0.0` | :white_check_mark: |
-| `< 1.0.0`  | :x:                |
+| Version | Supported          | Notes                                      |
+| ------- | ------------------ | ------------------------------------------ |
+| `3.x`   | :white_check_mark: | Current                                    |
+| `2.x`   | :x:                | Superseded by 3.0.0; targets Node 20 (EOL) |
+| `1.x`   | :x:                | Superseded                                 |
+| `0.x`   | :x:                | Superseded                                 |
 
-Please use the latest version for all security-critical applications.
+A fix ships as a new release on the current line rather than as a patch to an
+older one, so upgrading is the remedy.
+
+There is a second reason not to stay on an older line. Every version before
+3.0.0 permits a Node.js release that is itself end-of-life:
+
+| Package | `engines` | Oldest Node allowed | That version's EOL |
+| ------- | --------- | ------------------- | ------------------ |
+| `3.x`   | `>=22`    | 22                  | 2027-04-30         |
+| `2.x`   | `>=20`    | 20                  | **2026-04-30**     |
+| `1.x`   | `>=18`    | 18                  | **2025-04-30**     |
+
+An unsupported runtime stops receiving security fixes from upstream, which no
+patch to this package could compensate for.
+
+The upgrade path is documented in the README under "Upgrading to v3.0". The
+library API did not change in 3.0.0 — the breaking changes are the Node
+requirement and two CLI behaviours.
 
 ## Reporting a Vulnerability
 
