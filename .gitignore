@@ -89,3 +89,6 @@ Thumbs.db
 
 # JetBrains
 .idea/
+
+# Local Claude Code settings (per-developer, never committed)
+.claude/

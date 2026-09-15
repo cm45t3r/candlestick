@@ -1,69 +1,78 @@
-# Agentic SDLC and Spec-Driven Development
+# Working on candlestick
 
-Kiro-style Spec-Driven Development on an agentic SDLC
+Zero-dependency JavaScript library for candlestick pattern detection in OHLC data.
 
-## Project Context
+## How work is specified
 
-### Paths
+**GitHub issues are the spec.** There is no separate spec directory. A good issue
+here states the problem, shows observed behaviour against expected (a table of
+inputs to outputs where it helps), and names the acceptance criteria. Issues
+[#148](https://github.com/cm45t3r/candlestick/issues/148),
+[#149](https://github.com/cm45t3r/candlestick/issues/149) and
+[#150](https://github.com/cm45t3r/candlestick/issues/150) are the pattern to follow.
 
-- Steering: `.kiro/steering/`
-- Specs: `.kiro/specs/`
+Every change lands through a pull request, including documentation. CI runs the
+full suite on Node 20, 22, 24 and 26 across Linux, Windows and macOS.
 
-### Steering vs Specification
+## Commands
 
-**Steering** (`.kiro/steering/`) - Guide AI with project-wide rules and context
-**Specs** (`.kiro/specs/`) - Formalize development process for individual features
+```bash
+npm test              # node --test, the full suite
+npm run coverage      # c8 report
+npm run lint          # eslint
+npm run format        # prettier --write
+npm run bench         # full benchmark suite
+npm run bench:readme  # regenerate the README benchmark table in place
+```
 
-### Active Specifications
+`npm run lint && npm test` runs automatically before publish via `prepublishOnly`.
 
-- Check `.kiro/specs/` for active specifications
-- Use `/kiro-spec-status [feature-name]` to check progress
+## Layout
 
-## Development Guidelines
+Flat, one module per concern. No feature folders, no nested packages.
 
-- Think in English, generate responses in English. All Markdown content written to project files (e.g., requirements.md, design.md, tasks.md, research.md, validation reports) MUST be written in the target language configured for this specification (see spec.json.language).
+| Path                              | What                                                                                                                       |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `src/*.js`                        | one file per pattern, plus `utils`, `trend`, `volatility`, `streaming`, `patternChain`, `patternMetadata`, `pluginManager` |
+| `src/candlestick.js`              | aggregator; `index.js` proxies to it for CJS                                                                               |
+| `src/index.mjs`                   | ESM entry                                                                                                                  |
+| `types/index.d.ts`                | TypeScript definitions, hand-maintained                                                                                    |
+| `cli/index.js`, `bin/candlestick` | the CLI                                                                                                                    |
+| `test/`                           | mirrors `src/` one-to-one                                                                                                  |
+| `docs/`                           | ARCHITECTURE, PATTERNS, CLI_GUIDE, PLUGIN_API, ROADMAP                                                                     |
 
-## Minimal Workflow
+## Conventions that are easy to get wrong
 
-- Phase 0 (optional): `/kiro-steering`, `/kiro-steering-custom`
-- Discovery: `/kiro-discovery "idea"` — determines action path, writes brief.md + roadmap.md for multi-spec projects
-- Phase 1 (Specification):
-  - Single spec: `/kiro-spec-quick {feature} [--auto]` or step by step:
-    - `/kiro-spec-init "description"`
-    - `/kiro-spec-requirements {feature}`
-    - `/kiro-validate-gap {feature}` (optional: for existing codebase)
-    - `/kiro-spec-design {feature} [-y]`
-    - `/kiro-validate-design {feature}` (optional: design review)
-    - `/kiro-spec-tasks {feature} [-y]`
-  - Multi-spec: `/kiro-spec-batch` — creates all specs from roadmap.md in parallel by dependency wave
-- Phase 2 (Implementation): `/kiro-impl {feature} [tasks]`
-  - Without task numbers: autonomous mode (subagent per task + independent review + final validation)
-  - With task numbers: manual mode (selected tasks in main context, still reviewer-gated before completion)
-  - `/kiro-validate-impl {feature}` (standalone re-validation)
-- Progress check: `/kiro-spec-status {feature}` (use anytime)
+**Published claims must be measured, and say where the measurement came from.**
+The README benchmark table records its date, Node version and hardware. A figure
+without provenance has twice been wrong here: an unsubstantiated "~70% memory
+reduction" ([#135](https://github.com/cm45t3r/candlestick/issues/135)) and an
+install size that changed every time it was written, because this README ships
+inside the package it measures
+([#159](https://github.com/cm45t3r/candlestick/pull/159)). Prefer a badge or a
+regeneration script over a number typed by hand.
 
-## Skills Structure
+**Do not claim tree-shaking.** The ESM entry destructures the CommonJS namespace
+at runtime, so a bundle of one pattern is the same size as a bundle of all of
+them. Tracked in [#155](https://github.com/cm45t3r/candlestick/issues/155).
 
-Skills are located in `.claude/skills/kiro-*/SKILL.md`
+**Branch coverage is not deterministic.** `fast-check` seeds differ per run and
+reach different branches, so the figure moves by a tenth of a point between runs.
+Line and function coverage are stable; do not publish a branch decimal.
 
-- Each skill is a directory with a `SKILL.md` file
-- Skills run inline with access to conversation context
-- Skills may delegate parallel research to subagents for efficiency
-- Additional files (templates, examples) can be added to skill directories
-- `kiro-review` — task-local adversarial review protocol used by reviewer subagents
-- `kiro-debug` — root-cause-first debug protocol used by debugger subagents
-- `kiro-verify-completion` — fresh-evidence gate before success or completion claims
-- **If there is even a 1% chance a skill applies to the current task, invoke it.** Do not skip skills because the task seems simple.
+**`ROADMAP.md` carries corrections.** When a released claim turns out to be wrong,
+the entry keeps what was claimed and appends the correction rather than quietly
+rewriting history.
 
-## Development Rules
+## Releasing
 
-- 3-phase approval workflow: Requirements → Design → Tasks → Implementation
-- Human review required each phase; use `-y` only for intentional fast-track
-- Keep steering current and verify alignment with `/kiro-spec-status`
-- Follow the user's instructions precisely, and within that scope act autonomously: gather the necessary context and complete the requested work end-to-end in this run, asking questions only when essential information is missing or the instructions are critically ambiguous.
+1. Bump `package.json`, promote the roadmap's `Unreleased` section to the version.
+2. Merge, then tag `vX.Y.Z` on `main`. Release Automation generates the changelog
+   and creates the GitHub release.
+3. Publish with `npm publish`. It is a manual step: the account requires an OTP,
+   and the tag trigger in `npm-publish.yml` is disabled because `NPM_TOKEN` is
+   expired. The header of that workflow records what restoring it needs
+   (Trusted Publishing on npmjs.com, npm >= 11.5.1, dropping `NODE_AUTH_TOKEN`).
 
-## Steering Configuration
-
-- Load entire `.kiro/steering/` as project memory
-- Default files: `product.md`, `tech.md`, `structure.md`
-- Custom files are supported (managed via `/kiro-steering-custom`)
+Note that `v2.1.0` exists as a tag and GitHub release but never reached npm — the
+publish failed and `2.2.0` was released instead, deliberately leaving the gap.
