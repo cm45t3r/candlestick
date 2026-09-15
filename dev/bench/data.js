@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789100725024,
+  "lastUpdate": 1789449557619,
   "repoUrl": "https://github.com/cm45t3r/candlestick",
   "entries": {
     "Benchmark": [
@@ -593,6 +593,105 @@ window.BENCHMARK_DATA = {
           {
             "name": "Memory 1,000,000",
             "value": 1114.3,
+            "unit": "MB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cm45t3r@gmail.com",
+            "name": "cm45t3r",
+            "username": "cm45t3r"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d54f1a1494c5549eb1437c88fca1d8a109829c4d",
+          "message": "Merge pull request #164 from cm45t3r/fix/esm-tree-shaking\n\nfix(esm): make the ESM entry tree-shakeable",
+          "timestamp": "2026-09-15T00:18:10-05:00",
+          "tree_id": "9bf01b9d926007cb3951e7bca33c7f3b4977e874",
+          "url": "https://github.com/cm45t3r/candlestick/commit/d54f1a1494c5549eb1437c88fca1d8a109829c4d"
+        },
+        "date": 1789449556873,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Pattern Chain 100",
+            "value": 0.6,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100",
+            "value": 0.01,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100",
+            "value": 0.09,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000",
+            "value": 1.8,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000",
+            "value": 0.05,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000",
+            "value": -0.02,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 10,000",
+            "value": 15.1,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 10,000",
+            "value": 0.34,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 10,000",
+            "value": 7.17,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 100,000",
+            "value": 182.7,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 100,000",
+            "value": 4.28,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 100,000",
+            "value": 82.81,
+            "unit": "MB"
+          },
+          {
+            "name": "Pattern Chain 1,000,000",
+            "value": 2038.5,
+            "unit": "ms"
+          },
+          {
+            "name": "Hammer 1,000,000",
+            "value": 77.12,
+            "unit": "ms"
+          },
+          {
+            "name": "Memory 1,000,000",
+            "value": 1008.87,
             "unit": "MB"
           }
         ]
