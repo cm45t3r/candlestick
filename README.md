@@ -3,7 +3,7 @@
 [![Node.js CI workflow](https://github.com/cm45t3r/candlestick/actions/workflows/node.js.yml/badge.svg)](https://github.com/cm45t3r/candlestick/actions/workflows/node.js.yml)
 [![npm](https://img.shields.io/npm/v/candlestick.svg)](https://www.npmjs.com/package/candlestick)
 [![npm downloads](https://img.shields.io/npm/dm/candlestick.svg)](https://www.npmjs.com/package/candlestick)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/candlestick)](https://bundlephobia.com/package/candlestick)
+[![Install size](https://img.shields.io/npm/unpacked-size/candlestick)](https://www.npmjs.com/package/candlestick)
 [![Coverage Status](https://coveralls.io/repos/github/cm45t3r/candlestick/badge.svg?branch=main)](https://coveralls.io/github/cm45t3r/candlestick?branch=main)
 [![Socket Badge](https://socket.dev/api/badge/npm/package/candlestick)](https://socket.dev/npm/package/candlestick)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -595,12 +595,14 @@ Run `npm run bench` for the full benchmark suite on your hardware.
 | Install scripts        | none             |
 | Platform-specific code | none             |
 
-Install size is deliberately not stated here. This README ships inside the
-package, so any figure printed in this section changes the number it reports —
-the last two attempts were both stale by the time they were committed. Run
-`npm pack --dry-run` for the exact size at any commit; it is on the order of
-tens of kilobytes, and the rows above are the part that actually affects
-whether an install succeeds.
+No size is written into this section. The README ships inside the package, so
+a figure printed here changes the number it reports — two earlier attempts were
+both stale by the time they were committed. The install-size badge at the top
+carries it instead, read from npm's own `dist.unpackedSize` for whatever version
+is current, so it cannot go out of date. `npm pack --dry-run` gives the exact
+size at any commit.
+
+The rows above are the part that actually affects whether an install succeeds.
 
 For a browser bundle, note that the package is not usefully tree-shakeable
 today: importing one pattern pulls in the same code as importing all of them
