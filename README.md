@@ -38,6 +38,7 @@ A modern, modular JavaScript library for [candlestick pattern](https://en.wikipe
 - [Upgrading to v2.1](#upgrading-to-v21)
 - [Upgrading from v1.x](#upgrading-from-v1x)
 - [FAQ](#faq)
+- [Further Reading](#further-reading)
 - [Changelog](#changelog)
 - [Roadmap](#roadmap)
 - [Code of Conduct](#code-of-conduct)
@@ -589,14 +590,16 @@ Run `npm run bench` for the full benchmark suite on your hardware.
 
 |                             | candlestick 2.2.0 |
 | --------------------------- | ----------------- |
-| Published tarball           | 42.5 kB           |
-| Unpacked on disk            | 170.6 kB          |
+| Published tarball           | ~43 kB            |
+| Unpacked on disk            | ~171 kB           |
 | Runtime dependencies        | 0 (0 transitive)  |
 | Native build step           | none              |
 | Bundled, minified + gzipped | 7.8 kB            |
 
 Tarball and unpacked sizes are what `npm pack --dry-run` reports for the
-published file list. The bundled figure is `esbuild 0.28.2 --bundle --minify
+published file list, rounded: this README ships inside the package, so editing
+this section moves the number it states. Run `npm pack --dry-run` for the exact
+figure at any commit. The bundled figure is `esbuild 0.28.2 --bundle --minify
 --format=esm --platform=neutral` over the package entry, gzipped with `gzip -9`;
 it covers the whole library, since importing a single pattern currently pulls in
 the same code ([#155](https://github.com/cm45t3r/candlestick/issues/155)).
@@ -718,6 +721,17 @@ See the [Performance](#performance) table for current numbers. Run `npm run benc
 **Q: Are there visual examples of patterns?**
 
 Not yet, but this is planned (see [ROADMAP.md](./docs/ROADMAP.md)). For now, see the [Pattern Descriptions](#pattern-descriptions) section.
+
+---
+
+## Further Reading
+
+[**The Hammer and the Hanging Man Are the Same Candle**](https://cm45t3r.github.io/candlestick/blog/the-hammer-and-the-hanging-man/?utm_source=readme&utm_medium=repo&utm_campaign=candlestick) — why two
+patterns with identical geometry mean opposite things, what a static confidence score
+gets wrong, and how the trend-context scoring in this library works. Also covers the
+streaming memory measurements and where the savings actually come from.
+
+More at [cm45t3r.github.io/candlestick](https://cm45t3r.github.io/candlestick/?utm_source=readme&utm_medium=repo&utm_campaign=candlestick).
 
 ---
 
