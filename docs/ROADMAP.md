@@ -27,6 +27,51 @@ This roadmap outlines planned features and future directions for the Candlestick
 
 ## Completed
 
+### Unreleased
+
+Breaking release. The library API is unchanged; the breaks are in the CLI and
+the runtime requirement.
+
+**Breaking:**
+
+- **Node.js >= 22 required.** Node 20 reached EOL on 2026-04-30 and no longer
+  receives fixes, including security fixes. CI matrix is now 22.x / 24.x / 26.x
+  across Linux, Windows and macOS; `.nvmrc` pins 22.13
+  ([#146](https://github.com/cm45t3r/candlestick/issues/146))
+- **cli: unknown options are an error** instead of being silently ignored
+  ([#148](https://github.com/cm45t3r/candlestick/issues/148))
+- **cli: `Unsupported file format` no longer exists.** Input with no usable
+  extension is detected from its content, so CSV can be piped; a failure names
+  the format that was tried ([#150](https://github.com/cm45t3r/candlestick/issues/150))
+
+**Observable when using the CLI:**
+
+- A missing option value is diagnosed rather than mis-parsed: `-i -o csv` no
+  longer reads a file named `-o` while dropping `-o csv`, and `-p` with no value no
+  longer reports zero patterns with exit 0
+  ([#148](https://github.com/cm45t3r/candlestick/issues/148))
+- `--` ends option parsing, so a path beginning with a dash is reachable
+  ([#149](https://github.com/cm45t3r/candlestick/issues/149))
+- A bare path is accepted as the input, equivalent to `-i`
+- `cat data.csv | candlestick` works
+  ([#150](https://github.com/cm45t3r/candlestick/issues/150))
+
+**Observable when bundling for the browser:**
+
+- Named ESM imports tree-shake. The entry names each export against its own
+  module instead of destructuring the CommonJS namespace at runtime, which no
+  bundler could analyse. `import { hammer }` measures 1.5 kB minified and
+  gzipped against 8.1 kB for the whole library
+  ([#155](https://github.com/cm45t3r/candlestick/issues/155))
+
+**Project tooling:**
+
+- chore: remove the Kiro spec tooling; issues serve as the specification
+  ([#161](https://github.com/cm45t3r/candlestick/pull/161))
+- docs: the size badge reads npm's `dist.unpackedSize` rather than bundlephobia,
+  which rate-limits per package ([#160](https://github.com/cm45t3r/candlestick/pull/160))
+- docs: first blog post, published at cm45t3r.github.io/candlestick
+
 ### v2.2.0 (2026-09-14)
 
 CLI output and project-tooling fixes on top of v2.1.0.
@@ -80,6 +125,8 @@ Known gaps, tracked for a later release: [#148](https://github.com/cm45t3r/candl
 swallows the next flag when an option value is missing), [#149](https://github.com/cm45t3r/candlestick/issues/149)
 (`--` is not honoured as end-of-options) and [#150](https://github.com/cm45t3r/candlestick/issues/150) (CSV cannot
 be piped; stdin is always parsed as JSON).
+<br>_All three were fixed in v3.0.0; #148 and #150 turned out to be breaking to
+resolve. See that entry above._
 
 ### v2.1.0 (2026-09-11)
 

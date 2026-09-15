@@ -19,7 +19,7 @@ A modern, modular JavaScript library for [candlestick pattern](https://en.wikipe
 - 🪶 Zero runtime dependencies and no native build step — `npm install` never
   invokes `node-gyp`, so it installs identically on Linux, Windows and macOS
 
-> **Requires Node.js >= 20.** Tested in CI on Node 20.x, 22.x, 24.x and 26.x across Linux, Windows and macOS.
+> **Requires Node.js >= 22.** Tested in CI on Node 22.x, 24.x and 26.x across Linux, Windows and macOS.
 
 ---
 
@@ -35,6 +35,7 @@ A modern, modular JavaScript library for [candlestick pattern](https://en.wikipe
 - [Development](#development)
 - [Architecture](#architecture)
 - [Contributing](#contributing)
+- [Upgrading to v3.0](#upgrading-to-v30)
 - [Upgrading to v2.1](#upgrading-to-v21)
 - [Upgrading from v1.x](#upgrading-from-v1x)
 - [FAQ](#faq)
@@ -653,6 +654,40 @@ See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for an overview of the librar
 5. Write tests in `test/myPattern.test.js` covering valid matches, non-matches, and edge cases
 6. Add an example file in `examples/myPattern.js`
 7. Run `npm test && npm run lint` to verify
+
+---
+
+## Upgrading to v3.0
+
+v3.0.0 is a breaking release. Three changes need attention, all of them in the
+CLI or the runtime requirement — **the library API is unchanged**. Every pattern
+function, export, type and the streaming and plugin surfaces behave exactly as
+they did in 2.x.
+
+1. **Node.js >= 22 required.** Node 20 reached end of life on 2026-04-30 and no
+   longer receives fixes, including security fixes. `npm install` now refuses
+   Node 20. Update your runtime and CI matrix.
+
+2. **The CLI rejects unknown options.** `candlestick --bogus -i data.json` used
+   to exit 0 with `--bogus` silently ignored; it now exits 1 with
+   `Unknown option: --bogus`. If a script passes a flag this CLI does not know,
+   it will start failing — which is the point, since the flag was never doing
+   anything.
+
+   The same pass made missing option values an error rather than a mis-parse:
+   `-i -o csv` used to read a file named `-o` and drop `-o csv` entirely, and
+   `-p` with no value reported zero patterns with exit 0. Both are now
+   diagnosed.
+
+3. **`Unsupported file format` is gone.** A `.json` or `.csv` extension still
+   picks the parser, but stdin, extensionless files and unrecognised extensions
+   are now detected from their content, so piping CSV works. A file that cannot
+   be parsed reports which format was tried instead. If you match on that error
+   string, match on the new one.
+
+Two additions that break nothing: a bare path is accepted as the input
+(`candlestick data.json`, equivalent to `-i`), and named ESM imports now
+tree-shake.
 
 ---
 

@@ -7,7 +7,7 @@
 #
 # Restore the `push: tags` trigger once the package is configured for Trusted
 # Publishing on npmjs.com, which replaces the secret with an OIDC exchange.
-# That also requires npm >= 11.5.1 in this job (Node 20 ships npm 10) and
+# That also requires npm >= 11.5.1 in this job (Node 22 ships npm 10) and
 # dropping the NODE_AUTH_TOKEN env below.
 #
 # The trigger was never the GitHub Release: Release Automation creates the
@@ -35,7 +35,7 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
       - run: npm ci
       - run: npm run lint
       - run: npm test
@@ -55,7 +55,7 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://registry.npmjs.org/
       - name: Verify tag matches package.json version
         run: |

@@ -52,9 +52,11 @@ inside the package it measures
 ([#159](https://github.com/cm45t3r/candlestick/pull/159)). Prefer a badge or a
 regeneration script over a number typed by hand.
 
-**Do not claim tree-shaking.** The ESM entry destructures the CommonJS namespace
-at runtime, so a bundle of one pattern is the same size as a bundle of all of
-them. Tracked in [#155](https://github.com/cm45t3r/candlestick/issues/155).
+**`src/index.mjs` must stay in step with `src/candlestick.js`.** The ESM entry
+names every export against its own module so that bundlers can tree-shake it
+([#155](https://github.com/cm45t3r/candlestick/pull/164)). That means two lists:
+a pattern added to the aggregator and forgotten in the entry would vanish from
+ESM silently. `test/esm-exports.test.js` fails if they drift — do not weaken it.
 
 **Branch coverage is not deterministic.** `fast-check` seeds differ per run and
 reach different branches, so the figure moves by a tenth of a point between runs.
