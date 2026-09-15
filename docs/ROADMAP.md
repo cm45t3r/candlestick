@@ -125,6 +125,8 @@ Known gaps, tracked for a later release: [#148](https://github.com/cm45t3r/candl
 swallows the next flag when an option value is missing), [#149](https://github.com/cm45t3r/candlestick/issues/149)
 (`--` is not honoured as end-of-options) and [#150](https://github.com/cm45t3r/candlestick/issues/150) (CSV cannot
 be piped; stdin is always parsed as JSON).
+<br>_All three were fixed in v3.0.0; #148 and #150 turned out to be breaking to
+resolve. See that entry above._
 
 ### v2.1.0 (2026-09-11)
 

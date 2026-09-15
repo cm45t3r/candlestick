@@ -36,6 +36,7 @@
     "src/",
     "types/",
     "cli/",
+    "!cli/test-data.*",
     "bin/",
     "CHANGELOG.md",
     "index.js",

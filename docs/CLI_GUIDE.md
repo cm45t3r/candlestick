@@ -31,6 +31,23 @@ candlestick -i data.json
 candlestick -i data.csv --output table
 ```
 
+### Without a Flag
+
+The input path can be passed on its own, which is equivalent to `-i`:
+
+```bash
+candlestick data.json --output table
+```
+
+For a path that begins with a dash, put it after `--` so it is not read as an
+option:
+
+```bash
+candlestick --output table -- ./-odd-name.csv
+```
+
+Everything after `--` is treated as a path, so options go before it.
+
 ### Use with Pipes (stdin)
 
 Omitting `--input` reads from stdin, and `-` is accepted as an explicit
@@ -55,6 +72,13 @@ cat data.json | candlestick --input - --output table
 | `--validate`         |       | Validate OHLC data before processing            | false   |
 | `--metadata`         |       | Include pattern metadata in JSON output         | false   |
 | `--help`             | `-h`  | Show help message                               |         |
+| `--`                 |       | End of options; the rest is a file path         |         |
+
+An option that is missing its value is an error rather than a mis-parse:
+`candlestick -i -o csv` reports `-i requires a value` instead of reading a file
+named `-o`. An unrecognised option is an error too, rather than being ignored.
+A value may not begin with `-`, with the single exception of `-` itself; use
+`--` for a path that does.
 
 `--metadata` only affects `--output json`, where it adds a nested `metadata`
 object to each result. The `table` and `csv` formats have fixed type,
