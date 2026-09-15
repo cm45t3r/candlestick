@@ -34,7 +34,8 @@ candlestick -i data.csv --output table
 ### Use with Pipes (stdin)
 
 Omitting `--input` reads from stdin, and `-` is accepted as an explicit
-spelling of the same thing. Piped data is always parsed as JSON.
+spelling of the same thing. JSON and CSV both pipe: the format is detected from
+the first non-blank line, so no flag is needed.
 
 ```bash
 cat data.json | candlestick --output table
@@ -45,7 +46,7 @@ cat data.json | candlestick --input - --output table
 
 | Option               | Short | Description                                     | Default |
 | -------------------- | ----- | ----------------------------------------------- | ------- |
-| `--input <file>`     | `-i`  | Input CSV or JSON file, or `-` for stdin (JSON) | stdin   |
+| `--input <file>`     | `-i`  | Input CSV or JSON file, or `-` for stdin        | stdin   |
 | `--output <format>`  | `-o`  | Output format: json, table, csv                 | json    |
 | `--patterns <list>`  | `-p`  | Comma-separated pattern names                   | all     |
 | `--confidence <min>` | `-c`  | Minimum confidence threshold (0-1)              | 0       |
@@ -266,10 +267,14 @@ const results = processData(data, { confidence: 0.8 });
 - Use `--validate` flag to see specific validation errors
 - Check that high >= low, high >= open/close, etc.
 
-**"Unsupported file format"**
+**"Could not parse input as JSON/CSV, detected from its content"**
 
-- Only .json and .csv files are supported
-- Or use stdin with JSON data
+- A `.json` or `.csv` extension picks the parser outright. Without one — stdin,
+  no extension, or any other extension — the format is detected from the first
+  non-blank line: `{` or `[` means JSON, anything else is tried as CSV.
+- This message means the detected format failed to parse. The original error is
+  attached as the cause, and usually says what is actually wrong.
+- Rename the file with a `.json` or `.csv` extension to choose explicitly.
 
 ## More Information
 
