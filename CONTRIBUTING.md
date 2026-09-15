@@ -19,22 +19,25 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
 
 ## Supported Node.js Versions
 
-The package requires Node.js >= 20 (`package.json#engines`). CI runs the full
-suite on **20.x, 22.x, 24.x and 26.x** across Linux, Windows and macOS, so a
-change must pass on all four before it can merge. Develop on a version inside
-that range; anything that only works on a newer runtime will fail the 20.x
-jobs.
+The package requires Node.js >= 22 (`package.json#engines`). CI runs the full
+suite on **22.x, 24.x and 26.x** across Linux, Windows and macOS, so a change
+must pass on all three before it can merge. Develop on a version inside that
+range; anything that only works on a newer runtime will fail the 22.x jobs.
 
-`.nvmrc` pins **20.19**, the floor, so `nvm use` puts you on the oldest
+Node 20 was dropped in v3.0.0. It reached end of life on 2026-04-30 and no
+longer receives fixes, including security fixes, so continuing to declare
+support for it promised something upstream had stopped providing.
+
+`.nvmrc` pins **22.13**, the floor, so `nvm use` puts you on the oldest
 supported runtime — the one most likely to catch an accidental dependency on a
 newer API.
 
-The patch version in `.nvmrc` is deliberate: `c8`, the coverage tool, declares
-`engines: ^20.19.0 || ^22.12.0 || >=23`, so an older 20.x installs it with an
-`EBADENGINE` warning and `npm run coverage` may misbehave. If you see that
-warning, update your local Node 20 (`nvm install 20.19`). This affects
-contributors only — `c8` is a devDependency and never reaches anyone who
-installs the package, whose requirement stays `>=20`.
+The patch version in `.nvmrc` is deliberate: `eslint` declares
+`engines: ^20.19.0 || ^22.13.0 || >=24`, so an older 22.x installs it with an
+`EBADENGINE` warning and linting may misbehave. If you see that warning, update
+your local Node 22 (`nvm install 22.13`). This affects contributors only —
+`eslint` is a devDependency and never reaches anyone who installs the package,
+whose requirement stays `>=22`.
 
 ## Running Tests
 

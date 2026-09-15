@@ -78,7 +78,7 @@
     "prepublishOnly": "npm run lint && npm test"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
