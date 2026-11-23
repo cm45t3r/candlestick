@@ -1,5 +1,8 @@
 const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const { allPatterns } = require("../src/patternChain.js");
 const {
   getPatternMetadata,
   enrichWithMetadata,
@@ -10,6 +13,40 @@ const {
 } = require("../src/patternMetadata.js");
 
 describe("patternMetadata", () => {
+  describe("docs/PATTERNS.md metadata table", () => {
+    it("lists every pattern with the metadata the source declares", () => {
+      const doc = fs.readFileSync(
+        path.join(__dirname, "..", "docs", "PATTERNS.md"),
+        "utf8",
+      );
+      const section = doc.split("<!-- metadata-table:start -->")[1];
+      assert.ok(section, "metadata-table markers are missing");
+      const rows = section
+        .split("<!-- metadata-table:end -->")[0]
+        .split("\n")
+        .filter((line) => line.startsWith("| `"))
+        .map((line) =>
+          line
+            .split("|")
+            .slice(1, -1)
+            .map((cell) => cell.trim().replace(/`/g, "")),
+        );
+
+      const expected = allPatterns.map(({ name, paramCount }) => {
+        const meta = getPatternMetadata(name);
+        return [
+          name,
+          String(paramCount),
+          meta.type,
+          meta.direction,
+          String(meta.confidence),
+          meta.strength,
+        ];
+      });
+      assert.deepEqual(rows, expected);
+    });
+  });
+
   describe("getPatternMetadata", () => {
     it("returns metadata for known pattern", () => {
       const meta = getPatternMetadata("bullishEngulfing");

@@ -139,6 +139,15 @@ API — see "Upgrading to v2.1" in the README before updating.
 - fix(benchmark): separate feed size from `chunkSize` in the streaming benchmark ([#118](https://github.com/cm45t3r/candlestick/issues/118))
 - fix(cli): derive the banner version from `package.json` instead of hardcoding it
 - ci: test on Node 24.x; CI matrix is now 20.x / 22.x / 24.x across Linux, Windows and macOS
+  <br>_Correction: this entry left out two features that are in the v2.1.0
+  tag: `trendContext` for `patternChain`, which adds `contextFit`,
+  `effectiveConfidence` and `resolveConflicts` and deprecates the static
+  `confidence` ([#95](https://github.com/cm45t3r/candlestick/issues/95),
+  [#99](https://github.com/cm45t3r/candlestick/pull/99)), and the volatility-based
+  `minGapVol` threshold for kickers ([#96](https://github.com/cm45t3r/candlestick/issues/96),
+  [#98](https://github.com/cm45t3r/candlestick/pull/98)). v2.1.0 itself never
+  reached npm: the publish failed and 2.2.0 was released instead, so 2.2.0 is
+  the first npm version with these features and with the fixes above._
 
 ### v2.0.2 (2026-07-10)
 
@@ -173,6 +182,10 @@ API — see "Upgrading to v2.1" in the README before updating.
 - Test suite: 306 tests, 99.75% line coverage, 97.63% branch coverage
 - Benchmark suite with throughput metrics (59K+ candles/sec)
 
+<br>_Correction: the date above is the GitHub release. The npm registry records
+1.2.0 as published on 2026-04-18, so from 2025-10-18 until then the newest
+version on npm was 1.0.2._
+
 ### v1.1.0 (2025-10-17)
 
 - 6 new patterns: Morning Star, Evening Star, Three White Soldiers, Three Black Crows, Piercing Line, Dark Cloud Cover
@@ -182,6 +195,9 @@ API — see "Upgrading to v2.1" in the README before updating.
 - Data validation system (`validateOHLC`, `validateOHLCArray`)
 - Pattern metadata: confidence scores, strength indicators, type and direction classification
 - CLI tool (`candlestick` binary) for CSV/JSON analysis with JSON, table, and CSV output
+
+<br>_Correction: v1.1.0 exists as a tag and GitHub release but has no publish
+record on npm. Everything above first reached npm in 1.2.0._
 
 ### v1.0.x (2024–2025)
 

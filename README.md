@@ -428,6 +428,12 @@ boundary. Call `reset()` to reuse a stream. The `totalProcessed` in the summary 
 total number of candles you passed to `process()` — the overlap re-scanned at
 each chunk boundary is counted once, not twice.
 
+**`patterns` takes built-in pattern names only.** A name registered through the
+[plugin system](#plugin-system) throws `No matching patterns found`, so use
+`patternChain` for custom patterns. Streaming also has no `trendContext`
+option, so with `enrichMetadata: true` matches get the static metadata only,
+with no `contextFit` or `effectiveConfidence`.
+
 **`chunkSize` is the internal buffer threshold, not a cap on what you hand to
 `process()`** — feeding one candle at a time works at any `chunkSize`. It must be
 at least as large as the longest active pattern (3 candles for the full built-in
@@ -437,7 +443,8 @@ chunk overlap would no longer advance.
 **Benefits:** Resident memory stays bounded by `chunkSize` instead of scaling
 with the dataset. Measured on 200,000 candles with five patterns: 41.9 MB live
 heap for `patternChain` against 0.2 MB for the stream — the same 61,866 matches
-in both cases.
+in both cases. Measured on 2026-11-23 with `node --expose-gc examples/streaming.js`,
+Node v26.8.2, Intel Core i7-9750H @ 2.60GHz, 16 GB RAM, macOS 26.7.3.
 
 Two conditions are doing the work, and both are easy to lose:
 
@@ -468,6 +475,39 @@ try {
 // Validate array of candles
 validateOHLCArray(candles); // throws on invalid data
 ```
+
+### Pattern Metadata
+
+Every built-in pattern has a `type`, `direction`, `confidence` and `strength`.
+The full table is in [docs/PATTERNS.md](./docs/PATTERNS.md#pattern-metadata).
+
+```js
+const { metadata, patternChain, allPatterns } = require("candlestick");
+
+metadata.getPatternMetadata("hammer");
+// { type: "reversal", direction: "bullish", confidence: 0.7,
+//   strength: "moderate", description: "Potential bullish reversal with long lower shadow" }
+
+const data = [
+  { open: 10, high: 10.2, low: 8, close: 10.1 },
+  { open: 10.1, high: 11, low: 10, close: 10.9 },
+  { open: 11, high: 11.1, low: 10.2, close: 10.3 },
+];
+const results = metadata.enrichWithMetadata(patternChain(data, allPatterns));
+// hammer (0.7), bullishHammer (0.75) and doji (0.55), each with `metadata` attached
+
+metadata.filterByConfidence(results, 0.6); // hammer, bullishHammer (default minimum: 0.5)
+metadata.filterByType(results, "reversal"); // hammer, bullishHammer
+metadata.filterByDirection(results, "neutral"); // doji
+metadata.sortByConfidence(results); // bullishHammer, hammer, doji (a sorted copy)
+```
+
+The filters and `sortByConfidence` read each result's `metadata`, or look it up
+by pattern name when it is missing. They always compare the static
+`confidence`, even when `trendContext` has added an `effectiveConfidence`. To
+rank by the trend-aware value, filter on `result.metadata.effectiveConfidence`
+yourself. They only know the built-in patterns (see
+[docs/PLUGIN_API.md](./docs/PLUGIN_API.md#limitations)).
 
 ### Plugin System
 
@@ -692,6 +732,9 @@ tree-shake.
 ---
 
 ## Upgrading to v2.1
+
+> v2.1.0 was never published to npm. Its changes first shipped in 2.2.0, so if
+> you are coming from 2.0.x on npm, this section applies to 2.2.0.
 
 v2.1.0 fixes three streaming defects. The fixes are behavioural, so code that
 relied on the broken behaviour will see a difference:

@@ -81,9 +81,14 @@ A value may not begin with `-`, with the single exception of `-` itself; use
 `--` for a path that does.
 
 `--metadata` only affects `--output json`, where it adds a nested `metadata`
-object to each result. The `table` and `csv` formats have fixed type,
-direction, confidence and strength columns, so they always include metadata
-whether or not the flag is passed.
+object to each result. The `table` and `csv` formats always include metadata
+columns, whether or not the flag is passed: `table` shows type, confidence and
+strength, and `csv` adds direction.
+
+Input is **not** validated unless you pass `--validate`. Without it, a candle
+that breaks the OHLC rules (for example `high` below `close`) is still scanned,
+and can produce matches. With it, the first invalid candle stops the run with
+exit code 1 and names its index.
 
 ## Input Formats
 
@@ -308,6 +313,7 @@ const results = processData(data, { confidence: 0.8 });
 
 ---
 
-**The CLI ships with Candlestick v1.1.0+.** It requires Node.js >= 20; the
+**The CLI ships with Candlestick 1.2.0 and later** (1.1.0 introduced it but
+never reached npm). It requires Node.js >= 22; the
 authoritative floor is `engines` in `package.json`, and the tested matrix is in
 [CONTRIBUTING.md](../CONTRIBUTING.md).
