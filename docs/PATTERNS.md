@@ -30,3 +30,50 @@ For a general introduction to candlestick patterns, see [Candlestick chart — W
 - **Evening Star**: Bearish reversal. Long bullish candle (body ≥ 60% of range), small-bodied star (body ≤ 30% of range) whose body gaps up from the first candle's body, long bearish candle (body ≥ 60% of range) closing below the midpoint of the first candle's body.
 - **Three White Soldiers**: Three consecutive bullish candles, each opening within the previous body and closing higher. Each body ≥ 60% of its candle's range; upper shadows ≤ 30% of body. Signals strong bullish continuation/reversal.
 - **Three Black Crows**: Three consecutive bearish candles, each opening within the previous body and closing lower. Each body ≥ 60% of its candle's range; lower shadows ≤ 30% of body. Signals strong bearish continuation/reversal.
+
+## Pattern Metadata
+
+What `metadata.getPatternMetadata(name)` returns for each variant, in `allPatterns` order. This is what the CLI's `--type`, `--direction` and `--confidence` filters, and the `metadata.filterBy*` helpers, compare against. `confidence` is the static, context-blind score; see [README: Trend-Context Confidence Adjustment](../README.md#trend-context-confidence-adjustment) for the trend-aware `effectiveConfidence`.
+
+The **direction is the signal, not the candle's colour**, and two groups of names read the other way:
+
+- `bearishHammer` and `bearishInvertedHammer` are **bullish**. The "bearish" in the name describes the red body; the shape is still a bullish reversal. So `--direction bullish` returns them, and `--direction bearish` does not.
+- `bullishSpinningTop` and `bearishSpinningTop` are **neutral**, like `spinningTop`. Their names describe the body colour only, so neither direction filter returns them.
+
+`test/patternMetadata.test.js` checks this table against the source, so it cannot drift from the code.
+
+<!-- metadata-table:start -->
+
+| Pattern                 | Candles | Type         | Direction | Confidence | Strength |
+| ----------------------- | ------- | ------------ | --------- | ---------- | -------- |
+| `hammer`                | 1       | reversal     | bullish   | 0.7        | moderate |
+| `bullishHammer`         | 1       | reversal     | bullish   | 0.75       | moderate |
+| `bearishHammer`         | 1       | reversal     | bullish   | 0.65       | moderate |
+| `invertedHammer`        | 1       | reversal     | bullish   | 0.65       | moderate |
+| `bullishInvertedHammer` | 1       | reversal     | bullish   | 0.7        | moderate |
+| `bearishInvertedHammer` | 1       | reversal     | bullish   | 0.6        | weak     |
+| `bullishEngulfing`      | 2       | reversal     | bullish   | 0.85       | strong   |
+| `bearishEngulfing`      | 2       | reversal     | bearish   | 0.85       | strong   |
+| `bullishHarami`         | 2       | reversal     | bullish   | 0.7        | moderate |
+| `bearishHarami`         | 2       | reversal     | bearish   | 0.7        | moderate |
+| `bullishKicker`         | 2       | reversal     | bullish   | 0.9        | strong   |
+| `bearishKicker`         | 2       | reversal     | bearish   | 0.9        | strong   |
+| `hangingMan`            | 2       | reversal     | bearish   | 0.75       | moderate |
+| `shootingStar`          | 2       | reversal     | bearish   | 0.75       | moderate |
+| `piercingLine`          | 2       | reversal     | bullish   | 0.8        | strong   |
+| `darkCloudCover`        | 2       | reversal     | bearish   | 0.8        | strong   |
+| `doji`                  | 1       | neutral      | neutral   | 0.55       | weak     |
+| `morningStar`           | 3       | reversal     | bullish   | 0.9        | strong   |
+| `eveningStar`           | 3       | reversal     | bearish   | 0.9        | strong   |
+| `threeWhiteSoldiers`    | 3       | continuation | bullish   | 0.85       | strong   |
+| `threeBlackCrows`       | 3       | continuation | bearish   | 0.85       | strong   |
+| `marubozu`              | 1       | continuation | neutral   | 0.8        | strong   |
+| `bullishMarubozu`       | 1       | continuation | bullish   | 0.85       | strong   |
+| `bearishMarubozu`       | 1       | continuation | bearish   | 0.85       | strong   |
+| `spinningTop`           | 1       | neutral      | neutral   | 0.6        | weak     |
+| `bullishSpinningTop`    | 1       | neutral      | neutral   | 0.58       | weak     |
+| `bearishSpinningTop`    | 1       | neutral      | neutral   | 0.58       | weak     |
+| `tweezersTop`           | 2       | reversal     | bearish   | 0.75       | moderate |
+| `tweezersBottom`        | 2       | reversal     | bullish   | 0.75       | moderate |
+
+<!-- metadata-table:end -->

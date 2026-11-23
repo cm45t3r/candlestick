@@ -122,6 +122,11 @@ declare function precomputeCandleProps(
   dataArray: OHLC[],
   strict?: boolean,
 ): OHLCExtended[];
+/** Returns `dataArray` unchanged when its first candle is already precomputed (has a numeric `bodyLen`); otherwise `precomputeCandleProps(dataArray, strict)`. */
+declare function ensurePrecomputed(
+  dataArray: OHLC[] | OHLCExtended[],
+  strict?: boolean,
+): OHLCExtended[];
 /** @param throwError When true (default), throws on invalid data; when false, returns false instead. */
 declare function validateOHLC(candle: any, throwError?: boolean): boolean;
 /** @param throwError When true (default), throws on invalid data; when false, returns false instead. */
@@ -557,6 +562,7 @@ export const utils: {
   findPattern: typeof findPattern;
   isEngulfed: typeof isEngulfed;
   precomputeCandleProps: typeof precomputeCandleProps;
+  ensurePrecomputed: typeof ensurePrecomputed;
   validateOHLC: typeof validateOHLC;
   validateOHLCArray: typeof validateOHLCArray;
 };

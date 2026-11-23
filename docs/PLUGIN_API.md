@@ -395,6 +395,16 @@ candlestick.plugins.registerPattern({
 - Pattern names must be unique
 - Detection functions must return an array of indices
 - Cannot override built-in patterns (they're in a separate namespace)
+- **The `metadata` you register is stored but not used by the metadata API.**
+  `plugins.getPattern(name).metadata` returns it, but `metadata.getPatternMetadata`,
+  `enrichWithMetadata`, the `filterBy*` helpers and `sortByConfidence` only know the
+  built-in patterns. A custom match gets no `metadata` from `enrichWithMetadata`,
+  is dropped by `filterByConfidence`, `filterByType` and `filterByDirection`, and
+  gets a neutral `contextFit` of 1 under `trendContext`.
+- **Custom patterns cannot be streamed.** `streaming.createStream` and
+  `processLargeDataset` resolve `patterns` against the built-in list only, so a
+  registered name throws `No matching patterns found`. Use `patternChain` for
+  custom patterns.
 
 ## Singleton Behavior and Test Isolation
 
